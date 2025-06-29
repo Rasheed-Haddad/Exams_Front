@@ -1,0 +1,209 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  padding: 20px;
+  color: white;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Custom styles for the exam interface */
+.exam-timer {
+  color: #d32f2f;
+  font-weight: bold;
+}
+
+.exam-timer.warning {
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.question-card {
+  transition: all 0.3s ease;
+}
+
+.question-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+}
+
+.question-nav-button {
+  transition: all 0.2s ease;
+}
+
+.question-nav-button:hover {
+  transform: scale(1.05);
+}
+
+.question-nav-button.current {
+  background-color: #1976d2 !important;
+  color: white !important;
+}
+
+.question-nav-button.answered {
+  background-color: #4caf50 !important;
+  color: white !important;
+}
+
+.question-nav-button.unanswered {
+  background-color: #f5f5f5 !important;
+  color: #666 !important;
+  border: 1px solid #ddd !important;
+}
+
+/* Results page animations */
+.results-enter {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.results-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.3s, transform 0.3s;
+}
+
+/* Responsive design improvements */
+@media (max-width: 768px) {
+  .App-header {
+    font-size: calc(8px + 2vmin);
+    padding: 15px;
+  }
+  
+  .exam-container {
+    padding: 10px;
+  }
+  
+  .question-nav-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+}
+
+/* Loading animations */
+.loading-spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Custom MUI overrides */
+.MuiButton-root {
+  text-transform: none !important;
+}
+
+.MuiCard-root {
+  border-radius: 12px !important;
+}
+
+.MuiLinearProgress-root {
+  border-radius: 10px !important;
+}
+
+/* Exam interface specific styles */
+.exam-question-panel {
+  min-height: 400px;
+}
+
+.exam-navigation-panel {
+  position: sticky;
+  top: 20px;
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+}
+
+.exam-progress-bar {
+  height: 8px;
+  border-radius: 4px;
+  background-color: #e0e0e0;
+}
+
+.exam-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4caf50 0%, #8bc34a 100%);
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+/* Sign in page background */
+.signin-background {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+}
+
+/* Selection pages */
+.selection-card {
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.selection-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+}
+
+/* Utility classes */
+.text-gradient {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.shadow-custom {
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.border-gradient {
+  border: 1px solid;
+  border-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%) 1;
+}
