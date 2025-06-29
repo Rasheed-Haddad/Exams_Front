@@ -6,7 +6,7 @@ export const signIn = createAsyncThunk(
   async (Student_Data, { rejectWithValue }) => {
     try {
       const response = await axios.post(
-        "https://exams-gng1.onrender.com/signin",
+        "https://exams-back.onrender.com/signin",
         {
           ID: Student_Data.ID,
           name: Student_Data.name,
@@ -17,7 +17,6 @@ export const signIn = createAsyncThunk(
           ID: response.data.user.ID,
           name: response.data.user.name,
         },
-        token: response.data.token,
       };
     } catch (error) {
       console.log(error);
@@ -43,7 +42,7 @@ const authSlice = createSlice({
       localStorage.removeItem("token");
       localStorage.removeItem("name");
       localStorage.removeItem("ID");
-      state.token = null;
+      state.token = localStorage.getItem("token") || null;
       state.error = null;
     },
     clearError: (state) => {
@@ -60,10 +59,10 @@ const authSlice = createSlice({
         state.loading = false;
         state.isAuthenticated = true;
         state.user = action.payload.user;
-        localStorage.setItem("token", action.payload.token);
+        localStorage.setItem("token", action.payload.user.ID);
         localStorage.setItem("name", action.payload.user.name);
         localStorage.setItem("ID", action.payload.user.ID);
-        state.token = action.payload.token;
+        state.token = action.payload.user.ID;
         state.error = null;
       })
       .addCase(signIn.rejected, (state, action) => {

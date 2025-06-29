@@ -358,7 +358,7 @@ export const fetchSubjects = createAsyncThunk(
   async (college_id, { rejectWithValue }) => {
     try {
       const response = await axios.post(
-        "https://exams-gng1.onrender.com/subjects",
+        "https://exams-back.onrender.com/subjects",
         {
           college_id: college_id,
         }

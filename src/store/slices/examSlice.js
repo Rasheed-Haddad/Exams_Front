@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-import { useSelector, useDispatch } from "react-redux";
 
 export const fetchExamQuestions = createAsyncThunk(
   "exam/fetchExamQuestions",
@@ -38,7 +37,7 @@ export const submitExam = createAsyncThunk(
 
       const score = (correctAnswers / questions.length) * 100;
       const response = await axios.post(
-        "https://exams-gng1.onrender.com/results",
+        "https://exams-back.onrender.com/results",
         {
           student_ID: Student_State.user.ID,
           subject_id: subject.ID,
