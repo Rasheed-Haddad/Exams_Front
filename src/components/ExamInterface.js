@@ -41,11 +41,12 @@ import {
 } from "../store/slices/examSlice";
 
 const ExamInterface = () => {
+  const correctSound = new Audio("correct.mp3");
+  const wrongSound = new Audio("wrong.mp3");
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [showSubmitDialog, setShowSubmitDialog] = useState(false);
   const [showExitDialog, setShowExitDialog] = useState(false);
-
   const { selectedSubject } = useSelector((state) => state.selection);
   const {
     questions,
@@ -102,24 +103,33 @@ const ExamInterface = () => {
   };
 
   const handleAnswerChange = (value) => {
-    dispatch(
-      setAnswer({
-        questionIndex: currentQuestionIndex,
-        answer: parseInt(value),
-      })
-    );
-  };
+    if (answers[currentQuestionIndex] === undefined) {
+      const selected = parseInt(value);
+      const correct = questions[currentQuestionIndex].answer;
 
-  const handleNext = () => {
-    dispatch(nextQuestion());
-  };
+      dispatch(
+        setAnswer({
+          questionIndex: currentQuestionIndex,
+          answer: selected,
+        })
+      );
 
-  const handlePrevious = () => {
-    dispatch(previousQuestion());
-  };
+      // ✅ تشغيل الصوت مرة واحدة بناءً على الإجابة
+      if (selected == correct) {
+        correctSound.play();
+      } else {
+        wrongSound.play();
+      }
 
-  const handleQuestionNavigation = (index) => {
-    dispatch(goToQuestion(index));
+      // الانتقال التلقائي
+      setTimeout(() => {
+        if (currentQuestionIndex < questions.length - 1) {
+          dispatch(nextQuestion());
+        } else {
+          setShowSubmitDialog(true);
+        }
+      }, 1300);
+    }
   };
 
   const handleSubmitExam = async () => {
@@ -288,60 +298,42 @@ const ExamInterface = () => {
                       onChange={(e) => handleAnswerChange(e.target.value)}
                       className="space-y-3"
                     >
-                      {currentQuestion.options.map((option, index) => (
-                        <FormControlLabel
-                          key={index}
-                          value={(index + 1).toString()}
-                          control={<Radio />}
-                          label={
-                            <Typography variant="body1" className="ml-2">
-                              <span className="font-arabic text-xl ">
-                                {option}
-                              </span>
-                            </Typography>
+                      {currentQuestion.options.map((option, index) => {
+                        const isSelected =
+                          answers[currentQuestionIndex] == index + 1;
+                        const isCorrect = currentQuestion.answer == index + 1;
+                        const hasAnswered =
+                          answers[currentQuestionIndex] !== undefined;
+
+                        let bgColor = "";
+                        if (hasAnswered) {
+                          if (isCorrect) {
+                            bgColor = "bg-green-500 text-white";
+                          } else if (isSelected && !isCorrect) {
+                            bgColor = "bg-red-500 text-white";
                           }
-                          className="m-0 p-3 rounded-lg hover:bg-blue-50 transition-colors"
-                        />
-                      ))}
+                        }
+                        return (
+                          <FormControlLabel
+                            key={index}
+                            value={(index + 1).toString()}
+                            control={<Radio />}
+                            disabled={
+                              answers[currentQuestionIndex] !== undefined
+                            }
+                            label={
+                              <Typography variant="body1" className="ml-2">
+                                <span className="font-arabic text-xl ">
+                                  {option}
+                                </span>
+                              </Typography>
+                            }
+                            className={`m-0 p-3 rounded-lg ${bgColor}  transition-colors`}
+                          />
+                        );
+                      })}
                     </RadioGroup>
                   </FormControl>
-
-                  {/* Navigation Buttons */}
-                  <Box className="flex justify-between items-center mt-8">
-                    <Button
-                      variant="outlined"
-                      className="gap-4"
-                      startIcon={<NavigateNext />}
-                      onClick={handlePrevious}
-                      disabled={currentQuestionIndex === 0}
-                    >
-                      <span className="font-arabic text-2xl">السابق</span>
-                    </Button>
-
-                    <div className="flex gap-2">
-                      {currentQuestionIndex === questions.length - 1 ? (
-                        <Button
-                          variant="contained"
-                          color="success"
-                          onClick={() => setShowSubmitDialog(true)}
-                          size="large"
-                          className="px-8"
-                        >
-                          <span className="font-arabic text-2xl">تسليم</span>
-                        </Button>
-                      ) : (
-                        <Button
-                          variant="contained"
-                          className="gap-4"
-                          endIcon={<NavigateBefore />}
-                          onClick={handleNext}
-                          size="large"
-                        >
-                          <span className="font-arabic text-2xl">التالي</span>
-                        </Button>
-                      )}
-                    </div>
-                  </Box>
                 </div>
               </CardContent>
             </Card>
@@ -351,11 +343,7 @@ const ExamInterface = () => {
 
       {/* Submit Confirmation Dialog */}
       <div dir="rtl">
-        <Dialog
-          dir="rtl"
-          open={showSubmitDialog}
-          onClose={() => setShowSubmitDialog(false)}
-        >
+        <Dialog dir="rtl" open={showSubmitDialog}>
           <DialogTitle>
             <span className="font-arabic text-2xl font-bold">
               تسليم الامتحان
@@ -364,7 +352,7 @@ const ExamInterface = () => {
           <DialogContent>
             <Typography className="mb-4">
               <span className="font-arabic text-xl ">
-                متأكد أنك أنهيت الاختبار وتريد الحصول على درجتك
+                انتهى الامتحان, ستحصل على درجاتك الان
               </span>
             </Typography>
             <Box className="p-3 bg-gray-50 rounded-lg">
@@ -388,9 +376,6 @@ const ExamInterface = () => {
             </Box>
           </DialogContent>
           <DialogActions className="gap-7">
-            <Button onClick={() => setShowSubmitDialog(false)}>
-              <span className="font-arabic text-xl">الغاء</span>
-            </Button>
             <Button
               onClick={handleSubmitExam}
               variant="contained"

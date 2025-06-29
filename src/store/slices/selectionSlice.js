@@ -272,7 +272,6 @@ const mockColleges = {
     { id: "186", name: "هندسة الاتصالات", universityId: "19" },
     { id: "187", name: "المعالجة الفيزيائية", universityId: "19" },
     { id: "188", name: "الإدارة", universityId: "19" },
-    { id: "189", name: "طب الأسنان", universityId: "19" },
   ],
   20: [
     { id: "190", name: "الطب البشري", universityId: "20" },
