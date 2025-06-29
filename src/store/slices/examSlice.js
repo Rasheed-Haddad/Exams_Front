@@ -10,7 +10,7 @@ export const fetchExamQuestions = createAsyncThunk(
       return {
         questions: subject.questions || [],
         duration: 25,
-        totalQuestions: subject.questions.length || 0,
+        totalQuestions: subject ? subject.questions?.length || 0 : 0,
       };
     } catch (error) {
       return rejectWithValue(error.message);
