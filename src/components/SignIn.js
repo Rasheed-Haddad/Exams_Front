@@ -59,11 +59,7 @@ const SignIn = () => {
               component="h1"
               className="font-bold text-blue-500 mb-4"
             >
-              قدها وقدود
-            </Typography>
-
-            <Typography variant="p" className=" text-2xl text-blue-500">
-              سجل الدخول لبدء رحلة جديدة
+              سجل الدخول
             </Typography>
           </Box>
 
