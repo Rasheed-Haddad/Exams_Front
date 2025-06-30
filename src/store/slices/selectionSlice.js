@@ -356,15 +356,30 @@ export const fetchSubjects = createAsyncThunk(
   "selection/fetchSubjects",
   async (college_id, { rejectWithValue }) => {
     try {
+      const token = localStorage.getItem("token"); // احصل على التوكن من localStorage
       const response = await axios.post(
         "https://exams-back.onrender.com/subjects",
+        { college_id },
         {
-          college_id: college_id,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
       return response.data;
     } catch (error) {
-      return rejectWithValue("تأكد من اتصالك بالانترنت");
+      if (
+        error.response &&
+        (error.response.status === 401 || error.response.status === 403)
+      ) {
+        localStorage.removeItem("token"); // نحذف التوكن
+        window.location.href = "/signin"; // نعيد التوجيه
+        return rejectWithValue(
+          "انتهت صلاحية الجلسة. الرجاء تسجيل الدخول مجددًا."
+        );
+      }
+
+      return rejectWithValue("تأكد من اتصالك بالإنترنت أو من صلاحية الدخول");
     }
   }
 );

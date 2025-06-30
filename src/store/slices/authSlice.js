@@ -24,12 +24,13 @@ export const signIn = createAsyncThunk(
     }
   }
 );
+const token = localStorage.getItem("token");
 const name = localStorage.getItem("name");
 const ID = localStorage.getItem("ID");
 const authSlice = createSlice({
   name: "auth",
   initialState: {
-    isAuthenticated: false,
+    isAuthenticated: !!token,
     user: { name: name || "", ID: ID || "" },
     token: localStorage.getItem("token") || null,
     loading: false,
@@ -42,7 +43,7 @@ const authSlice = createSlice({
       localStorage.removeItem("token");
       localStorage.removeItem("name");
       localStorage.removeItem("ID");
-      state.token = localStorage.getItem("token") || null;
+      state.token = null;
       state.error = null;
     },
     clearError: (state) => {
@@ -59,10 +60,10 @@ const authSlice = createSlice({
         state.loading = false;
         state.isAuthenticated = true;
         state.user = action.payload.user;
-        localStorage.setItem("token", action.payload.user.ID);
+        localStorage.setItem("token", action.payload.token); // ✅ الصحيح
         localStorage.setItem("name", action.payload.user.name);
         localStorage.setItem("ID", action.payload.user.ID);
-        state.token = action.payload.user.ID;
+        state.token = action.payload.token;
         state.error = null;
       })
       .addCase(signIn.rejected, (state, action) => {
