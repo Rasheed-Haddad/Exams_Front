@@ -17,6 +17,7 @@ export const signIn = createAsyncThunk(
           ID: response.data.user.ID,
           name: response.data.user.name,
         },
+        token: response.data.token, // ← أضف هذا السطر المهم
       };
     } catch (error) {
       console.log(error);
@@ -32,7 +33,7 @@ const authSlice = createSlice({
   initialState: {
     isAuthenticated: !!token,
     user: { name: name || "", ID: ID || "" },
-    token: localStorage.getItem("token") || null,
+    token: localStorage.getItem("token"),
     loading: false,
     error: null,
   },

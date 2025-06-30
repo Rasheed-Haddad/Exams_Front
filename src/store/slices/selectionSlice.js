@@ -373,7 +373,7 @@ export const fetchSubjects = createAsyncThunk(
         (error.response.status === 401 || error.response.status === 403)
       ) {
         localStorage.removeItem("token"); // نحذف التوكن
-        window.location.href = "/signin"; // نعيد التوجيه
+        window.location.href = "/"; // نعيد التوجيه
         return rejectWithValue(
           "انتهت صلاحية الجلسة. الرجاء تسجيل الدخول مجددًا."
         );
