@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import {
@@ -11,16 +11,19 @@ import {
   CircularProgress,
   Alert,
   Box,
+  TextField,
 } from "@mui/material";
 import { BookOutlined, PlayArrowOutlined } from "@mui/icons-material";
 import { fetchSubjects, selectSubject } from "../store/slices/selectionSlice";
 import { signOut } from "../store/slices/authSlice";
+
 const SubjectSelection = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { subjects, selectedCollege, loading, error } = useSelector(
     (state) => state.selection
   );
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     if (!selectedCollege) {
@@ -46,6 +49,10 @@ const SubjectSelection = () => {
     navigate("/signin");
   };
 
+  const filteredSubjects = subjects.filter((subject) =>
+    subject.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -60,7 +67,7 @@ const SubjectSelection = () => {
       <Box className="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
         <div
           dir="rtl"
-          className="flex justify-start gap-7 items-center max-w-7xl mx-auto"
+          className="flex justify-between items-center max-w-7xl mx-auto gap-6 flex-wrap"
         >
           <div className="flex gap-2 font-arabic text-2xl">
             <Button
@@ -70,8 +77,6 @@ const SubjectSelection = () => {
             >
               رجوع
             </Button>
-          </div>
-          <div className="font-arabic text2xl">
             <Button
               variant="outlined"
               onClick={handleSignOut}
@@ -80,14 +85,24 @@ const SubjectSelection = () => {
               تسجيل الخروج
             </Button>
           </div>
-          <div className="font-arabic text-2xl">
-            <Typography
-              variant="p"
-              className="font-bold font-2xl font-arabic text-gray-800"
-            >
-              الاختبارات المتاحة
-            </Typography>
-          </div>
+
+          <Typography
+            variant="p"
+            className="font-bold font-2xl font-arabic text-gray-800"
+          >
+            الاختبارات المتاحة
+          </Typography>
+
+          {/* شريط البحث */}
+          <TextField
+            dir="rtl"
+            placeholder="ابحث عن اسم المادة..."
+            variant="outlined"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full sm:w-96 font-arabic"
+            inputProps={{ className: "font-arabic text-lg" }}
+          />
         </div>
       </Box>
 
@@ -107,8 +122,8 @@ const SubjectSelection = () => {
             justifyContent: "center",
           }}
         >
-          {subjects.length > 0 &&
-            subjects.map((subject) => (
+          {filteredSubjects.length > 0 &&
+            filteredSubjects.map((subject) => (
               <Grid key={subject.ID}>
                 <Card className="h-60 w-60 hover:shadow-lg transition-shadow duration-300 cursor-pointer transform hover:scale-105">
                   <CardContent className="p-6">
@@ -151,21 +166,13 @@ const SubjectSelection = () => {
             ))}
         </Grid>
 
-        {subjects.length === 0 && !loading && (
+        {filteredSubjects.length === 0 && !loading && (
           <Box textAlign="center" className="py-12">
             <Typography variant="h6" color="textSecondary">
               <p className="font-arabic text-lg m-12">
-                حاليا لا توجد أي اختبارات مضافة, في حال أردت إضافة اختبار
-                والمشاركة في موقعنا يرجى التواصل معنا عبر الرقم : 0937922870
+                لم يتم العثور على مادة بهذا الاسم.
               </p>
             </Typography>
-            <Button
-              variant="outlined"
-              onClick={handleBack}
-              className="mt-4 w-48"
-            >
-              عودة
-            </Button>
           </Box>
         )}
       </Container>
