@@ -10,21 +10,23 @@ export const signIn = createAsyncThunk(
         {
           ID: Student_Data.ID,
           name: Student_Data.name,
+          password: Student_Data.password,
         }
       );
       return {
         user: {
           ID: response.data.user.ID,
           name: response.data.user.name,
+          password: response.data.user.password,
         },
         token: response.data.token, // ← أضف هذا السطر المهم
       };
     } catch (error) {
-      console.log(error);
-      return rejectWithValue("تحقق من اتصالك بالانترنت");
+      return rejectWithValue(error.response.data.error);
     }
   }
 );
+const password = localStorage.getItem("password");
 const token = localStorage.getItem("token");
 const name = localStorage.getItem("name");
 const ID = localStorage.getItem("ID");
@@ -32,7 +34,7 @@ const authSlice = createSlice({
   name: "auth",
   initialState: {
     isAuthenticated: !!token,
-    user: { name: name || "", ID: ID || "" },
+    user: { name: name || "", ID: ID || "", password: password || "" },
     token: localStorage.getItem("token"),
     loading: false,
     error: null,
@@ -41,9 +43,7 @@ const authSlice = createSlice({
     signOut: (state) => {
       state.isAuthenticated = false;
       state.user = null;
-      localStorage.removeItem("token");
-      localStorage.removeItem("name");
-      localStorage.removeItem("ID");
+      localStorage.clear();
       state.token = null;
       state.error = null;
     },
@@ -64,6 +64,8 @@ const authSlice = createSlice({
         localStorage.setItem("token", action.payload.token); // ✅ الصحيح
         localStorage.setItem("name", action.payload.user.name);
         localStorage.setItem("ID", action.payload.user.ID);
+        localStorage.setItem("password", action.payload.user.password);
+        state.password = action.payload.user.password;
         state.token = action.payload.token;
         state.error = null;
       })

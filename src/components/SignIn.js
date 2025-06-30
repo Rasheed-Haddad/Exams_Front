@@ -17,6 +17,7 @@ const SignIn = () => {
   const [Student_Data, set_Student_Data] = useState({
     name: "",
     ID: "",
+    password: "",
   });
   const token = localStorage.getItem("token") || null;
   const dispatch = useDispatch();
@@ -95,7 +96,18 @@ const SignIn = () => {
               required
               className="mb-6"
             />
-
+            <TextField
+              dir="rtl"
+              fullWidth
+              label="كلمة المرور"
+              name="password"
+              type="text"
+              value={Student_Data.password}
+              onChange={handleChange}
+              variant="outlined"
+              required
+              className="mb-4"
+            />
             <Button
               type="submit"
               fullWidth
