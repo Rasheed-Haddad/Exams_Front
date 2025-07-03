@@ -159,14 +159,23 @@ const ExamInterface = () => {
   };
   if (!visible) {
     return (
-      <div className="min-h-screen bg-gray-50 font-arabic text-3xl flex items-center justify-center">
-        <Typography>انتظر موعد تفعيل الاختبار</Typography>
-        <Button variant="contained" onClick={() => navigate("/subject")}>
-          <p className="font-arabic text-2xl mt-12">عودة</p>
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 font-arabic px-4 text-center">
+        <Typography variant="h4" className="text-gray-800 mb-6">
+          انتظر موعد تفعيل الاختبار
+        </Typography>
+
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => navigate("/subject")}
+          className="text-xl px-6 py-2"
+        >
+          العودة
         </Button>
       </div>
     );
   }
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
