@@ -136,6 +136,7 @@ const examSlice = createSlice({
         state.answers = {};
         state.isSubmitted = false;
         state.results = null;
+        state.visible = action.payload.visible;
       })
       .addCase(fetchExamQuestions.rejected, (state, action) => {
         state.loading = false;
