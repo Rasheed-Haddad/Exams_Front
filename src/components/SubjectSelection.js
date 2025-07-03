@@ -149,6 +149,7 @@ const SubjectSelection = () => {
                         <Button
                           variant="contained"
                           fullWidth
+                          disabled={!subject.visible}
                           startIcon={<PlayArrowOutlined />}
                           className="mt-4 float-end bg-green-600 hover:bg-green-700"
                           onClick={(e) => {
