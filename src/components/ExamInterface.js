@@ -50,6 +50,7 @@ const ExamInterface = () => {
     duration,
     loading,
     error,
+    visible,
   } = useSelector((state) => state.exam);
   const Student_State = useSelector((state) => state.auth);
   useEffect(() => {
@@ -156,7 +157,18 @@ const ExamInterface = () => {
   const getAnsweredQuestionsCount = () => {
     return Object.keys(answers).length;
   };
-
+  if (!visible) {
+    return (
+      <div className="min-h-screen bg-gray-50 font-arabic text-2xl flex items-center justify-center">
+        <Container maxWidth="md">
+          <Typography>انتظر موعد تفعيل الاختبار</Typography>
+          <Button variant="contained" onClick={() => navigate("/subject")}>
+            <p className="font-arabic text-2xl ">عودة</p>
+          </Button>
+        </Container>
+      </div>
+    );
+  }
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">

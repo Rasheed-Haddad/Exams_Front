@@ -11,6 +11,7 @@ export const fetchExamQuestions = createAsyncThunk(
         questions: subject.questions || [],
         duration: subject.time,
         totalQuestions: subject ? subject.questions?.length || 0 : 0,
+        visible: subject.visible,
       };
     } catch (error) {
       return rejectWithValue(error.message);
@@ -70,6 +71,7 @@ const examSlice = createSlice({
     results: null,
     loading: false,
     error: null,
+    visible: false,
   },
   reducers: {
     setAnswer: (state, action) => {
