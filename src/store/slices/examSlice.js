@@ -9,7 +9,7 @@ export const fetchExamQuestions = createAsyncThunk(
 
       return {
         questions: subject.questions || [],
-        duration: 25,
+        duration: subject.time,
         totalQuestions: subject ? subject.questions?.length || 0 : 0,
       };
     } catch (error) {

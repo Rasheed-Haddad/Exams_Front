@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-
 import {
   Container,
   Typography,
@@ -21,18 +20,11 @@ import {
   DialogActions,
   Grid,
 } from "@mui/material";
-import {
-  NavigateNext,
-  NavigateBefore,
-  AccessTime,
-  ExitToApp,
-} from "@mui/icons-material";
+import { AccessTime } from "@mui/icons-material";
 import {
   fetchExamQuestions,
   setAnswer,
   nextQuestion,
-  previousQuestion,
-  goToQuestion,
   startTimer,
   stopTimer,
   decrementTimer,
@@ -55,6 +47,7 @@ const ExamInterface = () => {
     timeRemaining,
     isSubmitted,
     isActive,
+    duration,
     loading,
     error,
   } = useSelector((state) => state.exam);
@@ -135,7 +128,7 @@ const ExamInterface = () => {
   const handleSubmitExam = async () => {
     dispatch(stopTimer());
 
-    const timeSpent = Math.floor((1500 - timeRemaining) / 60);
+    const timeSpent = Math.floor((duration * 60 - timeRemaining) / 60);
 
     try {
       await dispatch(

@@ -74,7 +74,7 @@ const SignIn = () => {
             <TextField
               dir="rtl"
               fullWidth
-              label="الاسم الكامل"
+              label="الاسم والكنية باللغة العربية"
               name="name"
               type="text"
               value={Student_Data.name}
