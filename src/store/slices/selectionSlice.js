@@ -354,12 +354,12 @@ export const fetchColleges = createAsyncThunk(
 
 export const fetchSubjects = createAsyncThunk(
   "selection/fetchSubjects",
-  async (college_id, { rejectWithValue }) => {
+  async ({ college_id, ID }, { rejectWithValue }) => {
     try {
-      const token = localStorage.getItem("token"); // احصل على التوكن من localStorage
+      const token = localStorage.getItem("token");
       const response = await axios.post(
         "https://exams-back.onrender.com/subjects",
-        { college_id },
+        { college_id: college_id, ID: ID },
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -372,8 +372,8 @@ export const fetchSubjects = createAsyncThunk(
         error.response &&
         (error.response.status === 401 || error.response.status === 403)
       ) {
-        localStorage.removeItem("token"); // نحذف التوكن
-        window.location.href = "/"; // نعيد التوجيه
+        localStorage.removeItem("token");
+        window.location.href = "/";
         return rejectWithValue(
           "انتهت صلاحية الجلسة. الرجاء تسجيل الدخول مجددًا."
         );

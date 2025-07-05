@@ -26,18 +26,21 @@ const CollegeSelection = () => {
   const { colleges, selectedUniversity, loading, error } = useSelector(
     (state) => state.selection
   );
+  const { user } = useSelector((state) => state.auth);
   useEffect(() => {
     const saved_college = JSON.parse(localStorage.getItem("college")) || null;
 
-    if (saved_college) {
+    if (saved_college && user?.ID && !isNaN(user.ID)) {
       dispatch(selectCollege(saved_college));
-      dispatch(fetchSubjects(saved_college.id));
+      dispatch(
+        fetchSubjects({ college_id: saved_college.id, ID: Number(user.ID) })
+      );
 
       if (location.pathname !== "/subject") {
         navigate("/subject");
       }
     }
-  }, [dispatch, selectCollege, navigate, location]);
+  }, [dispatch, user, navigate, location]);
 
   useEffect(() => {
     if (!selectedUniversity) {

@@ -14,7 +14,11 @@ import {
   TextField,
 } from "@mui/material";
 import { BookOutlined, PlayArrowOutlined } from "@mui/icons-material";
-import { fetchSubjects, selectSubject } from "../store/slices/selectionSlice";
+import {
+  fetchSubjects,
+  selectCollege,
+  selectSubject,
+} from "../store/slices/selectionSlice";
 import { signOut } from "../store/slices/authSlice";
 
 const SubjectSelection = () => {
@@ -28,11 +32,20 @@ const SubjectSelection = () => {
 
   useEffect(() => {
     if (!selectedCollege) {
-      navigate("/college");
-      return;
+      const saved_college = JSON.parse(localStorage.getItem("college"));
+      if (saved_college) {
+        dispatch(selectCollege(saved_college));
+      }
     }
-    dispatch(fetchSubjects(selectedCollege.id));
-  }, [dispatch, selectedCollege, navigate]);
+  }, [dispatch, selectedCollege]);
+
+  useEffect(() => {
+    if (!selectedCollege || !user?.ID) return;
+
+    dispatch(
+      fetchSubjects({ college_id: selectedCollege.id, ID: Number(user.ID) })
+    );
+  }, [dispatch, selectedCollege, user]);
 
   const handleSubjectSelect = (subject) => {
     dispatch(selectSubject(subject));
@@ -54,7 +67,7 @@ const SubjectSelection = () => {
     subject.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  if (loading) {
+  if (loading || !user || !user.ID || !Array.isArray(subjects)) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <CircularProgress size={60} />
@@ -125,52 +138,48 @@ const SubjectSelection = () => {
         >
           {filteredSubjects.length > 0 &&
             filteredSubjects.map((subject) => {
-              if (subject.available_to.includes(user.ID)) {
-                return (
-                  <Grid key={subject.ID}>
-                    <Card className="h-60 w-60 hover:shadow-lg transition-shadow duration-300 cursor-pointer transform hover:scale-105">
-                      <CardContent className="p-6">
-                        <div className="flex items-start justify-between mb-4">
-                          <BookOutlined className="text-green-500 text-3xl" />
-                        </div>
-                        <div className="flex flex-col">
-                          <div className="h-32 font-arabic ">
-                            <Typography
-                              variant="p"
-                              className="font-arabic text-2xl text-gray-800 mb-2"
-                            >
-                              {subject.name}
-                            </Typography>
-                            <br />
-                            <div className="mt-5">
-                              <span className="font-arabic text-sm text-gray-700">
-                                {subject.info || ""}
-                              </span>
-                            </div>
-                          </div>
-                          <div className="">
-                            <Button
-                              variant="contained"
-                              fullWidth
-                              disabled={!subject.visible}
-                              startIcon={<PlayArrowOutlined />}
-                              className="mt-4 float-end bg-green-600 hover:bg-green-700"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleSubjectSelect(subject);
-                              }}
-                            >
-                              <p className="font-arabic text-lg">البدء</p>
-                            </Button>
+              return (
+                <Grid key={subject.ID}>
+                  <Card className="h-60 w-60 hover:shadow-lg transition-shadow duration-300 cursor-pointer transform hover:scale-105">
+                    <CardContent className="p-6">
+                      <div className="flex items-start justify-between mb-4">
+                        <BookOutlined className="text-green-500 text-3xl" />
+                      </div>
+                      <div className="flex flex-col">
+                        <div className="h-32 font-arabic ">
+                          <Typography
+                            variant="p"
+                            className="font-arabic text-2xl text-gray-800 mb-2"
+                          >
+                            {subject.name}
+                          </Typography>
+                          <br />
+                          <div className="mt-5">
+                            <span className="font-arabic text-sm text-gray-700">
+                              {subject.info || ""}
+                            </span>
                           </div>
                         </div>
-                      </CardContent>
-                    </Card>
-                  </Grid>
-                );
-              } else {
-                return;
-              }
+                        <div className="">
+                          <Button
+                            variant="contained"
+                            fullWidth
+                            disabled={!subject.visible}
+                            startIcon={<PlayArrowOutlined />}
+                            className="mt-4 float-end bg-green-600 hover:bg-green-700"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleSubjectSelect(subject);
+                            }}
+                          >
+                            <p className="font-arabic text-lg">البدء</p>
+                          </Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              );
             })}
         </Grid>
 
