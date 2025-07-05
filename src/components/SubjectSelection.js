@@ -23,6 +23,7 @@ const SubjectSelection = () => {
   const { subjects, selectedCollege, loading, error } = useSelector(
     (state) => state.selection
   );
+  const { user } = useSelector((state) => state.auth);
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
@@ -123,48 +124,54 @@ const SubjectSelection = () => {
           }}
         >
           {filteredSubjects.length > 0 &&
-            filteredSubjects.map((subject) => (
-              <Grid key={subject.ID}>
-                <Card className="h-60 w-60 hover:shadow-lg transition-shadow duration-300 cursor-pointer transform hover:scale-105">
-                  <CardContent className="p-6">
-                    <div className="flex items-start justify-between mb-4">
-                      <BookOutlined className="text-green-500 text-3xl" />
-                    </div>
-                    <div className="flex flex-col">
-                      <div className="h-32 font-arabic ">
-                        <Typography
-                          variant="p"
-                          className="font-arabic text-2xl text-gray-800 mb-2"
-                        >
-                          {subject.name}
-                        </Typography>
-                        <br />
-                        <div className="mt-5">
-                          <span className="font-arabic text-sm text-gray-700">
-                            {subject.info || ""}
-                          </span>
+            filteredSubjects.map((subject) => {
+              if (subject.available_to.includes(user.ID)) {
+                return (
+                  <Grid key={subject.ID}>
+                    <Card className="h-60 w-60 hover:shadow-lg transition-shadow duration-300 cursor-pointer transform hover:scale-105">
+                      <CardContent className="p-6">
+                        <div className="flex items-start justify-between mb-4">
+                          <BookOutlined className="text-green-500 text-3xl" />
                         </div>
-                      </div>
-                      <div className="">
-                        <Button
-                          variant="contained"
-                          fullWidth
-                          disabled={!subject.visible}
-                          startIcon={<PlayArrowOutlined />}
-                          className="mt-4 float-end bg-green-600 hover:bg-green-700"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleSubjectSelect(subject);
-                          }}
-                        >
-                          <p className="font-arabic text-lg">البدء</p>
-                        </Button>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </Grid>
-            ))}
+                        <div className="flex flex-col">
+                          <div className="h-32 font-arabic ">
+                            <Typography
+                              variant="p"
+                              className="font-arabic text-2xl text-gray-800 mb-2"
+                            >
+                              {subject.name}
+                            </Typography>
+                            <br />
+                            <div className="mt-5">
+                              <span className="font-arabic text-sm text-gray-700">
+                                {subject.info || ""}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="">
+                            <Button
+                              variant="contained"
+                              fullWidth
+                              disabled={!subject.visible}
+                              startIcon={<PlayArrowOutlined />}
+                              className="mt-4 float-end bg-green-600 hover:bg-green-700"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleSubjectSelect(subject);
+                              }}
+                            >
+                              <p className="font-arabic text-lg">البدء</p>
+                            </Button>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </Grid>
+                );
+              } else {
+                return;
+              }
+            })}
         </Grid>
 
         {filteredSubjects.length === 0 && !loading && (
