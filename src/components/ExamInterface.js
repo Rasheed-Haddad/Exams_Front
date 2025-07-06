@@ -277,10 +277,10 @@ const ExamInterface = () => {
                     variant="h6"
                     className="mb-6 text-gray-800 leading-relaxed"
                   >
-                    <span className="font-bold text-2xl text-blue-600">
+                    <span className="font-bold text-lg text-blue-600">
                       {currentQuestionIndex + 1}.
                     </span>{" "}
-                    <span className="font-arabic text-3xl ">
+                    <span className="font-arabic text-xl mb-1 ">
                       {currentQuestion.question}
                     </span>
                   </Typography>
