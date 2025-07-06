@@ -317,7 +317,7 @@ const ExamInterface = () => {
                             }
                             label={
                               <Typography variant="body1" className="ml-2">
-                                <span className="font-arabic text-xl ">
+                                <span className="font-arabic text-lg ">
                                   {option}
                                 </span>
                               </Typography>
