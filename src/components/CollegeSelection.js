@@ -104,7 +104,7 @@ const CollegeSelection = () => {
           container
           spacing={3}
           sx={{
-            alignItems: "center",
+            alignItems: "start",
             display: "flex",
             justifyContent: "center",
           }}
@@ -112,7 +112,7 @@ const CollegeSelection = () => {
           {colleges.map((college) => (
             <Grid key={college.id}>
               <Card
-                className="h-64 w-56 hover:shadow-lg transition-shadow duration-300 cursor-pointer transform hover:scale-105"
+                className="h-32 w-32 hover:shadow-lg transition-shadow duration-300 cursor-pointer transform hover:scale-105"
                 onClick={() => handleCollegeSelect(college)}
               >
                 <CardContent className="p-6" sx={{ height: "20vh" }}>
@@ -124,7 +124,7 @@ const CollegeSelection = () => {
                     <div className="h-28">
                       <Typography
                         variant="p"
-                        className="text-3xl font-arabic text-gray-800"
+                        className="text-xl font-arabic text-gray-800"
                       >
                         {college.name}
                       </Typography>

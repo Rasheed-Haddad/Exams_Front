@@ -273,18 +273,19 @@ const ExamInterface = () => {
 
                 {/* Question */}
                 <div dir="rtl">
-                  <Typography
-                    variant="h6"
-                    className="mb-6 text-gray-800 leading-relaxed"
-                  >
-                    <span className="font-bold text-lg text-blue-600">
-                      {currentQuestionIndex + 1}.
-                    </span>{" "}
-                    <span className="font-arabic text-xl mb-1 ">
-                      {currentQuestion.question}
-                    </span>
-                  </Typography>
-
+                  <div dir="rtl" className="pb-4 ">
+                    <Typography
+                      variant="h6"
+                      className="mb-6 text-gray-800 leading-relaxed"
+                    >
+                      <span className="font-bold text-2xl text-blue-600">
+                        {currentQuestionIndex + 1}.
+                      </span>{" "}
+                      <span className="font-arabic text-3xl ">
+                        {currentQuestion.question}
+                      </span>
+                    </Typography>
+                  </div>
                   {/* Options */}
                   <FormControl component="fieldset" className="w-full">
                     <RadioGroup
@@ -317,7 +318,7 @@ const ExamInterface = () => {
                             }
                             label={
                               <Typography variant="body1" className="ml-2">
-                                <span className="font-arabic text-lg ">
+                                <span className="font-arabic text-xl ">
                                   {option}
                                 </span>
                               </Typography>
