@@ -30,6 +30,7 @@ import {
   decrementTimer,
   submitExam,
   resetExam,
+  previousQuestion,
 } from "../store/slices/examSlice";
 
 const ExamInterface = () => {
@@ -50,9 +51,9 @@ const ExamInterface = () => {
     duration,
     loading,
     error,
-    visible,
   } = useSelector((state) => state.exam);
   const Student_State = useSelector((state) => state.auth);
+
   useEffect(() => {
     if (!selectedSubject) {
       navigate("/subject");
@@ -156,6 +157,10 @@ const ExamInterface = () => {
 
   const getAnsweredQuestionsCount = () => {
     return Object.keys(answers).length;
+  };
+
+  const handle_next_question = () => {
+    dispatch(nextQuestion());
   };
 
   if (loading) {
@@ -329,6 +334,30 @@ const ExamInterface = () => {
                       })}
                     </RadioGroup>
                   </FormControl>
+                </div>
+                <div
+                  className={` ${
+                    selectedSubject.open_mode ? "" : "hidden"
+                  } flex items-center justify-between mt-8 `}
+                >
+                  <Button
+                    variant="contained"
+                    className="w-32 "
+                    onClick={() => {
+                      handle_next_question();
+                    }}
+                  >
+                    <span className="font-arabic text-xl ">التالي</span>
+                  </Button>
+                  <Button
+                    variant="contained"
+                    className="w-32 bg-red-500"
+                    onClick={() => {
+                      dispatch(previousQuestion());
+                    }}
+                  >
+                    <span className="font-arabic text-xl ">السابق</span>
+                  </Button>
                 </div>
               </CardContent>
             </Card>
