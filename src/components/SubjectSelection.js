@@ -140,41 +140,42 @@ const SubjectSelection = () => {
             filteredSubjects.map((subject) => {
               return (
                 <Grid key={subject.ID}>
-                  <Card className="h-72 w-60 hover:shadow-lg transition-shadow duration-300 cursor-pointer transform hover:scale-105">
-                    <CardContent className="p-6">
+                  <Card className="h-72 w-64 hover:shadow-lg transition-shadow duration-300 cursor-pointer transform hover:scale-105">
+                    <CardContent className="p-6 h-full flex flex-col">
                       <div className="flex items-start justify-between mb-4">
                         <BookOutlined className="text-green-500 text-3xl" />
                       </div>
-                      <div className="flex flex-col">
-                        <div className="h-32 font-arabic ">
-                          <Typography
-                            variant="p"
-                            className="font-arabic text-lg text-gray-800 mb-2"
-                          >
-                            {subject.name}
-                          </Typography>
-                          <br />
-                          <div className="mt-2">
-                            <span className="font-arabic text-sm text-gray-700">
-                              {subject.info || ""}
-                            </span>
-                          </div>
+
+                      {/* النصوص - خذ كل المساحة المتاحة ما عدا الزر */}
+                      <div className="flex-grow font-arabic overflow-hidden">
+                        <Typography
+                          variant="p"
+                          className="font-arabic text-lg text-gray-800 mb-2"
+                        >
+                          {subject.name}
+                        </Typography>
+                        <div className="mt-2">
+                          <span className="font-arabic text-sm text-gray-700">
+                            {subject.info || ""}
+                          </span>
                         </div>
-                        <div className="float-end">
-                          <Button
-                            variant="contained"
-                            fullWidth
-                            disabled={!subject.visible}
-                            startIcon={<PlayArrowOutlined />}
-                            className="mt-4 float-end bg-green-600 hover:bg-green-700"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleSubjectSelect(subject);
-                            }}
-                          >
-                            <p className="font-arabic text-lg">البدء</p>
-                          </Button>
-                        </div>
+                      </div>
+
+                      {/* الزر - دائمًا في الأسفل */}
+                      <div className="mt-6">
+                        <Button
+                          variant="contained"
+                          fullWidth
+                          disabled={!subject.visible}
+                          startIcon={<PlayArrowOutlined />}
+                          className="bg-green-600 hover:bg-green-700"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleSubjectSelect(subject);
+                          }}
+                        >
+                          <p className="font-arabic text-lg">البدء</p>
+                        </Button>
                       </div>
                     </CardContent>
                   </Card>
