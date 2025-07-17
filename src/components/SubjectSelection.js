@@ -160,7 +160,7 @@ const SubjectSelection = () => {
                             </span>
                           </div>
                         </div>
-                        <div className="">
+                        <div className="float-end">
                           <Button
                             variant="contained"
                             fullWidth
