@@ -286,7 +286,7 @@ const ExamInterface = () => {
                       <span className="font-bold text-2xl text-blue-600">
                         {currentQuestionIndex + 1}.
                       </span>{" "}
-                      <span className="font-arabic text-3xl ">
+                      <span className="font-arabic text-xl ">
                         {currentQuestion.question}
                       </span>
                     </Typography>
@@ -323,7 +323,7 @@ const ExamInterface = () => {
                             }
                             label={
                               <Typography variant="body1" className="ml-2">
-                                <span className="font-arabic text-xl ">
+                                <span className="font-arabic text-lg ">
                                   {option}
                                 </span>
                               </Typography>

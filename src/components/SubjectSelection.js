@@ -140,7 +140,7 @@ const SubjectSelection = () => {
             filteredSubjects.map((subject) => {
               return (
                 <Grid key={subject.ID}>
-                  <Card className="h-60 w-60 hover:shadow-lg transition-shadow duration-300 cursor-pointer transform hover:scale-105">
+                  <Card className="h-72 w-60 hover:shadow-lg transition-shadow duration-300 cursor-pointer transform hover:scale-105">
                     <CardContent className="p-6">
                       <div className="flex items-start justify-between mb-4">
                         <BookOutlined className="text-green-500 text-3xl" />
