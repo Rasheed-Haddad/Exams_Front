@@ -89,7 +89,7 @@ const SubjectSelection = () => {
               onClick={handleBack}
               className="text-gray-600 border-gray-300"
             >
-              رجوع
+              تحديث
             </Button>
             <Button
               variant="outlined"
@@ -104,13 +104,13 @@ const SubjectSelection = () => {
             variant="p"
             className="font-bold font-2xl font-arabic text-gray-800"
           >
-            الاختبارات المتاحة
+            الاختبارات المتاحة لك
           </Typography>
 
           {/* شريط البحث */}
           <TextField
             dir="rtl"
-            placeholder="ابحث عن اسم المادة..."
+            placeholder="ابحث عن اختبار..."
             variant="outlined"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -149,12 +149,12 @@ const SubjectSelection = () => {
                         <div className="h-32 font-arabic ">
                           <Typography
                             variant="p"
-                            className="font-arabic text-2xl text-gray-800 mb-2"
+                            className="font-arabic text-lg text-gray-800 mb-2"
                           >
                             {subject.name}
                           </Typography>
                           <br />
-                          <div className="mt-5">
+                          <div className="mt-2">
                             <span className="font-arabic text-sm text-gray-700">
                               {subject.info || ""}
                             </span>
@@ -187,7 +187,8 @@ const SubjectSelection = () => {
           <Box textAlign="center" className="py-12">
             <Typography variant="h6" color="textSecondary">
               <p className="font-arabic text-lg m-12">
-                لم يتم العثور على مادة بهذا الاسم.
+                حاليا لا تتوفر أي اختبارات لك, لأي استفسار تواصل مع الرقم
+                0937922870
               </p>
             </Typography>
           </Box>
