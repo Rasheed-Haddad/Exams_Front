@@ -60,7 +60,9 @@ const ExamResults = () => {
   if (!results) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <Typography variant="h6">جار تحميل النتائج....</Typography>
+        <Typography variant="h6" sx={{ color: "#8C52FF" }}>
+          جار تحميل النتائج....
+        </Typography>
       </div>
     );
   }
@@ -89,11 +91,13 @@ const ExamResults = () => {
   };
 
   const getPerformanceMessage = (score) => {
-    if (score >= 90) return `${user.name} رسميا من نيردات الدفعة`;
-    if (score >= 80) return `معدلك بأمان يا ${user.name}`;
-    if (score >= 70) return "عليك بالدورات";
-    if (score >= 60) return "يكتر خيرك";
-    return "قيمتي ما بتتحدد بورقة وقلم";
+    const firstName = user.name.split(" ")[0];
+
+    if (score >= 90) return `${firstName} رسميا من نيردات الدفعة`;
+    if (score >= 80) return `معدلك بأمان يا ${firstName}`;
+    if (score >= 70) return "كويسة ";
+    if (score >= 60) return "السيطرة تحت الوضع";
+    return `قيمة ${firstName} ما بتتحدد بورقة وقلم`;
   };
 
   return (
@@ -105,11 +109,11 @@ const ExamResults = () => {
           className="flex justify-between items-center max-w-7xl mx-auto"
         >
           <div>
-            <Typography variant="h5" className="font-bold text-gray-800">
+            <Typography variant="h5" className="font-bold text-brand">
               <span className="font-arabic text-4xl mb-8">نتائج الامتحان</span>
             </Typography>
             <Typography variant="body2" color="textSecondary">
-              <span className="font-arabic text-xl mb-4">
+              <span className="font-arabic text-xl mb-4 text-brand">
                 {selectedSubject?.name}
               </span>
             </Typography>
@@ -152,7 +156,15 @@ const ExamResults = () => {
                 <div className="mb-6">
                   <Typography
                     variant="h2"
-                    className="font-bold text-gray-800 mb-2"
+                    className="font-bold  mb-2"
+                    style={{
+                      color:
+                        getGradeColor(results.score) === "success"
+                          ? "#2e7d32"
+                          : getGradeColor(results.score) === "error"
+                          ? "#d32f2f"
+                          : "#1976d2",
+                    }}
                   >
                     {results.score}%
                   </Typography>
@@ -169,7 +181,7 @@ const ExamResults = () => {
                             : "#1976d2",
                       }}
                     >
-                      <span className="font-bold text-5xl">
+                      <span className="font-bold text-5xl ">
                         {getGradeLetter(results.score)}{" "}
                       </span>
                       <span className="font-arabic font-bold text-5xl m-4 mb-8">
@@ -182,8 +194,16 @@ const ExamResults = () => {
                     variant="p"
                     color="textSecondary"
                     className="mb-4 mt-8"
+                    style={{
+                      color:
+                        getGradeColor(results.score) === "success"
+                          ? "#2e7d32"
+                          : getGradeColor(results.score) === "error"
+                          ? "#d32f2f"
+                          : "#1976d2",
+                    }}
                   >
-                    <span className="font-arabic text-2xl">
+                    <span className="font-arabic text-2xl ">
                       {getPerformanceMessage(results.score)}
                     </span>
                   </Typography>
@@ -192,10 +212,19 @@ const ExamResults = () => {
                 {/* Score Progress */}
                 <Box className="mb-6">
                   <div className="my-8">
-                    <Typography variant="p" className="mb-2">
-                      <span className="font-arabic text-xl text-black mb-4">
-                        نتيجتك
-                      </span>
+                    <Typography
+                      variant="p"
+                      className="mb-2"
+                      style={{
+                        color:
+                          getGradeColor(results.score) === "success"
+                            ? "#2e7d32"
+                            : getGradeColor(results.score) === "error"
+                            ? "#d32f2f"
+                            : "#1976d2",
+                      }}
+                    >
+                      <span className="font-arabic text-xl  mb-4">نتيجتك</span>
                     </Typography>
                     <LinearProgress
                       variant="determinate"
@@ -218,12 +247,13 @@ const ExamResults = () => {
                 <Box className="flex flex-wrap gap-3 justify-center">
                   <Button
                     variant="outlined"
-                    startIcon={<School />}
+                    startIcon={<School style={{ color: "#8C52FF" }} />}
                     onClick={handleNewExam}
                     size="large"
                     className="px-6"
+                    sx={{ borderColor: "#8C52FF" }}
                   >
-                    <span className="font-arabic text-xl text-black">
+                    <span className="font-arabic text-xl text-brand">
                       الانتقال لمادة أخرى
                     </span>
                   </Button>
@@ -261,7 +291,7 @@ const ExamResults = () => {
                         : الأسئلة التي تمت الإجابة عنها
                       </span>{" "}
                     </Typography>
-                    <QuestionAnswer className="text-purple-500" />
+                    <QuestionAnswer className="text-brand" />
                   </div>
 
                   <Divider className="my-1" />

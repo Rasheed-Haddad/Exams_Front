@@ -83,9 +83,19 @@ const examSlice = createSlice({
         state.currentQuestionIndex += 1;
       }
     },
+    next_10_Questions: (state) => {
+      if (state.currentQuestionIndex < state.questions.length - 11) {
+        state.currentQuestionIndex += 10;
+      }
+    },
     previousQuestion: (state) => {
       if (state.currentQuestionIndex > 0) {
         state.currentQuestionIndex -= 1;
+      }
+    },
+    previous_10_Questions: (state) => {
+      if (state.currentQuestionIndex > 9) {
+        state.currentQuestionIndex -= 10;
       }
     },
     goToQuestion: (state, action) => {
@@ -170,6 +180,8 @@ export const {
   decrementTimer,
   resetExam,
   clearError,
+  next_10_Questions,
+  previous_10_Questions,
 } = examSlice.actions;
 
 export default examSlice.reducer;

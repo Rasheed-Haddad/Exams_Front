@@ -51,14 +51,14 @@ const SignIn = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-brand to-indigo-100 flex items-center justify-center p-4">
       <Container maxWidth="sm">
-        <Paper elevation={8} className="p-8 rounded-2xl">
-          <Box textAlign="center" mb={4}>
+        <Paper elevation={10} className="p-8 rounded-2xl shadow-lg">
+          <Box textAlign="center" mb={6}>
             <Typography
               variant="h3"
               component="h1"
-              className="font-bold text-blue-500 mb-4"
+              className="font-bold text-brand mb-4 font-arabic"
             >
               سجل الدخول
             </Typography>
@@ -66,7 +66,7 @@ const SignIn = () => {
 
           {error && (
             <Alert severity="error" className="mb-4">
-              <span className="font-arabic text-2xl">{error}</span>
+              <span className="font-arabic text-lg">{error}</span>
             </Alert>
           )}
 
@@ -91,11 +91,21 @@ const SignIn = () => {
               name="ID"
               type="text"
               value={Student_Data.ID}
-              onChange={handleChange}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (/^\d*$/.test(value)) {
+                  handleChange(e);
+                }
+              }}
               variant="outlined"
               required
-              className="mb-6"
+              className="mb-4"
+              inputProps={{
+                inputMode: "numeric",
+                pattern: "[0-9]*",
+              }}
             />
+
             <TextField
               dir="rtl"
               fullWidth
@@ -106,17 +116,28 @@ const SignIn = () => {
               onChange={handleChange}
               variant="outlined"
               required
-              className="mb-4"
+              className="mb-6"
             />
+
             <Button
               type="submit"
               fullWidth
               variant="contained"
               size="large"
               disabled={loading}
-              className="h-12 text-lg font-semibold"
+              className="h-12 text-lg font-arabic text-white"
+              sx={{
+                backgroundColor: "#8C52FF",
+                "&:hover": {
+                  backgroundColor: "#7a45e6", // ظل غامق بسيط للهوفر
+                },
+              }}
             >
-              {loading ? <CircularProgress size={24} /> : "تسجيل الدخول"}
+              {loading ? (
+                <CircularProgress size={24} color="#8C52FF" />
+              ) : (
+                "تسجيل الدخول"
+              )}
             </Button>
           </form>
         </Paper>
@@ -124,5 +145,4 @@ const SignIn = () => {
     </div>
   );
 };
-
 export default SignIn;

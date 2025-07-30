@@ -63,7 +63,7 @@ const CollegeSelection = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <CircularProgress size={60} />
+        <CircularProgress size={60} sx={{ color: "#8C52FF" }} />
       </div>
     );
   }
@@ -72,21 +72,12 @@ const CollegeSelection = () => {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <Box className="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
-        <div dir="rtl" className="flex gap-10 items-start max-w-7xl mx-auto">
-          <div className="flex ">
-            <Button
-              variant="outlined"
-              onClick={handleBack}
-              className="text-gray-600  items-center justify-center flex border-gray-300"
-            >
-              رجوع
-            </Button>
-          </div>
+        <div
+          dir="rtl"
+          className="flex items-center justify-center max-w-7xl mx-auto"
+        >
           <div>
-            <Typography
-              variant="p"
-              className="font-bold text-4xl text-gray-800"
-            >
+            <Typography variant="p" className="font-bold text-4xl text-brand">
               اختر كليتك
             </Typography>
           </div>
@@ -117,14 +108,14 @@ const CollegeSelection = () => {
               >
                 <CardContent className="p-6" sx={{ height: "20vh" }}>
                   <div className="flex items-start justify-between mb-4">
-                    <BusinessOutlined className="text-indigo-500 text-3xl" />
+                    <BusinessOutlined className="text-brand text-3xl" />
                   </div>
 
                   <div className="flex flex-col gap-4 font-arabic">
                     <div className="h-28">
                       <Typography
                         variant="p"
-                        className="text-xl font-arabic text-gray-800"
+                        className="text-xl font-arabic text-brand"
                       >
                         {college.name}
                       </Typography>
@@ -147,7 +138,7 @@ const CollegeSelection = () => {
         </Grid>
 
         {colleges.length === 0 && !loading && (
-          <Box textAlign="center" className="py-12">
+          <Box textAlign="center" className="py-12 gap-6">
             <Typography variant="h6" color="textSecondary">
               قريبا
             </Typography>

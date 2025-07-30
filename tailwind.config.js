@@ -6,6 +6,9 @@ module.exports = {
       fontFamily: {
         arabic: ["Noto Kufi Arabic", "sans-serif"],
       },
+      colors: {
+        brand: "#8C52FF",
+      },
     },
   },
   plugins: [],

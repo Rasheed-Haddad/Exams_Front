@@ -20,7 +20,10 @@ import {
   selectSubject,
 } from "../store/slices/selectionSlice";
 import { signOut } from "../store/slices/authSlice";
-
+//localStorage.removeItem("name");
+//localStorage.removeItem("ID");
+//localStorage.removeItem("password");
+//localStorage.removeItem("university");
 const SubjectSelection = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -70,7 +73,7 @@ const SubjectSelection = () => {
   if (loading || !user || !user.ID || !Array.isArray(subjects)) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <CircularProgress size={60} />
+        <CircularProgress size={60} sx={{ color: "#8C52FF" }} />
       </div>
     );
   }
@@ -78,31 +81,27 @@ const SubjectSelection = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <Box className="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
+      <Box className="bg-white shadow-sm border-b border-gray-200 px-4 sm:px-6 py-4">
         <div
           dir="rtl"
-          className="flex justify-between items-center max-w-7xl mx-auto gap-6 flex-wrap"
+          className="flex flex-col sm:flex-row sm:items-center sm:justify-between max-w-7xl mx-auto gap-4"
         >
-          <div className="flex gap-2 font-arabic text-2xl">
-            <Button
-              variant="outlined"
-              onClick={handleBack}
-              className="text-gray-600 border-gray-300"
-            >
-              تحديث
-            </Button>
+          {/* زر تسجيل الخروج */}
+          <div className="flex justify-between sm:justify-start gap-2 font-arabic text-lg">
             <Button
               variant="outlined"
               onClick={handleSignOut}
-              className="text-gray-600 border-gray-300"
+              className="text-brand border-brand hover:bg-gray-50 transition"
+              sx={{ color: "#8C52FF", borderColor: "#8C52FF" }}
             >
               تسجيل الخروج
             </Button>
           </div>
 
+          {/* عنوان الصفحة */}
           <Typography
             variant="p"
-            className="font-bold font-2xl font-arabic text-gray-800"
+            className="font-bold text-xl font-arabic text-brand text-center"
           >
             الاختبارات المتاحة لك
           </Typography>
@@ -114,8 +113,9 @@ const SubjectSelection = () => {
             variant="outlined"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full sm:w-96 font-arabic"
-            inputProps={{ className: "font-arabic text-lg" }}
+            className="w-full sm:w-80 font-arabic"
+            inputProps={{ className: "font-arabic text-brand" }}
+            sx={{ color: "#8C52FF", borderColor: "#8C52FF" }}
           />
         </div>
       </Box>
@@ -140,10 +140,10 @@ const SubjectSelection = () => {
             filteredSubjects.map((subject) => {
               return (
                 <Grid key={subject.ID}>
-                  <Card className="h-72 w-64 hover:shadow-lg transition-shadow duration-300 cursor-pointer transform hover:scale-105">
+                  <Card className="h-72 w-64 hover:shadow-lg  transition-shadow duration-300 cursor-pointer transform hover:scale-105">
                     <CardContent className="p-6 h-full flex flex-col">
                       <div className="flex items-start justify-between mb-4">
-                        <BookOutlined className="text-green-500 text-3xl" />
+                        <BookOutlined className="text-brand text-3xl" />
                       </div>
 
                       {/* النصوص - خذ كل المساحة المتاحة ما عدا الزر */}
@@ -173,6 +173,7 @@ const SubjectSelection = () => {
                             e.stopPropagation();
                             handleSubjectSelect(subject);
                           }}
+                          sx={{ backgroundColor: "#8C52FF" }}
                         >
                           <p className="font-arabic text-lg">البدء</p>
                         </Button>

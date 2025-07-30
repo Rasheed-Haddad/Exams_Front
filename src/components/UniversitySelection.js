@@ -66,7 +66,7 @@ const UniversitySelection = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <CircularProgress size={60} />
+        <CircularProgress size={60} sx={{ color: "#8C52FF" }} />
       </div>
     );
   }
@@ -80,10 +80,7 @@ const UniversitySelection = () => {
           className="flex justify-between items-center max-w-7xl mx-auto"
         >
           <div>
-            <Typography
-              variant="p"
-              className="font-bold text-4xl text-gray-800"
-            >
+            <Typography variant="p" className="font-bold text-4xl text-brand">
               <span className="font-arabic text-4xl">اختر جامعتك</span>
             </Typography>
           </div>
@@ -91,7 +88,15 @@ const UniversitySelection = () => {
             variant="outlined"
             endIcon={<LogoutOutlined />}
             onClick={handleSignOut}
-            className="text-gray-600 gap-7 border-gray-300 w-40"
+            className="gap-7 w-40 font-arabic"
+            sx={{
+              color: "#8C52FF",
+              borderColor: "#8C52FF",
+              "&:hover": {
+                backgroundColor: "rgba(140, 82, 255, 0.1)",
+                borderColor: "#8C52FF",
+              },
+            }}
           >
             تسجيل الخروج
           </Button>
@@ -118,22 +123,22 @@ const UniversitySelection = () => {
           {universities.map((university) => (
             <Grid key={university.id}>
               <Card
-                className=" h-52 w-56 hover:shadow-lg transition-shadow duration-300 cursor-pointer transform hover:scale-105"
+                className=" h-52 w-64 hover:shadow-lg transition-shadow duration-300 cursor-pointer transform hover:scale-105"
                 onClick={() => handleUniversitySelect(university)}
               >
                 <CardContent className="p-6">
                   <div className="flex items-start justify-between mb-4">
-                    <SchoolOutlined className="text-blue-500 text-3xl" />
+                    <SchoolOutlined className="text-brand text-3xl" />
                   </div>
 
                   <Typography
                     variant="p"
-                    className=" text-gray-800 mb-3 text-lg font-arabic"
+                    className=" text-brand mb-3 text-xl font-arabic"
                   >
                     {university.name}
                   </Typography>
 
-                  <div className="flex items-center text-gray-600 mb-4">
+                  <div className="flex items-center text-brand mb-4">
                     <LocationOnOutlined className="text-sm mr-1" />
                     <Typography variant="p" className="text-sm font-arabic">
                       {university.location}
@@ -144,10 +149,17 @@ const UniversitySelection = () => {
                     variant="contained"
                     fullWidth
                     className="mt-auto"
-                    sx={{ fontFamily: "Cairo", fontSize: "1rem" }}
                     onClick={(e) => {
                       e.stopPropagation();
                       handleUniversitySelect(university);
+                    }}
+                    sx={{
+                      fontFamily: "Cairo",
+                      fontSize: "1rem",
+                      backgroundColor: "#8C52FF",
+                      "&:hover": {
+                        backgroundColor: "#7a45e6", // ظل غامق بسيط عند التحويم
+                      },
                     }}
                   >
                     اختيار

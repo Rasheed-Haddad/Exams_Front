@@ -25,6 +25,8 @@ import {
   fetchExamQuestions,
   setAnswer,
   nextQuestion,
+  next_10_Questions,
+  previous_10_Questions,
   startTimer,
   stopTimer,
   decrementTimer,
@@ -38,6 +40,7 @@ const ExamInterface = () => {
   const wrongSound = new Audio("wrong.mp3");
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [solved_exam, set_solved_exam] = useState(false);
   const [showSubmitDialog, setShowSubmitDialog] = useState(false);
   const [showExitDialog, setShowExitDialog] = useState(false);
   const { selectedSubject } = useSelector((state) => state.selection);
@@ -163,11 +166,23 @@ const ExamInterface = () => {
     dispatch(nextQuestion());
   };
 
+  const handle_next_10_questions = () => {
+    dispatch(next_10_Questions());
+  };
+
+  const handle_previous_question = () => {
+    dispatch(previousQuestion());
+  };
+
+  const handle_previous_10_questions = () => {
+    dispatch(previous_10_Questions());
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <Box textAlign="center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand mx-auto mb-4"></div>
           <Typography variant="h6">جار تحميل الأسئلة</Typography>
         </Box>
       </div>
@@ -194,12 +209,13 @@ const ExamInterface = () => {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <Container maxWidth="md">
           <Typography variant="h6" textAlign="center">
-            <span className="font-arabic text-4lx m-12">قريبا</span>
+            <span className="font-arabic text-4lx m-12 text-brand">قريبا</span>
           </Typography>
           <Button
             variant="contained"
             onClick={() => navigate("/subject")}
             className="mt-4"
+            sx={{ color: "white", backgroundColor: "#8C52FF" }}
           >
             <p className="font-arabic text-2xl ">عودة</p>
           </Button>
@@ -214,42 +230,53 @@ const ExamInterface = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <Box className="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
+      <Box className="bg-white shadow-sm border-b border-gray-200 px-4 py-3">
         <div
           dir="rtl"
-          className="flex gap-7 justify-start items-center max-w-7xl mx-auto"
+          className="flex flex-col sm:flex-row flex-wrap gap-4 justify-between items-start sm:items-center max-w-7xl mx-auto"
         >
-          <Button
-            variant="outlined"
-            onClick={() => setShowExitDialog(true)}
-            className=" gap-4 text-gray-600 border-gray-300"
-          >
-            <span className="font-arabic text-sm">انسحاب</span>
-          </Button>
-
-          <div>
-            <Typography
-              variant="p"
-              className="font-bold font-arabic text-xl text-gray-800"
+          {/* أزرار التحكم */}
+          <div className="flex flex-wrap gap-3">
+            <Button
+              variant="outlined"
+              onClick={() => setShowExitDialog(true)}
+              className="gap-2 text-brand border-brand"
+              sx={{ borderColor: "#8C52FF", color: "#8C52FF" }}
             >
-              {selectedSubject?.name}
-            </Typography>
+              <span className="font-arabic text-sm">انسحاب</span>
+            </Button>
+            <Button
+              variant="contained"
+              onClick={() => set_solved_exam(!solved_exam)}
+              sx={{ backgroundColor: "#8C52FF", color: "white" }}
+            >
+              <span className="font-arabic text-sm">
+                {solved_exam ? "إخفاء الحل" : "حل الاختبار"}
+              </span>
+            </Button>
           </div>
 
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 text-red-600">
-              <AccessTime />
-              <Typography variant="h6" className="font-mono font-bold">
-                {formatTime(timeRemaining)}
-              </Typography>
-            </div>
+          {/* اسم المادة */}
+          <Typography
+            variant="p"
+            className="font-bold font-arabic text-lg text-brand"
+          >
+            {selectedSubject?.name}
+          </Typography>
+
+          {/* المؤقت */}
+          <div className="flex items-center gap-2 text-brand">
+            <AccessTime />
+            <Typography variant="h6" className="font-mono font-bold text-base">
+              {formatTime(timeRemaining)}
+            </Typography>
           </div>
         </div>
       </Box>
 
       <Container
         maxWidth="lg"
-        className="py-6 flex items-center justify-center"
+        className="py-6 flex items-center justify-center "
       >
         <Grid container spacing={3}>
           {/* Question Panel */}
@@ -260,19 +287,32 @@ const ExamInterface = () => {
                 <Box className="mb-6">
                   <div
                     dir="rtl"
-                    className="flex justify-between items-center mb-2"
+                    className="flex justify-between items-center mb-2 text-brand font-arabic text-lg"
                   >
-                    <Typography variant="body2" color="textSecondary">
+                    <Typography
+                      variant="body2"
+                      sx={{ color: "#8C52FF", fontWeight: "bold" }}
+                    >
                       السؤال {currentQuestionIndex + 1} من {questions.length}
                     </Typography>
-                    <Typography variant="body2" color="textSecondary">
+                    <Typography
+                      variant="body2"
+                      sx={{ color: "#8C52FF", fontWeight: "bold" }}
+                    >
                       تم إكمال {Math.round(progress)}%
                     </Typography>
                   </div>
+
                   <LinearProgress
                     variant="determinate"
                     value={progress}
                     className="h-2 rounded-full"
+                    sx={{
+                      backgroundColor: "#e0d6fb", // لون الخلفية الهادئ
+                      "& .MuiLinearProgress-bar": {
+                        backgroundColor: "#8C52FF", // لون الشريط نفسه
+                      },
+                    }}
                   />
                 </Box>
 
@@ -283,10 +323,10 @@ const ExamInterface = () => {
                       variant="h6"
                       className="mb-6 text-gray-800 leading-relaxed"
                     >
-                      <span className="font-bold text-2xl text-blue-600">
+                      <span className="font-bold text-2xl text-brand">
                         {currentQuestionIndex + 1}.
                       </span>{" "}
-                      <span className="font-arabic text-xl ">
+                      <span className="font-arabic text-3xl ">
                         {currentQuestion.question}
                       </span>
                     </Typography>
@@ -313,6 +353,11 @@ const ExamInterface = () => {
                             bgColor = "bg-red-500 text-white";
                           }
                         }
+                        if (solved_exam) {
+                          if (isCorrect) {
+                            bgColor = "bg-green-500 text-white";
+                          }
+                        }
                         return (
                           <FormControlLabel
                             key={index}
@@ -323,7 +368,7 @@ const ExamInterface = () => {
                             }
                             label={
                               <Typography variant="body1" className="ml-2">
-                                <span className="font-arabic text-lg ">
+                                <span className="font-arabic text-xl ">
                                   {option}
                                 </span>
                               </Typography>
@@ -336,27 +381,57 @@ const ExamInterface = () => {
                   </FormControl>
                 </div>
                 <div
-                  className={` ${
+                  dir="rtl"
+                  className={`${
                     selectedSubject.open_mode ? "" : "hidden"
-                  } flex items-center justify-between mt-8 `}
+                  } flex flex-wrap flex-col sm:flex-row items-center justify-center mt-8 gap-4`}
                 >
+                  {/* عشر أسئلة للوراء */}
                   <Button
                     variant="contained"
-                    className="w-32 "
-                    onClick={() => {
-                      handle_next_question();
-                    }}
+                    className="w-full sm:w-40 flex items-center justify-center order-1"
+                    onClick={handle_previous_10_questions}
+                    sx={{ backgroundColor: "#8C52FF", color: "white" }}
+                    disabled={currentQuestionIndex < 10}
                   >
-                    <span className="font-arabic text-xl ">التالي</span>
+                    <span className="font-arabic text-xl mr-2 flex items-center justify-center">
+                      عشر أسئلة للوراء
+                    </span>
                   </Button>
+
+                  {/* السابق */}
                   <Button
                     variant="contained"
-                    className="w-32 bg-red-500"
-                    onClick={() => {
-                      dispatch(previousQuestion());
-                    }}
+                    className="w-full sm:w-32 order-2"
+                    onClick={handle_previous_question}
+                    sx={{ backgroundColor: "#8C52FF", color: "white" }}
+                    disabled={currentQuestionIndex === 0}
                   >
-                    <span className="font-arabic text-xl ">السابق</span>
+                    <span className="font-arabic text-xl">السابق</span>
+                  </Button>
+
+                  {/* التالي */}
+                  <Button
+                    variant="contained"
+                    className="w-full sm:w-32 order-3"
+                    onClick={handle_next_question}
+                    sx={{ backgroundColor: "#8C52FF", color: "white" }}
+                    disabled={currentQuestionIndex == questions.length - 1}
+                  >
+                    <span className="font-arabic text-xl mr-2">التالي</span>
+                  </Button>
+
+                  {/* عشر أسئلة للأمام */}
+                  <Button
+                    variant="contained"
+                    className="w-full sm:w-40 flex items-center justify-center order-4"
+                    onClick={handle_next_10_questions}
+                    sx={{ backgroundColor: "#8C52FF", color: "white" }}
+                    disabled={currentQuestionIndex > questions.length - 11}
+                  >
+                    <span className="font-arabic text-xl mr-2 flex items-center justify-center">
+                      عشر أسئلة للأمام
+                    </span>
                   </Button>
                 </div>
               </CardContent>
