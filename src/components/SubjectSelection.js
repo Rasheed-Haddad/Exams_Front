@@ -30,6 +30,7 @@ const SubjectSelection = () => {
   const { subjects, selectedCollege, loading, error } = useSelector(
     (state) => state.selection
   );
+
   const { user } = useSelector((state) => state.auth);
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -140,13 +141,12 @@ const SubjectSelection = () => {
             filteredSubjects.map((subject) => {
               return (
                 <Grid key={subject.ID}>
-                  <Card className="h-72 w-64 hover:shadow-lg  transition-shadow duration-300 cursor-pointer transform hover:scale-105">
+                  <Card className="h-80 w-64 hover:shadow-lg transition-shadow duration-300 cursor-pointer transform hover:scale-105">
                     <CardContent className="p-6 h-full flex flex-col">
                       <div className="flex items-start justify-between mb-4">
                         <BookOutlined className="text-brand text-3xl" />
                       </div>
 
-                      {/* النصوص - خذ كل المساحة المتاحة ما عدا الزر */}
                       <div className="flex-grow font-arabic overflow-hidden">
                         <Typography
                           variant="p"
@@ -154,9 +154,27 @@ const SubjectSelection = () => {
                         >
                           {subject.name}
                         </Typography>
+
                         <div className="mt-2">
                           <span className="font-arabic text-sm text-gray-700">
                             {subject.info || ""}
+                          </span>
+                        </div>
+
+                        {/* عدد الأسئلة */}
+                        <div className="mt-2">
+                          <span className="font-arabic text-sm text-gray-700">
+                            عدد الأسئلة :{" "}
+                            {subject.questions.length || "غير محدد"}
+                          </span>
+                        </div>
+
+                        <div className="mt-1">
+                          <span className="font-arabic text-sm text-gray-700">
+                            المدة :{" "}
+                            {subject.time
+                              ? `${subject.time} دقيقة`
+                              : "غير محددة"}
                           </span>
                         </div>
                       </div>

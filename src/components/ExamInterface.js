@@ -245,15 +245,17 @@ const ExamInterface = () => {
             >
               <span className="font-arabic text-sm">انسحاب</span>
             </Button>
-            <Button
-              variant="contained"
-              onClick={() => set_solved_exam(!solved_exam)}
-              sx={{ backgroundColor: "#8C52FF", color: "white" }}
-            >
-              <span className="font-arabic text-sm">
-                {solved_exam ? "إخفاء الحل" : "حل الاختبار"}
-              </span>
-            </Button>
+            {selectedSubject.open_mode ? (
+              <Button
+                variant="contained"
+                onClick={() => set_solved_exam(!solved_exam)}
+                sx={{ backgroundColor: "#8C52FF", color: "white" }}
+              >
+                <span className="font-arabic text-sm">
+                  {solved_exam ? "إخفاء الحل" : "حل الاختبار"}
+                </span>
+              </Button>
+            ) : null}
           </div>
 
           {/* اسم المادة */}
@@ -326,7 +328,7 @@ const ExamInterface = () => {
                       <span className="font-bold text-2xl text-brand">
                         {currentQuestionIndex + 1}.
                       </span>{" "}
-                      <span className="font-arabic text-3xl ">
+                      <span className="font-arabic text-xl ">
                         {currentQuestion.question}
                       </span>
                     </Typography>
@@ -368,7 +370,7 @@ const ExamInterface = () => {
                             }
                             label={
                               <Typography variant="body1" className="ml-2">
-                                <span className="font-arabic text-xl ">
+                                <span className="font-arabic text-lg ">
                                   {option}
                                 </span>
                               </Typography>
@@ -504,7 +506,7 @@ const ExamInterface = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setShowExitDialog(false)}>
-            <span className="font-arabic text-xl">الغاء</span>
+            <span className="font-arabic text-xl ml-8">الغاء</span>
           </Button>
           <Button onClick={handleExitExam} variant="contained" color="error">
             <span className="font-arabic text-xl">تأكيد</span>
