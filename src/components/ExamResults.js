@@ -41,20 +41,9 @@ const ExamResults = () => {
     }
   }, [isSubmitted]);
 
-  const handleRetakeExam = () => {
-    dispatch(resetExam());
-    navigate("/exam");
-  };
-
   const handleNewExam = () => {
     dispatch(resetExam());
     navigate("/subject");
-  };
-
-  const handleHome = () => {
-    dispatch(resetExam());
-    dispatch(resetSelections());
-    navigate("/university");
   };
 
   if (!results) {

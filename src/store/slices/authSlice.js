@@ -26,6 +26,27 @@ export const signIn = createAsyncThunk(
     }
   }
 );
+
+export const set_college = createAsyncThunk(
+  "auth/set_college",
+  async ({ ID, college_id }, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(
+        "https://exams-back.onrender.com/setcollege",
+        {
+          ID,
+          college_id,
+        }
+      );
+      return response.data; // مهم ترجع البيانات
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.error || "حدث خطأ أثناء حفظ الكلية"
+      );
+    }
+  }
+);
+
 const password = localStorage.getItem("password");
 const token = localStorage.getItem("token");
 const name = localStorage.getItem("name");

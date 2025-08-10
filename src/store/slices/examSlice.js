@@ -43,6 +43,7 @@ export const submitExam = createAsyncThunk(
           student_ID: Student_State.user.ID,
           subject_id: subject.ID,
           score: score,
+          is_open_mode: subject.open_mode,
         }
       );
       return {

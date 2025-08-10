@@ -130,7 +130,7 @@ const ExamInterface = () => {
     }
   };
 
-  const handleSubmitExam = async () => {
+  const handleSubmitExam = async (is_open_mode) => {
     dispatch(stopTimer());
 
     const timeSpent = Math.floor((duration * 60 - timeRemaining) / 60);
@@ -142,6 +142,7 @@ const ExamInterface = () => {
           answers,
           timeSpent,
           Student_State,
+          is_open_mode, // <<< ضفناها هون
         })
       ).unwrap();
 
@@ -478,7 +479,9 @@ const ExamInterface = () => {
           </DialogContent>
           <DialogActions className="gap-7">
             <Button
-              onClick={handleSubmitExam}
+              onClick={() => {
+                handleSubmitExam(selectedSubject.open_mode);
+              }}
               variant="contained"
               color="success"
             >

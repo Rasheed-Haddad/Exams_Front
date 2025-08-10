@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+
 import {
   Container,
   Typography,
@@ -18,6 +19,7 @@ import {
   fetchSubjects,
   selectCollege,
 } from "../store/slices/selectionSlice";
+import { set_college } from "../store/slices/authSlice";
 import { useLocation } from "react-router-dom";
 const CollegeSelection = () => {
   const location = useLocation();
@@ -53,6 +55,7 @@ const CollegeSelection = () => {
   const handleCollegeSelect = (college) => {
     dispatch(selectCollege(college));
     localStorage.setItem("college", JSON.stringify(college));
+    dispatch(set_college({ ID: user.ID, college_id: college.id }));
     navigate("/subject");
   };
 
