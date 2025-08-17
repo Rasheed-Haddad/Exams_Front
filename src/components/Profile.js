@@ -65,7 +65,7 @@ export default function Profile() {
             </span>
           </div>
           {loading ? (
-            <div className="bg-gray-50 flex items-center justify-center">
+            <div className="flex items-center justify-center">
               <h1 className="glow-text">قدها وقدود</h1>
 
               <style jsx>{`
@@ -209,6 +209,51 @@ export default function Profile() {
           >
             <span className="font-arabic text-white text-lg">عودة</span>
           </Button>
+          {/* 🔽 دليل النقاط */}
+          <div className="text-right font-arabic mt-4 bg-gradient-to-br from-purple-50 to-yellow-50 rounded-xl p-2 shadow-inner">
+            <ul className="space-y-2 text-base">
+              <li className="flex justify-between items-center bg-white rounded-lg px-3 py-1 shadow-sm">
+                <span>فارش</span>
+                <span className="text-gray-500"> أقل من 50</span>
+              </li>
+              <li className="flex justify-between items-center bg-white rounded-lg px-3 py-1 shadow-sm">
+                <span>مبتدئ</span>
+                <span className="text-blue-500"> 50+</span>
+              </li>
+              <li className="flex justify-between items-center bg-white rounded-lg px-3 py-1 shadow-sm">
+                <span>مثابر</span>
+                <span className="text-green-500"> 2000+</span>
+              </li>
+              <li className="flex justify-between items-center bg-white rounded-lg px-3 py-1 shadow-sm">
+                <span>مميز</span>
+                <span className="text-purple-500"> 3000+</span>
+              </li>
+              <li className="flex justify-between items-center bg-white rounded-lg px-3 py-1 shadow-sm">
+                <span>متفوق</span>
+                <span className="text-yellow-500"> 4000+</span>
+              </li>
+              <li className="flex justify-between items-center bg-white rounded-lg px-3 py-1 shadow-sm">
+                <span>نخبة</span>
+                <span className="text-indigo-500"> 5000+</span>
+              </li>
+              <li className="flex justify-between items-center bg-white rounded-lg px-3 py-1 shadow-sm">
+                <span>نيرد</span>
+                <span className="text-pink-500"> 6000+</span>
+              </li>
+              <li className="flex justify-between items-center bg-white rounded-lg px-3 py-1 shadow-sm">
+                <span>صائد العلامات</span>
+                <span className="text-red-500"> 7000+</span>
+              </li>
+              <li className="flex justify-between items-center bg-white rounded-lg px-3 py-1 shadow-sm">
+                <span>كبير الحكماء</span>
+                <span className="text-green-700"> 8000+</span>
+              </li>
+              <li className="flex justify-between items-center bg-white rounded-lg px-3 py-1 shadow-sm">
+                <span>قدها وقدود</span>
+                <span className="text-orange-600"> 10000+</span>
+              </li>
+            </ul>
+          </div>
         </CardContent>
       </Card>
     </div>

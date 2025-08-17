@@ -69,7 +69,7 @@ const SubjectSelection = () => {
 
   if (loading) {
     return (
-      <div className="bg-gray-50 flex items-center justify-center mt-32">
+      <div className="flex items-center justify-center mt-32">
         <h1 className="glow-text">قدها وقدود</h1>
 
         <style jsx>{`
@@ -128,16 +128,23 @@ const SubjectSelection = () => {
               </Button>
             </div>
             <div className="flex justify-center sm:justify-start gap-2 font-arabic text-lg">
-              <Button
-                variant="outlined"
-                onClick={handle_profile}
-                className="text-brand  border-brand hover:bg-gray-50 transition"
-                sx={{ color: "#8C52FF", borderColor: "#8C52FF" }}
-              >
-                <span className="font-arabic text-brand text-sm">
-                  الملف الشخصي
+              <div className="relative inline-block">
+                <Button
+                  variant="outlined"
+                  onClick={handle_profile}
+                  className="text-brand border-brand hover:bg-gray-50 transition"
+                  sx={{ color: "#8C52FF", borderColor: "#8C52FF" }}
+                >
+                  <span className="font-arabic text-brand text-sm">
+                    الملف الشخصي
+                  </span>
+                </Button>
+
+                {/* شارة NEW */}
+                <span className="absolute -top-2 h-5 items-center justify-center flex -left-2 -rotate-12 bg-green-500 text-white text-[8px] font-bold px-0.5 py-0.5 rounded-full shadow-md">
+                  NEW
                 </span>
-              </Button>
+              </div>
             </div>
           </div>
 

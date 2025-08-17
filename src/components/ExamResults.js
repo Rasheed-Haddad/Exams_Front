@@ -371,58 +371,59 @@ const ExamResults = () => {
         </Grid>
       </Container>
       {/* DIALOG */}
-      {user.previous_badge !== badgeInfo?.badge ? (
-        <Dialog
-          dir="rtl"
-          open={badgeModalOpen}
-          onClose={() => setBadgeModalOpen(false)}
-          PaperProps={{
-            style: {
-              backgroundColor: "transparent",
-              boxShadow: "none",
-              overflow: "hidden",
-              maxWidth: "unset",
-              maxHeight: "unset",
-              margin: 0,
-            },
-          }}
+
+      <Dialog
+        dir="rtl"
+        open={badgeModalOpen}
+        onClose={() => setBadgeModalOpen(false)}
+        PaperProps={{
+          style: {
+            backgroundColor: "transparent",
+            boxShadow: "none",
+            overflow: "hidden",
+            maxWidth: "unset",
+            maxHeight: "unset",
+            margin: 0,
+          },
+        }}
+      >
+        {/* تأثير قصاصات الورق الاحتفالية */}
+        {badgeModalOpen && <Confetti numberOfPieces={200} gravity={0.2} />}
+
+        <motion.div
+          initial={{ scale: 0.5, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.4, type: "spring" }}
+          className="bg-white rounded-2xl p-8 text-center shadow-2xl w-80 mx-auto "
         >
-          {/* تأثير قصاصات الورق الاحتفالية */}
-          {badgeModalOpen && <Confetti numberOfPieces={200} gravity={0.2} />}
+          <h2 className="text-4xl font-extrabold font-arabic mb-6 text-yellow-500 drop-shadow-lg">
+            تهانينا
+          </h2>
 
-          <motion.div
-            initial={{ scale: 0.5, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.4, type: "spring" }}
-            className="bg-white rounded-2xl p-8 text-center shadow-2xl w-80 mx-auto "
+          <p className="text-xl mb-6 font-arabic">
+            رتبتك :
+            <span className="block text-3xl font-arabic font-bold text-purple-600 mt-2">
+              {badgeInfo?.badge}
+            </span>
+          </p>
+
+          <p className="text-xl font-arabic text-gray-700 mb-4">
+            نقاطك :
+            <span className="block text-2xl font-arabic font-bold text-green-500 mt-6">
+              {badgeInfo?.points}
+            </span>
+          </p>
+
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => setBadgeModalOpen(false)}
+            className="bg-brand font-arabic hover:bg-purple-400 text-white px-4 py-3 rounded-full text-xl shadow-lg transition-colors mb-4"
           >
-            <h2 className="text-4xl font-extrabold font-arabic mb-4 text-yellow-500 drop-shadow-lg">
-              تهانينا
-            </h2>
-            <p className="text-xl mb-6 font-arabic">
-              رتبتك :
-              <span className="block text-3xl font-arabic font-bold text-purple-600 mt-2">
-                {badgeInfo?.badge}
-              </span>
-            </p>
-            <p className="text-lg font-arabic text-gray-700 mb-8">
-              نقاطك :
-              <span className="block text-2xl font-arabic font-bold text-green-500 mt-1">
-                {badgeInfo?.points}
-              </span>
-            </p>
-
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setBadgeModalOpen(false)}
-              className="bg-brand font-arabic hover:bg-purple-400 text-white px-6 py-3 rounded-full text-lg shadow-lg transition-colors"
-            >
-              إغلاق
-            </motion.button>
-          </motion.div>
-        </Dialog>
-      ) : null}
+            إغلاق
+          </motion.button>
+        </motion.div>
+      </Dialog>
     </div>
   );
 };

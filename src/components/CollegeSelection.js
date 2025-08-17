@@ -69,7 +69,7 @@ const CollegeSelection = () => {
 
   if (loading) {
     return (
-      <div className="bg-gray-50 flex items-center justify-center mt-32">
+      <div className="flex items-center justify-center mt-32">
         <h1 className="glow-text">قدها وقدود</h1>
 
         <style jsx>{`

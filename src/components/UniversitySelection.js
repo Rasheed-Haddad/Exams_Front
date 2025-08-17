@@ -65,8 +65,38 @@ const UniversitySelection = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <CircularProgress size={60} sx={{ color: "#8C52FF" }} />
+      <div className="flex items-center justify-center mt-32">
+        <h1 className="glow-text">قدها وقدود</h1>
+
+        <style jsx>{`
+          .glow-text {
+            font-size: 3rem;
+            font-weight: 100;
+            color: #8c52ff;
+            animation: glow 1.5s ease-in-out infinite,
+              float 3s ease-in-out infinite;
+          }
+
+          @keyframes glow {
+            0%,
+            100% {
+              text-shadow: 0 0 5px #8c52ff, 0 0 10px #8c52ff, 0 0 20px #8c52ff;
+            }
+            50% {
+              text-shadow: 0 0 15px #8c52ff, 0 0 30px #8c52ff, 0 0 45px #8c52ff;
+            }
+          }
+
+          @keyframes float {
+            0%,
+            100% {
+              transform: translateY(0);
+            }
+            50% {
+              transform: translateY(-5px);
+            }
+          }
+        `}</style>
       </div>
     );
   }
@@ -77,29 +107,13 @@ const UniversitySelection = () => {
       <Box className="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
         <div
           dir="rtl"
-          className="flex justify-between items-center max-w-7xl mx-auto"
+          className="flex justify-center items-center max-w-7xl mx-auto"
         >
           <div>
-            <Typography variant="p" className="font-bold text-4xl text-brand">
-              <span className="font-arabic text-4xl">اختر جامعتك</span>
+            <Typography variant="p" className="font-bold text-2xl text-brand">
+              <span className="font-arabic text-2xl">اختر جامعتك</span>
             </Typography>
           </div>
-          <Button
-            variant="outlined"
-            endIcon={<LogoutOutlined />}
-            onClick={handleSignOut}
-            className="gap-7 w-40 font-arabic"
-            sx={{
-              color: "#8C52FF",
-              borderColor: "#8C52FF",
-              "&:hover": {
-                backgroundColor: "rgba(140, 82, 255, 0.1)",
-                borderColor: "#8C52FF",
-              },
-            }}
-          >
-            تسجيل الخروج
-          </Button>
         </div>
       </Box>
 

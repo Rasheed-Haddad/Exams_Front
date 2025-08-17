@@ -57,9 +57,9 @@ const SignIn = () => {
         <Paper elevation={10} className="p-8 rounded-2xl shadow-lg">
           <Box textAlign="center" mb={6}>
             <Typography
-              variant="h3"
+              variant="p"
               component="h1"
-              className="font-bold text-brand mb-4 font-arabic"
+              className="font-bold text-3xl text-brand mb-4 font-arabic"
             >
               سجل الدخول
             </Typography>
@@ -75,7 +75,11 @@ const SignIn = () => {
             <TextField
               dir="rtl"
               fullWidth
-              label="الاسم والكنية باللغة العربية"
+              label={
+                <span className="font-arabic text-sm text-brand">
+                  الاسم والكنية باللغة العربية
+                </span>
+              }
               name="name"
               type="text"
               value={Student_Data.name}
@@ -87,7 +91,11 @@ const SignIn = () => {
             <TextField
               dir="rtl"
               fullWidth
-              label="الاسم المستعار (يظهر للآخرين)"
+              label={
+                <span className="font-arabic text-sm text-brand">
+                  الاسم المستعار (يظهر للآخرين)
+                </span>
+              }
               name="nick_name"
               type="text"
               value={Student_Data.nick_name}
@@ -99,7 +107,11 @@ const SignIn = () => {
             <TextField
               dir="rtl"
               fullWidth
-              label="الرقم الجامعي"
+              label={
+                <span className="font-arabic text-sm text-brand">
+                  الرقم الجامعي
+                </span>
+              }
               name="ID"
               type="text"
               value={Student_Data.ID}
@@ -121,7 +133,11 @@ const SignIn = () => {
             <TextField
               dir="rtl"
               fullWidth
-              label="كلمة المرور"
+              label={
+                <span className="font-arabic text-sm text-brand">
+                  كلمة المرور
+                </span>
+              }
               name="password"
               type="text"
               value={Student_Data.password}
@@ -148,7 +164,9 @@ const SignIn = () => {
               {loading ? (
                 <CircularProgress size={24} color="#8C52FF" />
               ) : (
-                "تسجيل الدخول"
+                <span className="font-arabic text-lg text-white">
+                  تسجيل الدخول
+                </span>
               )}
             </Button>
           </form>
