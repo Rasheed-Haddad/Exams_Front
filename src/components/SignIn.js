@@ -52,9 +52,9 @@ const SignIn = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-brand to-indigo-100 flex items-center justify-center p-4">
+    <div className="h-screen bg-gradient-to-br from-brand to-indigo-100 flex items-start justify-center p-4">
       <Container maxWidth="sm">
-        <Paper elevation={10} className="p-8 rounded-2xl shadow-lg">
+        <Paper elevation={10} className="p-8 mt-14 rounded-2xl shadow-lg">
           <Box textAlign="center" mb={6}>
             <Typography
               variant="p"

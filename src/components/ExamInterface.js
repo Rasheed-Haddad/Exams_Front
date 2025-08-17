@@ -247,13 +247,13 @@ const ExamInterface = () => {
                 <thead>
                   <tr className="bg-brand text-white font-bold">
                     <th className="px-3 py-2 font-arabic text-sm sm:text-base text-center">
-                      المرتبة
-                    </th>
-                    <th className="px-3 py-2 font-arabic text-sm sm:text-base text-center">
                       الاسم
                     </th>
                     <th className="px-3 py-2 font-arabic text-sm sm:text-base text-center">
-                      النقاط
+                      اللقب
+                    </th>
+                    <th className="px-3 py-2 font-arabic text-sm sm:text-base text-center">
+                      العلامة
                     </th>
                   </tr>
                 </thead>
@@ -267,10 +267,10 @@ const ExamInterface = () => {
                     return (
                       <tr key={index} className={`${bgColor} text-center`}>
                         <td className="px-3 py-1 font-arabic text-sm sm:text-base">
-                          {index + 1}
+                          {rank.nick_name}
                         </td>
                         <td className="px-3 py-1 font-arabic text-sm sm:text-base">
-                          {rank.nick_name}
+                          {rank.badge}
                         </td>
                         <td className="px-3 py-1 font-arabic text-sm sm:text-base font-bold">
                           {rank.score}
@@ -280,39 +280,6 @@ const ExamInterface = () => {
                   })}
                 </tbody>
               </table>
-
-              {/* أزرار التحكم في الموبايل تحت الجدول */}
-              <div className="flex flex-wrap justify-center gap-4 mt-4 sm:hidden w-full px-2">
-                <Button
-                  variant="outlined"
-                  onClick={() => setShowExitDialog(true)}
-                  className="gap-2 text-brand border-brand w-full"
-                  sx={{
-                    backgroundColor: "#8C52FF",
-                    borderColor: "#8C52FF",
-                    color: "#fff",
-                    paddingY: "8px",
-                  }}
-                >
-                  <span className="font-arabic text-white text-sm">انسحاب</span>
-                </Button>
-                {selectedSubject.open_mode && (
-                  <Button
-                    variant="contained"
-                    onClick={() => set_solved_exam(!solved_exam)}
-                    className="w-full"
-                    sx={{
-                      backgroundColor: "#8C52FF",
-                      color: "white",
-                      paddingY: "8px",
-                    }}
-                  >
-                    <span className="font-arabic text-sm">
-                      {solved_exam ? "إخفاء الحل" : "حل الاختبار"}
-                    </span>
-                  </Button>
-                )}
-              </div>
             </div>
           ) : null}
 

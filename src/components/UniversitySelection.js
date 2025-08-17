@@ -176,7 +176,9 @@ const UniversitySelection = () => {
                       },
                     }}
                   >
-                    اختيار
+                    <span className="font-arabic text-white text-sm">
+                      اختيار
+                    </span>
                   </Button>
                 </CardContent>
               </Card>
