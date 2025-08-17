@@ -16,6 +16,7 @@ import { signIn, clearError } from "../store/slices/authSlice";
 const SignIn = () => {
   const [Student_Data, set_Student_Data] = useState({
     name: "",
+    nick_name: "",
     ID: "",
     password: "",
   });
@@ -83,7 +84,18 @@ const SignIn = () => {
               required
               className="mb-4"
             />
-
+            <TextField
+              dir="rtl"
+              fullWidth
+              label="الاسم المستعار (يظهر للآخرين)"
+              name="nick_name"
+              type="text"
+              value={Student_Data.nick_name}
+              onChange={handleChange}
+              variant="outlined"
+              required
+              className="mb-4"
+            />
             <TextField
               dir="rtl"
               fullWidth

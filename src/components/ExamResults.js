@@ -1,6 +1,9 @@
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import Confetti from "react-confetti";
+import { set_previous_badge_like_the_new } from "../store/slices/authSlice";
 import {
   Container,
   Typography,
@@ -12,25 +15,26 @@ import {
   Chip,
   Divider,
   Grid,
-  Paper,
+  Dialog,
 } from "@mui/material";
 import {
   CheckCircle,
   Cancel,
-  Home,
-  Refresh,
-  TrendingUp,
   AccessTime,
   QuestionAnswer,
   School,
 } from "@mui/icons-material";
 import { resetExam } from "../store/slices/examSlice";
 import { resetSelections } from "../store/slices/selectionSlice";
+import { set_badge } from "../store/slices/authSlice";
 
 const ExamResults = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { results, isSubmitted } = useSelector((state) => state.exam);
+  const [badgeModalOpen, setBadgeModalOpen] = useState(false);
+  const [badgeInfo, setBadgeInfo] = useState(null);
+  const dispatchedRef = useRef(false); // يمنع الطلب المتكرر
+  const { results, isSubmitted, loading } = useSelector((state) => state.exam);
   const { selectedSubject, selectedCollege, selectedUniversity } = useSelector(
     (state) => state.selection
   );
@@ -38,21 +42,82 @@ const ExamResults = () => {
   useEffect(() => {
     if (!isSubmitted) {
       navigate("/subject");
+      return;
     }
-  }, [isSubmitted]);
 
+    // تأكد أن المستخدم موجود وأننا لم نرسل الطلب سابقاً
+    if (!user?.ID || dispatchedRef.current) return;
+
+    const pointsToAdd = Number(results?.correctAnswers || 0);
+    if (pointsToAdd <= 0) {
+      // حتى إذا صفر، ممكن نطلب تحديث الشارة (أو نتجنب الطلب). هنا نتجنب الطلب.
+      dispatchedRef.current = true;
+      return;
+    }
+
+    (async () => {
+      try {
+        const payload = await dispatch(
+          set_badge({ ID: user.ID, points: pointsToAdd })
+        ).unwrap();
+
+        // payload => { points, badge }
+        setBadgeInfo(payload);
+        setBadgeModalOpen(true);
+        dispatchedRef.current = true;
+      } catch (err) {
+        console.error("Failed to set badge:", err);
+        dispatchedRef.current = true; // حتى لا يعيد المحاولة باستمرار — عدّل حسب الحاجة
+      }
+    })();
+  }, [isSubmitted, dispatch, navigate, user?.ID, results?.correctAnswers]);
   const handleNewExam = () => {
+    dispatch(set_previous_badge_like_the_new(badgeInfo?.badge));
     dispatch(resetExam());
     navigate("/subject");
   };
 
-  if (!results) {
+  if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <>
+        <div className="bg-gray-50 flex items-center justify-center mb-12 mt-32">
+          <h1 className="glow-text">قدها وقدود</h1>
+
+          <style jsx>{`
+            .glow-text {
+              font-size: 3rem;
+              font-weight: 100;
+              color: #8c52ff;
+              animation: glow 1.5s ease-in-out infinite,
+                float 3s ease-in-out infinite;
+            }
+
+            @keyframes glow {
+              0%,
+              100% {
+                text-shadow: 0 0 5px #8c52ff, 0 0 10px #8c52ff, 0 0 20px #8c52ff;
+              }
+              50% {
+                text-shadow: 0 0 15px #8c52ff, 0 0 30px #8c52ff,
+                  0 0 45px #8c52ff;
+              }
+            }
+
+            @keyframes float {
+              0%,
+              100% {
+                transform: translateY(0);
+              }
+              50% {
+                transform: translateY(-5px);
+              }
+            }
+          `}</style>
+        </div>
         <Typography variant="h6" sx={{ color: "#8C52FF" }}>
           جار تحميل النتائج....
         </Typography>
-      </div>
+      </>
     );
   }
 
@@ -95,19 +160,8 @@ const ExamResults = () => {
       <Box className="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
         <div
           dir="rtl"
-          className="flex justify-between items-center max-w-7xl mx-auto"
+          className="flex justify-center items-center max-w-7xl mx-auto"
         >
-          <div>
-            <Typography variant="h5" className="font-bold text-brand">
-              <span className="font-arabic text-4xl mb-8">نتائج الامتحان</span>
-            </Typography>
-            <Typography variant="body2" color="textSecondary">
-              <span className="font-arabic text-xl mb-4 text-brand">
-                {selectedSubject?.name}
-              </span>
-            </Typography>
-          </div>
-
           <div className="flex items-center gap-2 h-fit">
             {results.passed ? (
               <Chip
@@ -170,10 +224,10 @@ const ExamResults = () => {
                             : "#1976d2",
                       }}
                     >
-                      <span className="font-bold text-5xl ">
+                      <span className="font-bold text-3xl ">
                         {getGradeLetter(results.score)}{" "}
                       </span>
-                      <span className="font-arabic font-bold text-5xl m-4 mb-8">
+                      <span className="font-arabic font-bold text-3xl m-4 mb-8">
                         {" "}
                         : الدرجة
                       </span>
@@ -260,11 +314,13 @@ const ExamResults = () => {
 
                   <div className="flex items-center gap-2">
                     <Typography variant="h6" className="font-bold">
-                      <span className="font-arabic text-lg">دقيقة</span>{" "}
+                      <span className="font-arabic text-sm">دقيقة</span>{" "}
                     </Typography>
-                    {results.timeSpent}{" "}
+                    <Typography variant="p" className="text-sm">
+                      {results.timeSpent}{" "}
+                    </Typography>
                     <Typography variant="body2" className="font-semibold">
-                      <span className="font-arabic text-lg">
+                      <span className="font-arabic text-sm">
                         : مدة إتمام الامتحان
                       </span>
                     </Typography>
@@ -272,11 +328,11 @@ const ExamResults = () => {
                   </div>
 
                   <div className="flex items-center gap-2">
-                    <Typography variant="h6" className="font-bold">
+                    <Typography variant="p" className=" text-sm">
                       {results.totalQuestions}
                     </Typography>
                     <Typography variant="body2" color="textSecondary">
-                      <span className="font-arabic text-lg">
+                      <span className="font-arabic text-sm">
                         : الأسئلة التي تمت الإجابة عنها
                       </span>{" "}
                     </Typography>
@@ -314,6 +370,59 @@ const ExamResults = () => {
           </Grid>
         </Grid>
       </Container>
+      {/* DIALOG */}
+      {user.previous_badge !== badgeInfo?.badge ? (
+        <Dialog
+          dir="rtl"
+          open={badgeModalOpen}
+          onClose={() => setBadgeModalOpen(false)}
+          PaperProps={{
+            style: {
+              backgroundColor: "transparent",
+              boxShadow: "none",
+              overflow: "hidden",
+              maxWidth: "unset",
+              maxHeight: "unset",
+              margin: 0,
+            },
+          }}
+        >
+          {/* تأثير قصاصات الورق الاحتفالية */}
+          {badgeModalOpen && <Confetti numberOfPieces={200} gravity={0.2} />}
+
+          <motion.div
+            initial={{ scale: 0.5, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.4, type: "spring" }}
+            className="bg-white rounded-2xl p-8 text-center shadow-2xl w-80 mx-auto "
+          >
+            <h2 className="text-4xl font-extrabold font-arabic mb-4 text-yellow-500 drop-shadow-lg">
+              تهانينا
+            </h2>
+            <p className="text-xl mb-6 font-arabic">
+              رتبتك :
+              <span className="block text-3xl font-arabic font-bold text-purple-600 mt-2">
+                {badgeInfo?.badge}
+              </span>
+            </p>
+            <p className="text-lg font-arabic text-gray-700 mb-8">
+              نقاطك :
+              <span className="block text-2xl font-arabic font-bold text-green-500 mt-1">
+                {badgeInfo?.points}
+              </span>
+            </p>
+
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setBadgeModalOpen(false)}
+              className="bg-brand font-arabic hover:bg-purple-400 text-white px-6 py-3 rounded-full text-lg shadow-lg transition-colors"
+            >
+              إغلاق
+            </motion.button>
+          </motion.div>
+        </Dialog>
+      ) : null}
     </div>
   );
 };

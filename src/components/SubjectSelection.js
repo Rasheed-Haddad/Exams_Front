@@ -32,7 +32,6 @@ const SubjectSelection = () => {
   );
 
   const { user } = useSelector((state) => state.auth);
-  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     if (!selectedCollege) {
@@ -45,19 +44,16 @@ const SubjectSelection = () => {
 
   useEffect(() => {
     if (!selectedCollege || !user?.ID) return;
-
-    dispatch(
-      fetchSubjects({ college_id: selectedCollege.id, ID: Number(user.ID) })
-    );
+    if (subjects.length == 0) {
+      dispatch(
+        fetchSubjects({ college_id: selectedCollege.id, ID: Number(user.ID) })
+      );
+    }
   }, [dispatch, selectedCollege, user]);
 
   const handleSubjectSelect = (subject) => {
     dispatch(selectSubject(subject));
     navigate("/exam");
-  };
-
-  const handleBack = () => {
-    navigate("/college");
   };
 
   const handleSignOut = () => {
@@ -67,14 +63,44 @@ const SubjectSelection = () => {
     navigate("/signin");
   };
 
-  const filteredSubjects = subjects.filter((subject) =>
-    subject.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const handle_profile = () => {
+    navigate("/profile");
+  };
 
-  if (loading || !user || !user.ID || !Array.isArray(subjects)) {
+  if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <CircularProgress size={60} sx={{ color: "#8C52FF" }} />
+      <div className="bg-gray-50 flex items-center justify-center mt-32">
+        <h1 className="glow-text">قدها وقدود</h1>
+
+        <style jsx>{`
+          .glow-text {
+            font-size: 3rem;
+            font-weight: 100;
+            color: #8c52ff;
+            animation: glow 1.5s ease-in-out infinite,
+              float 3s ease-in-out infinite;
+          }
+
+          @keyframes glow {
+            0%,
+            100% {
+              text-shadow: 0 0 5px #8c52ff, 0 0 10px #8c52ff, 0 0 20px #8c52ff;
+            }
+            50% {
+              text-shadow: 0 0 15px #8c52ff, 0 0 30px #8c52ff, 0 0 45px #8c52ff;
+            }
+          }
+
+          @keyframes float {
+            0%,
+            100% {
+              transform: translateY(0);
+            }
+            50% {
+              transform: translateY(-5px);
+            }
+          }
+        `}</style>
       </div>
     );
   }
@@ -85,18 +111,34 @@ const SubjectSelection = () => {
       <Box className="bg-white shadow-sm border-b border-gray-200 px-4 sm:px-6 py-4">
         <div
           dir="rtl"
-          className="flex flex-col sm:flex-row sm:items-center sm:justify-between max-w-7xl mx-auto gap-4"
+          className="flex flex-col sm:flex-row sm:items-center sm:justify-center max-w-7xl mx-auto gap-4"
         >
-          {/* زر تسجيل الخروج */}
-          <div className="flex justify-between sm:justify-start gap-2 font-arabic text-lg">
-            <Button
-              variant="outlined"
-              onClick={handleSignOut}
-              className="text-brand border-brand hover:bg-gray-50 transition"
-              sx={{ color: "#8C52FF", borderColor: "#8C52FF" }}
-            >
-              تسجيل الخروج
-            </Button>
+          <div className="flex items-center justify-center gap-2">
+            {/* زر تسجيل الخروج */}
+            <div className="flex justify-center sm:justify-start gap-2 font-arabic text-lg">
+              <Button
+                variant="outlined"
+                onClick={handleSignOut}
+                className="text-brand  border-brand hover:bg-gray-50 transition"
+                sx={{ color: "#8C52FF", borderColor: "#8C52FF" }}
+              >
+                <span className="font-arabic text-brand text-sm">
+                  تسجيل الخروج
+                </span>
+              </Button>
+            </div>
+            <div className="flex justify-center sm:justify-start gap-2 font-arabic text-lg">
+              <Button
+                variant="outlined"
+                onClick={handle_profile}
+                className="text-brand  border-brand hover:bg-gray-50 transition"
+                sx={{ color: "#8C52FF", borderColor: "#8C52FF" }}
+              >
+                <span className="font-arabic text-brand text-sm">
+                  الملف الشخصي
+                </span>
+              </Button>
+            </div>
           </div>
 
           {/* عنوان الصفحة */}
@@ -106,18 +148,6 @@ const SubjectSelection = () => {
           >
             الاختبارات المتاحة لك
           </Typography>
-
-          {/* شريط البحث */}
-          <TextField
-            dir="rtl"
-            placeholder="ابحث عن اختبار..."
-            variant="outlined"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full sm:w-80 font-arabic"
-            inputProps={{ className: "font-arabic text-brand" }}
-            sx={{ color: "#8C52FF", borderColor: "#8C52FF" }}
-          />
         </div>
       </Box>
 
@@ -137,8 +167,8 @@ const SubjectSelection = () => {
             justifyContent: "center",
           }}
         >
-          {filteredSubjects.length > 0 &&
-            filteredSubjects.map((subject) => {
+          {subjects.length > 0 &&
+            subjects.map((subject) => {
               return (
                 <Grid key={subject.ID}>
                   <Card className="h-80 w-64 hover:shadow-lg transition-shadow duration-300 cursor-pointer transform hover:scale-105">
@@ -203,7 +233,7 @@ const SubjectSelection = () => {
             })}
         </Grid>
 
-        {filteredSubjects.length === 0 && !loading && (
+        {subjects.length === 0 && !loading ? (
           <Box textAlign="center" className="py-12">
             <Typography variant="h6" color="textSecondary">
               <p className="font-arabic text-lg m-12">
@@ -212,6 +242,8 @@ const SubjectSelection = () => {
               </p>
             </Typography>
           </Box>
+        ) : (
+          ""
         )}
       </Container>
     </div>

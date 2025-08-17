@@ -16,6 +16,8 @@ import ExamInterface from "./components/ExamInterface";
 import ExamResults from "./components/ExamResults";
 import ProtectedRoute from "./components/ProtectedRoute";
 import "./App.css";
+import { Typography } from "@mui/material";
+import Profile from "./components/Profile";
 
 const theme = createTheme({
   palette: {
@@ -35,6 +37,15 @@ function App() {
         <CssBaseline />
         <Router>
           <div className="App min-h-screen bg-gray-50">
+            <div className="flex items-center justify-center bg-brand pb-2">
+              <Typography
+                variant="p"
+                className="text-sm text-white  font-arabic "
+              >
+                جميع حقوق المحتوى محفوظة © قدها وقدود – يمنع النسخ أو التصوير أو
+                النشر
+              </Typography>
+            </div>
             <Routes>
               <Route path="/signin" element={<SignIn />} />
               <Route path="/" element={<Navigate to="/signin" replace />} />
@@ -83,6 +94,7 @@ function App() {
                   </ProtectedRoute>
                 }
               />
+              <Route path="/profile" element={<Profile />} />
             </Routes>
           </div>
         </Router>

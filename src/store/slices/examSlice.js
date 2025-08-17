@@ -59,6 +59,22 @@ export const submitExam = createAsyncThunk(
   }
 );
 
+export const get_top_scores = createAsyncThunk(
+  "exam/gettopscores",
+  async ({ ID }) => {
+    try {
+      const response = await axios.post(
+        "https://exams-back.onrender.com/topscores",
+        { ID }
+      );
+      return response.data;
+    } catch (error) {
+      // ممكن تضيف معالجة خطأ هون
+      throw error;
+    }
+  }
+);
+
 const examSlice = createSlice({
   name: "exam",
   initialState: {
@@ -73,6 +89,7 @@ const examSlice = createSlice({
     loading: false,
     error: null,
     visible: false,
+    top_scores: [],
   },
   reducers: {
     setAnswer: (state, action) => {
@@ -167,6 +184,9 @@ const examSlice = createSlice({
       .addCase(submitExam.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+      .addCase(get_top_scores.fulfilled, (state, action) => {
+        state.top_scores = action.payload;
       });
   },
 });

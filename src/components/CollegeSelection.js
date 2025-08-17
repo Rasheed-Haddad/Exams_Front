@@ -52,6 +52,10 @@ const CollegeSelection = () => {
     dispatch(fetchColleges(selectedUniversity.id));
   }, [dispatch, selectedUniversity, navigate]);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   const handleCollegeSelect = (college) => {
     dispatch(selectCollege(college));
     localStorage.setItem("college", JSON.stringify(college));
@@ -65,8 +69,38 @@ const CollegeSelection = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <CircularProgress size={60} sx={{ color: "#8C52FF" }} />
+      <div className="bg-gray-50 flex items-center justify-center mt-32">
+        <h1 className="glow-text">قدها وقدود</h1>
+
+        <style jsx>{`
+          .glow-text {
+            font-size: 3rem;
+            font-weight: 100;
+            color: #8c52ff;
+            animation: glow 1.5s ease-in-out infinite,
+              float 3s ease-in-out infinite;
+          }
+
+          @keyframes glow {
+            0%,
+            100% {
+              text-shadow: 0 0 5px #8c52ff, 0 0 10px #8c52ff, 0 0 20px #8c52ff;
+            }
+            50% {
+              text-shadow: 0 0 15px #8c52ff, 0 0 30px #8c52ff, 0 0 45px #8c52ff;
+            }
+          }
+
+          @keyframes float {
+            0%,
+            100% {
+              transform: translateY(0);
+            }
+            50% {
+              transform: translateY(-5px);
+            }
+          }
+        `}</style>
       </div>
     );
   }

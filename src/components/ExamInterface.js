@@ -20,6 +20,7 @@ import {
   DialogActions,
   Grid,
 } from "@mui/material";
+
 import { AccessTime } from "@mui/icons-material";
 import {
   fetchExamQuestions,
@@ -33,6 +34,7 @@ import {
   submitExam,
   resetExam,
   previousQuestion,
+  get_top_scores,
 } from "../store/slices/examSlice";
 
 const ExamInterface = () => {
@@ -54,6 +56,7 @@ const ExamInterface = () => {
     duration,
     loading,
     error,
+    top_scores,
   } = useSelector((state) => state.exam);
   const Student_State = useSelector((state) => state.auth);
 
@@ -69,6 +72,7 @@ const ExamInterface = () => {
   useEffect(() => {
     if (selectedSubject) {
       dispatch(fetchExamQuestions(selectedSubject));
+      dispatch(get_top_scores({ ID: selectedSubject.ID }));
     }
   }, [dispatch, selectedSubject]);
 
@@ -234,10 +238,86 @@ const ExamInterface = () => {
       <Box className="bg-white shadow-sm border-b border-gray-200 px-4 py-3">
         <div
           dir="rtl"
-          className="flex flex-col sm:flex-row flex-wrap gap-4 justify-between items-start sm:items-center max-w-7xl mx-auto"
+          className="flex flex-col sm:flex-row flex-wrap gap-4 justify-between items-center max-w-7xl mx-auto"
         >
-          {/* أزرار التحكم */}
-          <div className="flex flex-wrap gap-3">
+          {/* جدول لائحة الصدارة */}
+          {top_scores.length !== 0 ? (
+            <div className="w-full sm:w-auto overflow-x-auto items-center justify-center flex flex-col">
+              <table className="min-w-[240px] sm:min-w-[320px] border-collapse rounded-lg overflow-hidden shadow">
+                <thead>
+                  <tr className="bg-brand text-white font-bold">
+                    <th className="px-3 py-2 font-arabic text-sm sm:text-base text-center">
+                      المرتبة
+                    </th>
+                    <th className="px-3 py-2 font-arabic text-sm sm:text-base text-center">
+                      الاسم
+                    </th>
+                    <th className="px-3 py-2 font-arabic text-sm sm:text-base text-center">
+                      النقاط
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {top_scores.map((rank, index) => {
+                    let bgColor = "";
+                    if (index === 0) bgColor = "bg-yellow-300";
+                    else if (index === 1) bgColor = "bg-gray-300";
+                    else if (index === 2) bgColor = "bg-amber-500";
+
+                    return (
+                      <tr key={index} className={`${bgColor} text-center`}>
+                        <td className="px-3 py-1 font-arabic text-sm sm:text-base">
+                          {index + 1}
+                        </td>
+                        <td className="px-3 py-1 font-arabic text-sm sm:text-base">
+                          {rank.nick_name}
+                        </td>
+                        <td className="px-3 py-1 font-arabic text-sm sm:text-base font-bold">
+                          {rank.score}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+
+              {/* أزرار التحكم في الموبايل تحت الجدول */}
+              <div className="flex flex-wrap justify-center gap-4 mt-4 sm:hidden w-full px-2">
+                <Button
+                  variant="outlined"
+                  onClick={() => setShowExitDialog(true)}
+                  className="gap-2 text-brand border-brand w-full"
+                  sx={{
+                    backgroundColor: "#8C52FF",
+                    borderColor: "#8C52FF",
+                    color: "#fff",
+                    paddingY: "8px",
+                  }}
+                >
+                  <span className="font-arabic text-white text-sm">انسحاب</span>
+                </Button>
+                {selectedSubject.open_mode && (
+                  <Button
+                    variant="contained"
+                    onClick={() => set_solved_exam(!solved_exam)}
+                    className="w-full"
+                    sx={{
+                      backgroundColor: "#8C52FF",
+                      color: "white",
+                      paddingY: "8px",
+                    }}
+                  >
+                    <span className="font-arabic text-sm">
+                      {solved_exam ? "إخفاء الحل" : "حل الاختبار"}
+                    </span>
+                  </Button>
+                )}
+              </div>
+            </div>
+          ) : null}
+
+          {/* أزرار التحكم في الشاشات الكبيرة */}
+          <div className=" flex gap-2">
             <Button
               variant="outlined"
               onClick={() => setShowExitDialog(true)}
@@ -246,7 +326,7 @@ const ExamInterface = () => {
             >
               <span className="font-arabic text-sm">انسحاب</span>
             </Button>
-            {selectedSubject.open_mode ? (
+            {selectedSubject.open_mode && (
               <Button
                 variant="contained"
                 onClick={() => set_solved_exam(!solved_exam)}
@@ -256,31 +336,32 @@ const ExamInterface = () => {
                   {solved_exam ? "إخفاء الحل" : "حل الاختبار"}
                 </span>
               </Button>
-            ) : null}
+            )}
           </div>
-
           {/* اسم المادة */}
-          <Typography
-            variant="p"
-            className="font-bold font-arabic text-lg text-brand"
-          >
-            {selectedSubject?.name}
-          </Typography>
-
-          {/* المؤقت */}
-          <div className="flex items-center gap-2 text-brand">
-            <AccessTime />
-            <Typography variant="h6" className="font-mono font-bold text-base">
-              {formatTime(timeRemaining)}
+          <div className="flex items-center justify-center gap-4">
+            <Typography
+              variant="p"
+              className="font-bold font-arabic text-lg text-brand text-center sm:text-right"
+            >
+              {selectedSubject?.name}
             </Typography>
+
+            {/* المؤقت */}
+            <div className="flex items-center gap-2 text-brand">
+              <AccessTime />
+              <Typography
+                variant="h6"
+                className="font-mono font-bold text-base"
+              >
+                {formatTime(timeRemaining)}
+              </Typography>
+            </div>
           </div>
         </div>
       </Box>
 
-      <Container
-        maxWidth="lg"
-        className="py-6 flex items-center justify-center "
-      >
+      <Container className="py-6 flex items-center justify-center ">
         <Grid container spacing={3}>
           {/* Question Panel */}
           <Grid>
@@ -290,7 +371,7 @@ const ExamInterface = () => {
                 <Box className="mb-6">
                   <div
                     dir="rtl"
-                    className="flex justify-between items-center mb-2 text-brand font-arabic text-lg"
+                    className=" flex justify-between items-center mb-2 text-brand font-arabic text-lg"
                   >
                     <Typography
                       variant="body2"
@@ -367,7 +448,8 @@ const ExamInterface = () => {
                             value={(index + 1).toString()}
                             control={<Radio />}
                             disabled={
-                              answers[currentQuestionIndex] !== undefined
+                              answers[currentQuestionIndex] !== undefined ||
+                              solved_exam
                             }
                             label={
                               <Typography variant="body1" className="ml-2">
