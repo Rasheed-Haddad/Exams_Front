@@ -52,7 +52,10 @@ const SignIn = () => {
   };
 
   return (
-    <div className="h-screen bg-gradient-to-br from-brand to-indigo-100 flex items-start justify-center p-4">
+    <div
+      dir="rtl"
+      className="h-screen bg-gradient-to-br from-brand to-indigo-100 flex items-start justify-center p-4"
+    >
       <Container maxWidth="sm">
         <Paper elevation={10} className="p-8 mt-14 rounded-2xl shadow-lg">
           <Box textAlign="center" mb={6}>
@@ -76,7 +79,7 @@ const SignIn = () => {
               dir="rtl"
               fullWidth
               label={
-                <span className="font-arabic text-sm text-brand">
+                <span dir="rtl" className="font-arabic text-sm text-brand">
                   الاسم والكنية باللغة العربية
                 </span>
               }

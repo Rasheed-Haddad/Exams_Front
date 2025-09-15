@@ -40,7 +40,7 @@ function App() {
             <div className="flex items-center justify-center bg-brand pb-2">
               <Typography
                 variant="p"
-                className="text-sm text-white  font-arabic "
+                className="text-xs text-white  font-arabic "
               >
                 جميع حقوق المحتوى محفوظة © قدها وقدود – يمنع النسخ أو التصوير أو
                 النشر

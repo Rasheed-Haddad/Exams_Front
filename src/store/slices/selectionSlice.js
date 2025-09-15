@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-const mockUniversities = [
+export const mockUniversities = [
   { id: "1", name: "الجامعة الدولية", location: "درعا" },
   {
     id: "2",
@@ -46,7 +46,7 @@ const mockUniversities = [
   },
 ];
 
-const mockColleges = {
+export const mockColleges = {
   1: [
     { id: "1", name: "طب الأسنان", universityId: "1" },
     { id: "2", name: "الصيدلة", universityId: "1" },

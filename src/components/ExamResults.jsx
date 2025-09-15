@@ -1,8 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
-import Confetti from "react-confetti";
 import { set_previous_badge_like_the_new } from "../store/slices/authSlice";
 import {
   Container,
@@ -12,32 +10,18 @@ import {
   Button,
   Box,
   LinearProgress,
-  Chip,
-  Divider,
   Grid,
-  Dialog,
 } from "@mui/material";
-import {
-  CheckCircle,
-  Cancel,
-  AccessTime,
-  QuestionAnswer,
-  School,
-} from "@mui/icons-material";
+import { School } from "@mui/icons-material";
 import { resetExam } from "../store/slices/examSlice";
-import { resetSelections } from "../store/slices/selectionSlice";
 import { set_badge } from "../store/slices/authSlice";
 
 const ExamResults = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [badgeModalOpen, setBadgeModalOpen] = useState(false);
   const [badgeInfo, setBadgeInfo] = useState(null);
-  const dispatchedRef = useRef(false); // يمنع الطلب المتكرر
+  const dispatchedRef = useRef(false);
   const { results, isSubmitted, loading } = useSelector((state) => state.exam);
-  const { selectedSubject, selectedCollege, selectedUniversity } = useSelector(
-    (state) => state.selection
-  );
   const { user } = useSelector((state) => state.auth);
   useEffect(() => {
     if (!isSubmitted) {
@@ -45,12 +29,10 @@ const ExamResults = () => {
       return;
     }
 
-    // تأكد أن المستخدم موجود وأننا لم نرسل الطلب سابقاً
     if (!user?.ID || dispatchedRef.current) return;
 
     const pointsToAdd = Number(results?.correctAnswers || 0);
     if (pointsToAdd <= 0) {
-      // حتى إذا صفر، ممكن نطلب تحديث الشارة (أو نتجنب الطلب). هنا نتجنب الطلب.
       dispatchedRef.current = true;
       return;
     }
@@ -61,9 +43,7 @@ const ExamResults = () => {
           set_badge({ ID: user.ID, points: pointsToAdd })
         ).unwrap();
 
-        // payload => { points, badge }
         setBadgeInfo(payload);
-        setBadgeModalOpen(true);
         dispatchedRef.current = true;
       } catch (err) {
         console.error("Failed to set badge:", err);
@@ -155,34 +135,8 @@ const ExamResults = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <Box className="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
-        <div
-          dir="rtl"
-          className="flex justify-center items-center max-w-7xl mx-auto"
-        >
-          <div className="flex items-center gap-2 h-fit">
-            {results.passed ? (
-              <Chip
-                icon={<CheckCircle sx={{ fontSize: "1.5rem" }} />}
-                label=<span className="font-arabic text-xl ">نجاح</span>
-                color="success"
-                className=" text-4xl gap-4 w-32 h-fit"
-              />
-            ) : (
-              <Chip
-                icon={<Cancel sx={{ fontSize: "1.5rem" }} />}
-                label=<span className="font-arabic text-xl ">رسوب</span>
-                color="error"
-                className="text-4xl gap-4 w-32 h-fit"
-              />
-            )}
-          </div>
-        </div>
-      </Box>
-
-      <Container maxWidth="lg" className="py-8 flex flex-col">
+    <div className="h-full bg-gray-50">
+      <Container maxWidth="lg" className="py-8 flex flex-col mt-16">
         <Grid
           container
           spacing={4}
@@ -280,8 +234,8 @@ const ExamResults = () => {
                       color="textSecondary"
                       className="font-arabic text-lg text-black"
                     >
-                      ({results.correctAnswers}/{results.totalQuestions} صحيح){" "}
-                      {results.score}%
+                      الأجوبة الصحيحة : {results.correctAnswers} من{" "}
+                      {results.totalQuestions}
                     </Typography>
                   </div>
                 </Box>
@@ -296,134 +250,14 @@ const ExamResults = () => {
                     className="px-6"
                     sx={{ borderColor: "#8C52FF" }}
                   >
-                    <span className="font-arabic text-xl text-brand">
-                      الانتقال لمادة أخرى
-                    </span>
+                    <span className="font-arabic text-xl text-brand">عودة</span>
                   </Button>
                 </Box>
               </CardContent>
             </Card>
           </Grid>
-
-          {/* Stats Sidebar */}
-          <Grid>
-            <Card>
-              <CardContent className="p-6 flex flex-col">
-                <div className="space-y-4 flex flex-col gap-4 items-center justify-center">
-                  {/* Time Spent */}
-
-                  <div className="flex items-center gap-2">
-                    <Typography variant="h6" className="font-bold">
-                      <span className="font-arabic text-sm">دقيقة</span>{" "}
-                    </Typography>
-                    <Typography variant="p" className="text-sm">
-                      {results.timeSpent}{" "}
-                    </Typography>
-                    <Typography variant="body2" className="font-semibold">
-                      <span className="font-arabic text-sm">
-                        : مدة إتمام الامتحان
-                      </span>
-                    </Typography>
-                    <AccessTime className="text-green-500" />
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <Typography variant="p" className=" text-sm">
-                      {results.totalQuestions}
-                    </Typography>
-                    <Typography variant="body2" color="textSecondary">
-                      <span className="font-arabic text-sm">
-                        : الأسئلة التي تمت الإجابة عنها
-                      </span>{" "}
-                    </Typography>
-                    <QuestionAnswer className="text-brand" />
-                  </div>
-
-                  <Divider className="my-1" />
-
-                  {/* Exam Details */}
-                  <div className="space-y-2">
-                    <Typography variant="body2" color="textSecondary">
-                      <span className="font-arabic text-lg">
-                        <strong>المادة : </strong> {selectedSubject?.name}
-                      </span>
-                    </Typography>
-                    <Typography variant="body2" color="textSecondary">
-                      <span className="font-arabic text-lg">
-                        <strong>الكلية:</strong> {selectedCollege?.name}
-                      </span>
-                    </Typography>
-                    <Typography variant="body2" color="textSecondary">
-                      <span className="font-arabic text-lg">
-                        <strong>الجامعة:</strong> {selectedUniversity?.name}
-                      </span>
-                    </Typography>
-                    <Typography variant="body2" color="textSecondary">
-                      <span className="font-arabic text-lg">
-                        <strong>الطالب:</strong> {user?.name}
-                      </span>
-                    </Typography>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </Grid>
         </Grid>
       </Container>
-      {/* DIALOG */}
-
-      <Dialog
-        dir="rtl"
-        open={badgeModalOpen}
-        onClose={() => setBadgeModalOpen(false)}
-        PaperProps={{
-          style: {
-            backgroundColor: "transparent",
-            boxShadow: "none",
-            overflow: "hidden",
-            maxWidth: "unset",
-            maxHeight: "unset",
-            margin: 0,
-          },
-        }}
-      >
-        {/* تأثير قصاصات الورق الاحتفالية */}
-        {badgeModalOpen && <Confetti numberOfPieces={200} gravity={0.2} />}
-
-        <motion.div
-          initial={{ scale: 0.5, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.4, type: "spring" }}
-          className="bg-white rounded-2xl p-8 text-center shadow-2xl w-80 mx-auto "
-        >
-          <h2 className="text-4xl font-extrabold font-arabic mb-6 text-yellow-500 drop-shadow-lg">
-            تهانينا
-          </h2>
-
-          <p className="text-xl mb-6 font-arabic">
-            رتبتك :
-            <span className="block text-3xl font-arabic font-bold text-purple-600 mt-2">
-              {badgeInfo?.badge}
-            </span>
-          </p>
-
-          <p className="text-xl font-arabic text-gray-700 mb-4">
-            نقاطك :
-            <span className="block text-2xl font-arabic font-bold text-green-500 mt-6">
-              {badgeInfo?.points}
-            </span>
-          </p>
-
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => setBadgeModalOpen(false)}
-            className="bg-brand font-arabic hover:bg-purple-400 text-white px-4 py-3 rounded-full text-xl shadow-lg transition-colors mb-4"
-          >
-            إغلاق
-          </motion.button>
-        </motion.div>
-      </Dialog>
     </div>
   );
 };

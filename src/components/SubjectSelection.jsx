@@ -20,10 +20,7 @@ import {
   selectSubject,
 } from "../store/slices/selectionSlice";
 import { signOut } from "../store/slices/authSlice";
-//localStorage.removeItem("name");
-//localStorage.removeItem("ID");
-//localStorage.removeItem("password");
-//localStorage.removeItem("university");
+
 const SubjectSelection = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -119,7 +116,6 @@ const SubjectSelection = () => {
               <Button
                 variant="outlined"
                 onClick={handleSignOut}
-                className="text-brand  border-brand hover:bg-gray-50 transition"
                 sx={{ color: "#8C52FF", borderColor: "#8C52FF" }}
               >
                 <span className="font-arabic text-brand text-sm">

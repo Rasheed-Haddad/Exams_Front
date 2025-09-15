@@ -42,16 +42,16 @@ export default function Profile() {
       <Card className="w-full max-w-md shadow-xl border border-gray-200 rounded-2xl overflow-hidden">
         <CardHeader
           title={
-            <span className="text-brand font-arabic font-bold text-lg">
+            <span className="text-brand  font-arabic font-bold text-lg">
               {user.name}
             </span>
           }
           subheader={
-            <span className="text-gray-500 font-arabic">
+            <span className="text-gray-500  font-arabic">
               الرقم الجامعي : {user.ID}
             </span>
           }
-          className="bg-brand/10 px-6 py-4"
+          className="bg-brand/10 px-6 py-4 "
         />
         <CardContent className="space-y-6 px-6 py-4">
           {/* الاسم المستعار */}
@@ -191,7 +191,9 @@ export default function Profile() {
                     <span className="font-arabic text-brand">
                       {s.subject_id}
                     </span>
-                    <span className="font-arabic text-brand">{s.score}</span>
+                    <span className="font-arabic text-brand">
+                      {s.score.toFixed(2)}
+                    </span>
                   </li>
                 ))}
               </ul>
