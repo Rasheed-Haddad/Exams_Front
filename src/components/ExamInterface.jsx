@@ -233,7 +233,7 @@ const ExamInterface = () => {
   const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 justify-center">
       {/* Header */}
       <Box className="bg-white shadow-sm border-b border-gray-200 px-4 py-3">
         <div
@@ -243,7 +243,7 @@ const ExamInterface = () => {
           {/* جدول لائحة الصدارة */}
           {top_scores.length !== 0 ? (
             <div className="w-full sm:w-auto overflow-x-auto items-center justify-center flex flex-col">
-              <table className="min-w-[240px] sm:min-w-[320px] border-collapse rounded-lg overflow-hidden shadow">
+              <table className="min-w-[240px] w-full sm:min-w-[320px] border-collapse rounded-lg overflow-hidden shadow">
                 <thead>
                   <tr className="bg-brand text-white font-bold">
                     <th className="px-3 py-2 font-arabic text-sm sm:text-base text-center">
@@ -260,7 +260,7 @@ const ExamInterface = () => {
                 <tbody>
                   {top_scores.map((rank, index) => {
                     let bgColor = "";
-                    if (index === 0) bgColor = "bg-yellow-300";
+                    if (index === 0) bgColor = "bg-brand_2";
                     else if (index === 1) bgColor = "bg-gray-300";
                     else if (index === 2) bgColor = "bg-amber-500";
 
@@ -304,25 +304,17 @@ const ExamInterface = () => {
                 </span>
               </Button>
             )}
-          </div>
-          {/* اسم المادة */}
-          <div className="flex items-center justify-center gap-4">
-            <Typography
-              variant="p"
-              className="font-bold font-arabic text-lg text-brand text-center sm:text-right"
-            >
-              {selectedSubject?.name}
-            </Typography>
-
-            {/* المؤقت */}
-            <div className="flex items-center gap-2 text-brand">
-              <AccessTime />
-              <Typography
-                variant="h6"
-                className="font-mono font-bold text-base"
-              >
-                {formatTime(timeRemaining)}
-              </Typography>
+            <div className="flex items-center justify-center gap-4">
+              {/* المؤقت */}
+              <div className="flex items-center gap-2 text-brand">
+                <AccessTime />
+                <Typography
+                  variant="h6"
+                  className="font-mono font-bold text-base"
+                >
+                  {formatTime(timeRemaining)}
+                </Typography>
+              </div>
             </div>
           </div>
         </div>
@@ -338,17 +330,20 @@ const ExamInterface = () => {
                 <Box className="mb-6">
                   <div
                     dir="rtl"
-                    className=" flex justify-between items-center mb-2 text-brand font-arabic text-lg"
+                    className=" flex justify-between gap-3 items-center mb-2 text-brand font-arabic text-lg"
                   >
                     <Typography
                       variant="body2"
-                      sx={{ color: "#8C52FF", fontWeight: "bold" }}
+                      sx={{
+                        color: "#8C52FF",
+                        fontSize: "20px",
+                      }}
                     >
                       السؤال {currentQuestionIndex + 1} من {questions.length}
                     </Typography>
                     <Typography
                       variant="body2"
-                      sx={{ color: "#8C52FF", fontWeight: "bold" }}
+                      sx={{ color: "#8C52FF", fontSize: "20px" }}
                     >
                       تم إكمال {Math.round(progress)}%
                     </Typography>
@@ -374,9 +369,6 @@ const ExamInterface = () => {
                       variant="h6"
                       className="mb-6 text-gray-800 leading-relaxed"
                     >
-                      <span className="font-bold text-2xl text-brand">
-                        {currentQuestionIndex + 1}.
-                      </span>{" "}
                       <span className="font-arabic text-xl ">
                         {currentQuestion.question}
                       </span>

@@ -94,7 +94,7 @@ const SubjectSelection = () => {
               transform: translateY(0);
             }
             50% {
-              transform: translateY(-5px);
+              transform: translateY(-20px); /* نزول وطلوع أوضح */
             }
           }
         `}</style>
@@ -108,7 +108,7 @@ const SubjectSelection = () => {
       <Box className="bg-white shadow-sm border-b border-gray-200 px-4 sm:px-6 py-4">
         <div
           dir="rtl"
-          className="flex flex-col sm:flex-row sm:items-center sm:justify-center max-w-7xl mx-auto gap-4"
+          className="flex flex-col  sm:flex-row sm:items-center sm:justify-center max-w-7xl mx-auto gap-4"
         >
           <div className="flex items-center justify-center gap-2">
             {/* زر تسجيل الخروج */}

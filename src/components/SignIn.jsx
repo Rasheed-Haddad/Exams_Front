@@ -102,11 +102,21 @@ const SignIn = () => {
               name="nick_name"
               type="text"
               value={Student_Data.nick_name}
-              onChange={handleChange}
+              onChange={(e) => {
+                // السماح فقط بالأحرف العربية (من الألف إلى الياء) بدون مسافات
+                const value = e.target.value.replace(/[^ء-ي]/g, "");
+                // تحديد الطول الأقصى 10
+                if (value.length <= 10) {
+                  handleChange({
+                    target: { name: "nick_name", value },
+                  });
+                }
+              }}
               variant="outlined"
               required
               className="mb-4"
             />
+
             <TextField
               dir="rtl"
               fullWidth
