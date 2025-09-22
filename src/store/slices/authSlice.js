@@ -1,19 +1,18 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
-// TODO: Replace with actual API call
+import api from "../../api/api";
+
 export const signIn = createAsyncThunk(
   "auth/signIn",
   async (Student_Data, { rejectWithValue }) => {
     try {
-      const response = await axios.post(
-        "https://exams-back.onrender.com/signin",
-        {
-          ID: Student_Data.ID,
-          name: Student_Data.name,
-          nick_name: Student_Data.nick_name,
-          password: Student_Data.password,
-        }
-      );
+      // استخدام الـ api instance
+      const response = await api.post("/signin", {
+        ID: Student_Data.ID,
+        name: Student_Data.name,
+        nick_name: Student_Data.nick_name,
+        password: Student_Data.password,
+      });
+
       return {
         user: {
           ID: response.data.user.ID,
@@ -27,7 +26,7 @@ export const signIn = createAsyncThunk(
         token: response.data.token,
       };
     } catch (error) {
-      return rejectWithValue(error.response.data.error);
+      return rejectWithValue(error.response?.data?.error || "حدث خطأ");
     }
   }
 );
@@ -36,13 +35,12 @@ export const set_college = createAsyncThunk(
   "auth/set_college",
   async ({ ID, college_id }, { rejectWithValue }) => {
     try {
-      const response = await axios.post(
-        "https://exams-back.onrender.com/setcollege",
-        {
-          ID,
-          college_id,
-        }
-      );
+      // استخدام الـ api instance، التوكن يُضاف تلقائياً
+      const response = await api.post("/setcollege", {
+        ID,
+        college_id,
+      });
+
       return response.data; // مهم ترجع البيانات
     } catch (error) {
       return rejectWithValue(
@@ -54,11 +52,15 @@ export const set_college = createAsyncThunk(
 
 export const get_student_info = createAsyncThunk(
   "auth/info",
-  async ({ ID }) => {
-    const response = await axios.post("https://exams-back.onrender.com/info", {
-      ID,
-    });
-    return response.data;
+  async ({ ID }, { rejectWithValue }) => {
+    try {
+      const response = await api.post("/info", { ID });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.error || "حدث خطأ أثناء جلب معلومات الطالب"
+      );
+    }
   }
 );
 
@@ -66,13 +68,13 @@ export const set_badge = createAsyncThunk(
   "auth/setbadge",
   async ({ ID, points }, { rejectWithValue }) => {
     try {
-      const res = await axios.post("https://exams-back.onrender.com/setbadge", {
+      const res = await api.post("/setbadge", {
         ID,
         points,
       });
+
       return res.data; // نتوقع { points, badge, message }
     } catch (err) {
-      // أفضل تمرير رسالة مفيدة
       const message = err.response?.data?.message || err.message;
       return rejectWithValue(message);
     }
@@ -80,7 +82,7 @@ export const set_badge = createAsyncThunk(
 );
 
 export const get_rank = createAsyncThunk("auth/rank", async ({ ID }) => {
-  const response = await axios.post("https://exams-back.onrender.com/rank", {
+  const response = await api.post("/rank", {
     ID,
   });
   return response.data;

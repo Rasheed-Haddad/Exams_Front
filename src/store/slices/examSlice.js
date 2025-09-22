@@ -1,5 +1,4 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
 
 export const fetchExamQuestions = createAsyncThunk(
   "exam/fetchExamQuestions",
@@ -37,15 +36,15 @@ export const submitExam = createAsyncThunk(
       });
 
       const score = (correctAnswers / questions.length) * 100;
-      const response = await axios.post(
-        "https://exams-back.onrender.com/results",
-        {
-          student_ID: Student_State.user.ID,
-          subject_id: subject.ID,
-          score: score,
-          is_open_mode: subject.open_mode,
-        }
-      );
+
+      // استخدام الـ api instance لإرسال الطلب، التوكن يُضاف تلقائيًا
+      await api.post("/results", {
+        student_ID: Student_State.user.ID,
+        subject_id: subject.ID,
+        score: score,
+        is_open_mode: subject.open_mode,
+      });
+
       return {
         score: Math.round(score),
         correctAnswers,
@@ -63,13 +62,9 @@ export const get_top_scores = createAsyncThunk(
   "exam/gettopscores",
   async ({ ID }) => {
     try {
-      const response = await axios.post(
-        "https://exams-back.onrender.com/topscores",
-        { ID }
-      );
+      const response = await api.post("/topscores", { ID });
       return response.data;
     } catch (error) {
-      // ممكن تضيف معالجة خطأ هون
       throw error;
     }
   }

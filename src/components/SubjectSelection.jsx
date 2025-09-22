@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import {
@@ -8,10 +8,8 @@ import {
   CardContent,
   Grid,
   Button,
-  CircularProgress,
   Alert,
   Box,
-  TextField,
 } from "@mui/material";
 import { BookOutlined, PlayArrowOutlined } from "@mui/icons-material";
 import {

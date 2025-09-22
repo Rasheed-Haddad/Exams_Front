@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
+import api from "../../api/api";
 export const mockUniversities = [
   { id: "1", name: "الجامعة الدولية", location: "درعا" },
   {
@@ -356,30 +356,15 @@ export const fetchSubjects = createAsyncThunk(
   "selection/fetchSubjects",
   async ({ college_id, ID }, { rejectWithValue }) => {
     try {
-      const token = localStorage.getItem("token");
-      const response = await axios.post(
-        "https://exams-back.onrender.com/subjects",
-        { college_id: college_id, ID: ID },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      console.log("START SUBJECT");
+      const response = await api.post("/subjects", { college_id, ID });
+      console.log(response);
       return response.data;
     } catch (error) {
-      if (
-        error.response &&
-        (error.response.status === 401 || error.response.status === 403)
-      ) {
-        localStorage.removeItem("token");
-        window.location.href = "/";
-        return rejectWithValue(
-          "انتهت صلاحية الجلسة. الرجاء تسجيل الدخول مجددًا."
-        );
-      }
-
-      return rejectWithValue("تأكد من اتصالك بالإنترنت أو من صلاحية الدخول");
+      return rejectWithValue(
+        error.response?.data?.error ||
+          "تأكد من اتصالك بالإنترنت أو من صلاحية الدخول"
+      );
     }
   }
 );
