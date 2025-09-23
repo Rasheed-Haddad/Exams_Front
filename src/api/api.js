@@ -8,7 +8,15 @@ const api = axios.create({
 // إضافة interceptor لكل طلب لإضافة التوكن تلقائياً
 api.interceptors.request.use(
   (config) => {
-    const publicRoutes = ["/signin", "/info"];
+    const publicRoutes = [
+      "/signin",
+      "/info",
+      "rank",
+      "setbadge",
+      "setcollege",
+      "results",
+      "topscores",
+    ];
     if (!publicRoutes.includes(config.url)) {
       const token = localStorage.getItem("token");
       if (token) {
