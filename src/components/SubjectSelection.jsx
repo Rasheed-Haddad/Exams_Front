@@ -11,7 +11,7 @@ import {
   Alert,
   Box,
 } from "@mui/material";
-import { BookOutlined, PlayArrowOutlined } from "@mui/icons-material";
+import { BookOutlined, PlayArrowRounded } from "@mui/icons-material";
 import {
   fetchSubjects,
   selectCollege,
@@ -130,7 +130,7 @@ const SubjectSelection = () => {
                   sx={{ color: "#8C52FF", borderColor: "#8C52FF" }}
                 >
                   <span className="font-arabic text-brand text-sm">
-                    الملف الشخصي
+                    الإحصائيات
                   </span>
                 </Button>
 
@@ -216,16 +216,16 @@ const SubjectSelection = () => {
                           variant="contained"
                           fullWidth
                           disabled={!subject.visible}
-                          startIcon={<PlayArrowOutlined />}
+                          startIcon={
+                            <PlayArrowRounded style={{ fontSize: "25px" }} />
+                          }
                           className="bg-green-600 hover:bg-green-700"
                           onClick={(e) => {
                             e.stopPropagation();
                             handleSubjectSelect(subject);
                           }}
                           sx={{ backgroundColor: "#8C52FF" }}
-                        >
-                          <p className="font-arabic text-lg">البدء</p>
-                        </Button>
+                        ></Button>
                       </div>
                     </CardContent>
                   </Card>
@@ -238,8 +238,8 @@ const SubjectSelection = () => {
           <Box textAlign="center" className="py-12">
             <Typography variant="h6" color="textSecondary">
               <p className="font-arabic text-lg m-12">
-                حاليا لا تتوفر أي اختبارات لك, لأي استفسار تواصل مع الرقم
-                0937922870
+                للتسجيل على المواد المتاحة لكليتك, يرجى التواصل عبر واتسأب على
+                الرقم 0937922870
               </p>
             </Typography>
           </Box>

@@ -56,16 +56,17 @@ export default function Profile() {
         <CardContent className="space-y-6 px-6 py-4">
           {/* الاسم المستعار */}
 
-          <div>
-            <span className="font-arabic text-gray-700 block mb-1">
-              الاسم المستعار :
-            </span>
-            <span className="text-gray-600 font-arabic">
+          <div className="w-full text-center bg-gradient-to-br from-brand/10 to-brand/20 rounded-xl p-1 border border-brand/30 mt-4">
+            <p className="text-sm font-medium text-gray-600 mb-1 font-arabic">
+              الاسم المستعار
+            </p>
+            <div className="text-2xl font-bold text-brand font-arabic">
               {user.nick_name || "John Doe"}
-            </span>
+            </div>
           </div>
+
           {loading ? (
-            <div className="flex items-center justify-center">
+            <div className="flex items-center justify-center mt-32">
               <h1 className="glow-text">قدها وقدود</h1>
 
               <style jsx>{`
@@ -95,81 +96,45 @@ export default function Profile() {
                     transform: translateY(0);
                   }
                   50% {
-                    transform: translateY(-5px);
+                    transform: translateY(-20px); /* نزول وطلوع أوضح */
                   }
                 }
               `}</style>
             </div>
           ) : (
-            <div className="grid grid-rows-4 gap-4">
+            <div className="flex flex-col items-center text-center w-full">
               {/* المعدل */}
-              <div className="flex justify-between items-center">
-                <span className="font-semibold text-gray-700 font-arabic">
-                  المعدل :
-                </span>
-
-                <Chip
-                  variant="outlined"
-                  label={
-                    <span className="font-arabic text-brand">
-                      {GPA.toFixed(2)}
-                    </span>
-                  }
-                  className="border-brand"
-                  sx={{ borderWidth: 2 }}
-                />
+              <div className="mt-4 w-full bg-gradient-to-br from-brand/10 to-brand/20 rounded-xl p-2 border border-brand/30">
+                <p className="text-sm font-medium text-gray-600 mb-1">المعدل</p>
+                <div className="text-3xl font-extrabold text-brand">
+                  {GPA.toFixed(2)}
+                </div>
               </div>
 
               {/* النقاط */}
-              <div className="flex justify-between items-center">
-                <span className="font-semibold text-gray-700 font-arabic">
-                  النقاط :
-                </span>
-
-                <Chip
-                  variant="outlined"
-                  label={
-                    <span className="font-arabic text-brand">
-                      {user.points}
-                    </span>
-                  }
-                  className="border-brand"
-                  sx={{ borderWidth: 2 }}
-                />
+              <div className="mt-1 w-full bg-gradient-to-br from-brand/10 to-brand/20 rounded-xl p-2 border border-brand/30">
+                <p className="text-sm font-medium text-gray-600 mb-1">النقاط</p>
+                <div className="text-3xl font-extrabold text-brand">
+                  {user.points}
+                </div>
               </div>
 
               {/* الرتبة */}
-              <div className="flex justify-between items-center">
-                <span className="font-semibold text-gray-700 font-arabic">
-                  الرتبة :
-                </span>
-
-                <Chip
-                  variant="outlined"
-                  label={
-                    <span className="font-arabic text-brand">{user.badge}</span>
-                  }
-                  className="border-brand"
-                  sx={{ borderWidth: 2 }}
-                />
+              <div className="mt-1 w-full bg-gradient-to-br from-brand/10 to-brand/20 rounded-xl p-2 border border-brand/30">
+                <p className="text-sm font-medium text-gray-600 mb-1">الرتبة</p>
+                <div className="text-3xl font-extrabold text-brand">
+                  {user.badge}
+                </div>
               </div>
 
               {/* الترتيب على الموقع */}
-              <div className="flex justify-between items-center">
-                <span className="font-semibold text-gray-700 font-arabic">
-                  الترتيب على الموقع :
-                </span>
-
-                <Chip
-                  variant="outlined"
-                  label={
-                    <span className="font-arabic text-brand">
-                      # {user.rank}
-                    </span>
-                  }
-                  className="border-brand"
-                  sx={{ borderWidth: 2 }}
-                />
+              <div className="mt-1 w-full bg-gradient-to-br from-brand/10 to-brand/20 rounded-xl p-2 border border-brand/30">
+                <p className="text-sm font-medium text-gray-600 mb-1">
+                  الترتيب على الموقع
+                </p>
+                <div className="text-3xl font-extrabold text-brand">
+                  #{user.rank}
+                </div>
               </div>
             </div>
           )}
@@ -215,44 +180,44 @@ export default function Profile() {
           <div className="text-right font-arabic mt-4 bg-gradient-to-br from-purple-50 to-yellow-50 rounded-xl p-2 shadow-inner">
             <ul className="space-y-2 text-base">
               <li className="flex justify-between items-center bg-white rounded-lg px-3 py-1 shadow-sm">
-                <span>فارش</span>
-                <span className="text-gray-500"> أقل من 50</span>
-              </li>
-              <li className="flex justify-between items-center bg-white rounded-lg px-3 py-1 shadow-sm">
-                <span>مبتدئ</span>
-                <span className="text-blue-500"> 50+</span>
-              </li>
-              <li className="flex justify-between items-center bg-white rounded-lg px-3 py-1 shadow-sm">
-                <span>مثابر</span>
-                <span className="text-green-500"> 2000+</span>
-              </li>
-              <li className="flex justify-between items-center bg-white rounded-lg px-3 py-1 shadow-sm">
-                <span>مميز</span>
-                <span className="text-purple-500"> 3000+</span>
-              </li>
-              <li className="flex justify-between items-center bg-white rounded-lg px-3 py-1 shadow-sm">
-                <span>متفوق</span>
-                <span className="text-yellow-500"> 4000+</span>
-              </li>
-              <li className="flex justify-between items-center bg-white rounded-lg px-3 py-1 shadow-sm">
-                <span>نخبة</span>
-                <span className="text-indigo-500"> 5000+</span>
-              </li>
-              <li className="flex justify-between items-center bg-white rounded-lg px-3 py-1 shadow-sm">
-                <span>نيرد</span>
-                <span className="text-pink-500"> 6000+</span>
-              </li>
-              <li className="flex justify-between items-center bg-white rounded-lg px-3 py-1 shadow-sm">
-                <span>صائد العلامات</span>
-                <span className="text-red-500"> 7000+</span>
+                <span>قدها وقدود</span>
+                <span className="text-orange-600"> 10000+</span>
               </li>
               <li className="flex justify-between items-center bg-white rounded-lg px-3 py-1 shadow-sm">
                 <span>كبير الحكماء</span>
                 <span className="text-green-700"> 8000+</span>
               </li>
               <li className="flex justify-between items-center bg-white rounded-lg px-3 py-1 shadow-sm">
-                <span>قدها وقدود</span>
-                <span className="text-orange-600"> 10000+</span>
+                <span>صائد العلامات</span>
+                <span className="text-red-500"> 7000+</span>
+              </li>
+              <li className="flex justify-between items-center bg-white rounded-lg px-3 py-1 shadow-sm">
+                <span>نيرد</span>
+                <span className="text-pink-500"> 6000+</span>
+              </li>
+              <li className="flex justify-between items-center bg-white rounded-lg px-3 py-1 shadow-sm">
+                <span>نخبة</span>
+                <span className="text-indigo-500"> 5000+</span>
+              </li>
+              <li className="flex justify-between items-center bg-white rounded-lg px-3 py-1 shadow-sm">
+                <span>متفوق</span>
+                <span className="text-yellow-500"> 4000+</span>
+              </li>
+              <li className="flex justify-between items-center bg-white rounded-lg px-3 py-1 shadow-sm">
+                <span>مميز</span>
+                <span className="text-purple-500"> 3000+</span>
+              </li>
+              <li className="flex justify-between items-center bg-white rounded-lg px-3 py-1 shadow-sm">
+                <span>مثابر</span>
+                <span className="text-green-500"> 2000+</span>
+              </li>
+              <li className="flex justify-between items-center bg-white rounded-lg px-3 py-1 shadow-sm">
+                <span>مبتدئ</span>
+                <span className="text-blue-500"> 50+</span>
+              </li>
+              <li className="flex justify-between items-center bg-white rounded-lg px-3 py-1 shadow-sm">
+                <span>فارش</span>
+                <span className="text-gray-500"> أقل من 50</span>
               </li>
             </ul>
           </div>
