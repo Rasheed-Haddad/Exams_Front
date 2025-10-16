@@ -363,24 +363,23 @@ const ExamInterface = () => {
                 </Box>
 
                 {/* Question */}
-                <div dir="rtl">
-                  <div dir="rtl" className="pb-4 ">
+                <div
+                  dir="rtl"
+                  className="px-3 py-4 sm:px-6 flex flex-col items-center"
+                >
+                  {/* السؤال */}
+                  <div className="mb-6 text-center w-full">
                     <Typography
                       variant="h6"
-                      className="mb-6 text-gray-800 leading-relaxed"
+                      className="text-gray-800 leading-relaxed font-arabic text-lg sm:text-xl"
                     >
-                      <span className="font-arabic text-xl ">
-                        {currentQuestion.question}
-                      </span>
+                      {currentQuestion.question}
                     </Typography>
                   </div>
-                  {/* Options */}
-                  <FormControl component="fieldset" className="w-full">
-                    <RadioGroup
-                      value={answers[currentQuestionIndex] || ""}
-                      onChange={(e) => handleAnswerChange(e.target.value)}
-                      className="space-y-3"
-                    >
+
+                  {/* الخيارات */}
+                  <FormControl component="fieldset" className="w-full max-w-md">
+                    <div className="flex flex-col items-center w-full space-y-3">
                       {currentQuestion.options.map((option, index) => {
                         const isSelected =
                           answers[currentQuestionIndex] == index + 1;
@@ -401,29 +400,28 @@ const ExamInterface = () => {
                             bgColor = "bg-green-500 text-white";
                           }
                         }
+
                         return (
-                          <FormControlLabel
+                          <button
                             key={index}
-                            value={(index + 1).toString()}
-                            control={<Radio />}
-                            disabled={
-                              answers[currentQuestionIndex] !== undefined ||
-                              solved_exam
+                            onClick={() =>
+                              handleAnswerChange((index + 1).toString())
                             }
-                            label={
-                              <Typography variant="body1" className="ml-2">
-                                <span className="font-arabic text-lg ">
-                                  {option}
-                                </span>
-                              </Typography>
-                            }
-                            className={`m-0 p-3 rounded-lg ${bgColor}  transition-colors`}
-                          />
+                            disabled={hasAnswered || solved_exam}
+                            className={`w-full text-right font-arabic text-base sm:text-lg leading-snug 
+                        rounded-xl border border-gray-200 shadow-sm 
+                        px-4 py-3 transition-all duration-200 
+                        ${bgColor} 
+                        `}
+                          >
+                            {option}
+                          </button>
                         );
                       })}
-                    </RadioGroup>
+                    </div>
                   </FormControl>
                 </div>
+
                 <div
                   dir="rtl"
                   className={`${
