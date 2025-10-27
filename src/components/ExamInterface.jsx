@@ -401,7 +401,7 @@ const ExamInterface = () => {
                           }
                         }
 
-                        return (
+                        return option !== "." ? (
                           <button
                             key={index}
                             onClick={() =>
@@ -416,7 +416,7 @@ const ExamInterface = () => {
                           >
                             {option}
                           </button>
-                        );
+                        ) : null;
                       })}
                     </div>
                   </FormControl>
