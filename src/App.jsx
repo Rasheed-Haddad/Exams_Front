@@ -1,10 +1,11 @@
 import { Provider } from "react-redux";
 import {
-  BrowserRouter as Router,
+  HashRouter as Router,
   Routes,
   Route,
   Navigate,
 } from "react-router-dom";
+
 import CssBaseline from "@mui/material/CssBaseline";
 import { store } from "./store/store";
 import SignIn from "./components/SignIn";

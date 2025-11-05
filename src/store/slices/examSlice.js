@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-
+import api from "../../api/api";
 export const fetchExamQuestions = createAsyncThunk(
   "exam/fetchExamQuestions",
   async (subject, { rejectWithValue }) => {
@@ -22,7 +22,7 @@ export const fetchExamQuestions = createAsyncThunk(
 export const submitExam = createAsyncThunk(
   "exam/submitExam",
   async (
-    { subject, answers, timeSpent, Student_State },
+    { subject, answers, timeSpent, Student_State, is_open_mode },
     { rejectWithValue }
   ) => {
     try {
@@ -36,13 +36,12 @@ export const submitExam = createAsyncThunk(
       });
 
       const score = (correctAnswers / questions.length) * 100;
-
       // استخدام الـ api instance لإرسال الطلب، التوكن يُضاف تلقائيًا
       await api.post("/results", {
         student_ID: Student_State.user.ID,
         subject_id: subject.ID,
         score: score,
-        is_open_mode: subject.open_mode,
+        is_open_mode: is_open_mode,
       });
 
       return {
@@ -53,7 +52,7 @@ export const submitExam = createAsyncThunk(
         passed: score >= 60,
       };
     } catch (error) {
-      return rejectWithValue("تحقق من اتصالك بالانترنت");
+      return rejectWithValue(error);
     }
   }
 );

@@ -14,15 +14,17 @@ api.interceptors.request.use(
       "rank",
       "setbadge",
       "setcollege",
-      "results",
+      "/results",
       "topscores",
     ];
-    if (!publicRoutes.includes(config.url)) {
+
+    if (!publicRoutes.some((route) => config.url.includes(route))) {
       const token = localStorage.getItem("token");
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
     }
+
     return config;
   },
   (error) => Promise.reject(error)

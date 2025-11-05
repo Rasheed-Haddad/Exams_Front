@@ -356,9 +356,7 @@ export const fetchSubjects = createAsyncThunk(
   "selection/fetchSubjects",
   async ({ college_id, ID }, { rejectWithValue }) => {
     try {
-      console.log("START SUBJECT");
       const response = await api.post("/subjects", { college_id, ID });
-      console.log(response);
       return response.data;
     } catch (error) {
       return rejectWithValue(
