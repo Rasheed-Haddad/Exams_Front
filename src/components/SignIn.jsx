@@ -76,7 +76,7 @@ const SignIn = () => {
 
           <form onSubmit={handleSubmit} className="space-y-4" dir="rtl">
             <TextField
-              dir="rtl"
+              style={{ direction: "rtl" }}
               fullWidth
               label={
                 <span dir="rtl" className="font-arabic text-sm text-brand">

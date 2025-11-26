@@ -45,6 +45,7 @@ const ExamInterface = () => {
   const [solved_exam, set_solved_exam] = useState(false);
   const [showSubmitDialog, setShowSubmitDialog] = useState(false);
   const [showExitDialog, setShowExitDialog] = useState(false);
+  const [isTransitioning, setIsTransitioning] = useState(false);
   const { selectedSubject } = useSelector((state) => state.selection);
   const {
     questions,
@@ -123,13 +124,17 @@ const ExamInterface = () => {
         wrongSound.play();
       }
 
-      // الانتقال التلقائي
+      // الانتقال التلقائي مع حركة انتقالية
       setTimeout(() => {
-        if (currentQuestionIndex < questions.length - 1) {
-          dispatch(nextQuestion());
-        } else {
-          setShowSubmitDialog(true);
-        }
+        setIsTransitioning(true);
+        setTimeout(() => {
+          if (currentQuestionIndex < questions.length - 1) {
+            dispatch(nextQuestion());
+          } else {
+            setShowSubmitDialog(true);
+          }
+          setIsTransitioning(false);
+        }, 300);
       }, 1300);
     }
   };
@@ -168,19 +173,35 @@ const ExamInterface = () => {
   };
 
   const handle_next_question = () => {
-    dispatch(nextQuestion());
+    setIsTransitioning(true);
+    setTimeout(() => {
+      dispatch(nextQuestion());
+      setIsTransitioning(false);
+    }, 300);
   };
 
   const handle_next_10_questions = () => {
-    dispatch(next_10_Questions());
+    setIsTransitioning(true);
+    setTimeout(() => {
+      dispatch(next_10_Questions());
+      setIsTransitioning(false);
+    }, 300);
   };
 
   const handle_previous_question = () => {
-    dispatch(previousQuestion());
+    setIsTransitioning(true);
+    setTimeout(() => {
+      dispatch(previousQuestion());
+      setIsTransitioning(false);
+    }, 300);
   };
 
   const handle_previous_10_questions = () => {
-    dispatch(previous_10_Questions());
+    setIsTransitioning(true);
+    setTimeout(() => {
+      dispatch(previous_10_Questions());
+      setIsTransitioning(false);
+    }, 300);
   };
 
   if (loading) {
@@ -233,7 +254,7 @@ const ExamInterface = () => {
   const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
 
   return (
-    <div className="min-h-screen bg-gray-50 justify-center">
+    <div className="min-h-screen bg-gray-50 justify-center" style={{ paddingBottom: selectedSubject.open_mode ? '180px' : '0' }}>
       {/* Header */}
       <Box className="bg-white shadow-sm border-b border-gray-200 px-4 py-3">
         <div
@@ -300,7 +321,7 @@ const ExamInterface = () => {
                 sx={{ backgroundColor: "#8C52FF", color: "white" }}
               >
                 <span className="font-arabic text-sm">
-                  {solved_exam ? "إخفاء الحل" : "حل الاختبار"}
+                  {solved_exam ? "إخفاء الحل" : "حل "}
                 </span>
               </Button>
             )}
@@ -320,7 +341,7 @@ const ExamInterface = () => {
         </div>
       </Box>
 
-      <Container className="py-6 flex items-center justify-center ">
+      <Container className="py-6 flex flex-col items-center justify-center ">
         <Grid container spacing={3}>
           {/* Question Panel */}
           <Grid>
@@ -339,48 +360,35 @@ const ExamInterface = () => {
                         fontSize: "20px",
                       }}
                     >
-                      السؤال {currentQuestionIndex + 1} من {questions.length}
+                      {currentQuestionIndex + 1} من {questions.length}
                     </Typography>
-                    <Typography
-                      variant="body2"
-                      sx={{ color: "#8C52FF", fontSize: "20px" }}
-                    >
-                      تم إكمال {Math.round(progress)}%
-                    </Typography>
+                    <div>
+                      <span className="text-brand text-sm font-arabic max-w-48  opacity-80">
+                        {currentQuestion.lecture}
+                      </span>
+                    </div>
                   </div>
-
-                  <LinearProgress
-                    variant="determinate"
-                    value={progress}
-                    className="h-2 rounded-full"
-                    sx={{
-                      backgroundColor: "#e0d6fb", // لون الخلفية الهادئ
-                      "& .MuiLinearProgress-bar": {
-                        backgroundColor: "#8C52FF", // لون الشريط نفسه
-                      },
-                    }}
-                  />
                 </Box>
 
                 {/* Question */}
                 <div
                   dir="rtl"
-                  className="px-3 py-4 sm:px-6 flex flex-col items-center"
+                  className={`px-3 py-4 sm:px-6 flex flex-col items-center transition-all duration-300 ${
+                    isTransitioning ? 'opacity-0 translate-x-8' : 'opacity-100 translate-x-0'
+                  }`}
                 >
                   {/* السؤال */}
                   <div className="mb-6 text-center w-full">
-                    <Typography
-                      variant="h6"
-                      className="text-gray-800 leading-relaxed font-arabic text-lg sm:text-xl"
-                    >
+                    <span className="text-gray-800 font-arabic text-xl sm:text-xl">
                       {currentQuestion.question}
-                    </Typography>
+                    </span>
                   </div>
 
                   {/* الخيارات */}
                   <FormControl component="fieldset" className="w-full max-w-md">
                     <div className="flex flex-col items-center w-full space-y-3">
                       {currentQuestion.options.map((option, index) => {
+                        const water_marks = [Student_State.user.ID, Student_State.user.name, Student_State.user.nick_name];
                         const isSelected =
                           answers[currentQuestionIndex] == index + 1;
                         const isCorrect = currentQuestion.answer == index + 1;
@@ -402,85 +410,94 @@ const ExamInterface = () => {
                         }
 
                         return option !== "." ? (
-                          <button
-                            key={index}
-                            onClick={() =>
-                              handleAnswerChange((index + 1).toString())
-                            }
-                            disabled={hasAnswered || solved_exam}
-                            className={`w-full text-right font-arabic text-base sm:text-lg leading-snug 
-                        rounded-xl border border-gray-200 shadow-sm 
-                        px-4 py-3 transition-all duration-200 
-                        ${bgColor} 
-                        `}
-                          >
-                            {option}
-                          </button>
+                          <div key={index} className="w-full">
+                            <button
+                              onClick={() =>
+                                handleAnswerChange((index + 1).toString())
+                              }
+                              disabled={hasAnswered || solved_exam}
+                              className={`w-full text-right font-arabic text-base sm:text-lg leading-snug 
+                          rounded-xl border border-gray-200 shadow-sm 
+                          px-4 py-3 transition-all duration-200 
+                          ${bgColor}
+                          hover:scale-[1.02] active:scale-[0.98]
+                          `}
+                            >
+                              {option}
+                            </button>
+                            {/* العلامة المائية بين الخيارات */}
+                            {water_marks[index] && (
+                              <div className="text-center mt-1 mb-1">
+                                <span className="text-gray-300 text-[10px] font-arabic opacity-72">
+                                  {water_marks[index]}
+                                </span>
+                              </div>
+                            )}
+                          </div>
                         ) : null;
                       })}
                     </div>
                   </FormControl>
                 </div>
-
-                <div
-                  dir="rtl"
-                  className={`${
-                    selectedSubject.open_mode ? "" : "hidden"
-                  } flex flex-wrap flex-col sm:flex-row items-center justify-center mt-8 gap-4`}
-                >
-                  {/* عشر أسئلة للوراء */}
-                  <Button
-                    variant="contained"
-                    className="w-full sm:w-40 flex items-center justify-center order-1"
-                    onClick={handle_previous_10_questions}
-                    sx={{ backgroundColor: "#8C52FF", color: "white" }}
-                    disabled={currentQuestionIndex < 10}
-                  >
-                    <span className="font-arabic text-xl mr-2 flex items-center justify-center">
-                      عشر أسئلة للوراء
-                    </span>
-                  </Button>
-
-                  {/* السابق */}
-                  <Button
-                    variant="contained"
-                    className="w-full sm:w-32 order-2"
-                    onClick={handle_previous_question}
-                    sx={{ backgroundColor: "#8C52FF", color: "white" }}
-                    disabled={currentQuestionIndex === 0}
-                  >
-                    <span className="font-arabic text-xl">السابق</span>
-                  </Button>
-
-                  {/* التالي */}
-                  <Button
-                    variant="contained"
-                    className="w-full sm:w-32 order-3"
-                    onClick={handle_next_question}
-                    sx={{ backgroundColor: "#8C52FF", color: "white" }}
-                    disabled={currentQuestionIndex == questions.length - 1}
-                  >
-                    <span className="font-arabic text-xl mr-2">التالي</span>
-                  </Button>
-
-                  {/* عشر أسئلة للأمام */}
-                  <Button
-                    variant="contained"
-                    className="w-full sm:w-40 flex items-center justify-center order-4"
-                    onClick={handle_next_10_questions}
-                    sx={{ backgroundColor: "#8C52FF", color: "white" }}
-                    disabled={currentQuestionIndex > questions.length - 11}
-                  >
-                    <span className="font-arabic text-xl mr-2 flex items-center justify-center">
-                      عشر أسئلة للأمام
-                    </span>
-                  </Button>
-                </div>
               </CardContent>
             </Card>
           </Grid>
+         
         </Grid>
+         
       </Container>
+
+      {/* أزرار التنقل الثابتة في الأسفل */}
+      {selectedSubject.open_mode && (
+        <div 
+          className="fixed bottom-0 left-0 right-0 bg-white border-t-2 border-gray-200 shadow-lg px-4 py-4"
+          style={{ zIndex: 1000 }}
+        >
+          <div className="max-w-md mx-auto" dir="rtl">
+            {/* الصف الأول: السابق — التالي */}
+            <div className="flex justify-between gap-3 mb-3">
+              <button
+                className="bg-brand px-4 py-3 rounded-lg flex-1 disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90 transition-opacity"
+                onClick={handle_previous_question}
+                disabled={currentQuestionIndex === 0}
+              >
+                <span className="text-white text-center text-lg font-arabic">
+                  السابق
+                </span>
+              </button>
+
+              <button
+                className="bg-brand px-4 py-3 rounded-lg flex-1 disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90 transition-opacity"
+                onClick={handle_next_question}
+                disabled={currentQuestionIndex === questions.length - 1}
+              >
+                <span className="text-white text-center text-lg font-arabic">
+                  التالي
+                </span>
+              </button>
+            </div>
+
+            {/* الصف الثاني: عشر أسئلة للوراء — عشر أسئلة للأمام */}
+            <div className="flex justify-between gap-3">
+              <button
+                className="bg-brand px-4 py-3 rounded-lg flex-1 disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90 transition-opacity"
+                onClick={handle_previous_10_questions}
+                disabled={currentQuestionIndex < 10}
+              >
+                <span className="text-white text-center text-lg font-arabic">- 10</span>
+              </button>
+
+              <button
+                className="bg-brand px-4 py-3 rounded-lg flex-1 disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90 transition-opacity"
+                onClick={handle_next_10_questions}
+                disabled={currentQuestionIndex > questions.length - 11}
+              >
+                <span className="text-white text-center text-lg font-arabic">+ 10</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Submit Confirmation Dialog */}
       <div dir="rtl">

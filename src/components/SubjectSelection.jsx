@@ -133,11 +133,6 @@ const SubjectSelection = () => {
                     الإحصائيات
                   </span>
                 </Button>
-
-                {/* شارة NEW */}
-                <span className="absolute -top-2 h-5 items-center justify-center flex -left-2 -rotate-12 bg-green-500 text-white text-[8px] font-bold px-0.5 py-0.5 rounded-full shadow-md">
-                  NEW
-                </span>
               </div>
             </div>
           </div>
@@ -147,7 +142,7 @@ const SubjectSelection = () => {
             variant="p"
             className="font-bold text-xl font-arabic text-brand text-center"
           >
-            الاختبارات المتاحة لك
+            المواد المتاحة لك
           </Typography>
         </div>
       </Box>
@@ -172,7 +167,7 @@ const SubjectSelection = () => {
             subjects.map((subject) => {
               return (
                 <Grid key={subject.ID}>
-                  <Card className="h-80 w-64 hover:shadow-lg transition-shadow duration-300 cursor-pointer transform hover:scale-105">
+                  <Card className="h-60 w-80 hover:shadow-lg transition-shadow duration-300 cursor-pointer transform hover:scale-105">
                     <CardContent className="p-6 h-full flex flex-col">
                       <div className="flex items-start justify-between mb-4">
                         <BookOutlined className="text-brand text-3xl" />
@@ -189,23 +184,6 @@ const SubjectSelection = () => {
                         <div className="mt-2">
                           <span className="font-arabic text-sm text-gray-700">
                             {subject.info || ""}
-                          </span>
-                        </div>
-
-                        {/* عدد الأسئلة */}
-                        <div className="mt-2">
-                          <span className="font-arabic text-sm text-gray-700">
-                            عدد الأسئلة :{" "}
-                            {subject.questions.length || "غير محدد"}
-                          </span>
-                        </div>
-
-                        <div className="mt-1">
-                          <span className="font-arabic text-sm text-gray-700">
-                            المدة :{" "}
-                            {subject.time
-                              ? `${subject.time} دقيقة`
-                              : "غير محددة"}
                           </span>
                         </div>
                       </div>
