@@ -1,20 +1,30 @@
 import { useEffect, useState } from "react";
-import { Box, Typography, Container } from "@mui/material";
-import { Android } from "@mui/icons-material";
+import { Box, Typography, Button, Container } from "@mui/material";
+import { Android, Apple, Download, PhoneIphone } from "@mui/icons-material";
 
 const AndroidBlocker = ({ children }) => {
-  const [isAndroid, setIsAndroid] = useState(false);
+  const [deviceType, setDeviceType] = useState(null); // 'android', 'desktop', null
 
   useEffect(() => {
-    // كشف نظام Android
+    // كشف نظام التشغيل
     const userAgent = navigator.userAgent || navigator.vendor || window.opera;
     const isAndroidDevice = /android/i.test(userAgent);
+    const isDesktop =
+      !/android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(
+        userAgent.toLowerCase()
+      );
 
-    setIsAndroid(isAndroidDevice);
+    if (isAndroidDevice) {
+      setDeviceType("android");
+    } else if (isDesktop) {
+      setDeviceType("desktop");
+    }
   }, []);
 
-  // إذا كان Android، اعرض صفحة التحويل
-  if (isAndroid) {
+  // إذا كان Android أو Desktop، اعرض صفحة التحويل
+  if (deviceType === "android" || deviceType === "desktop") {
+    const isAndroid = deviceType === "android";
+
     return (
       <div className="min-h-screen bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center p-4">
         <Container maxWidth="sm">
@@ -22,21 +32,31 @@ const AndroidBlocker = ({ children }) => {
             className="bg-white rounded-2xl shadow-2xl p-8 text-center"
             sx={{ animation: "fadeIn 0.5s ease-in" }}
           >
-            {/* أيقونة Android */}
-            <Android
-              sx={{
-                fontSize: 100,
-                color: "#3DDC84",
-                mb: 3,
-              }}
-            />
+            {/* أيقونة حسب النظام */}
+            {isAndroid ? (
+              <Android
+                sx={{
+                  fontSize: 100,
+                  color: "#3DDC84",
+                  mb: 3,
+                }}
+              />
+            ) : (
+              <PhoneIphone
+                sx={{
+                  fontSize: 100,
+                  color: "#8C52FF",
+                  mb: 3,
+                }}
+              />
+            )}
 
             {/* العنوان */}
             <Typography
               variant="h4"
               className="font-arabic font-bold text-gray-800 mb-4"
             >
-              أهلا وسهلا 💜
+              {isAndroid ? "مرحباً بك! 👋" : "هذا التطبيق للهواتف فقط 📱"}
             </Typography>
 
             {/* الرسالة */}
@@ -44,10 +64,20 @@ const AndroidBlocker = ({ children }) => {
               variant="body1"
               className="font-arabic text-gray-600 mb-6 text-lg leading-relaxed"
             >
-              نلاحظ أنك تستخدم جهاز أندرويد.
-              <br />
-              يرجى التواصل معنا على واتسأب على الرقم 0937922870 لتحميل التطبيق
-              المخصص 💜
+              {isAndroid ? (
+                <>
+                  نلاحظ أنك تستخدم جهاز أندرويد.
+                  <br />
+                  لتجربة أفضل، يرجى التواصل معنا على واتسأب لتحميل التطبيق
+                  المخصص!
+                </>
+              ) : (
+                <>
+                  يرجى استخدام هاتفك الأيفون
+                  <br />
+                  للوصول إلى هذا الموقع.
+                </>
+              )}
             </Typography>
           </Box>
         </Container>
@@ -69,7 +99,7 @@ const AndroidBlocker = ({ children }) => {
     );
   }
 
-  // إذا لم يكن Android، اعرض المحتوى العادي
+  // إذا كان iPhone أو iPad، اعرض المحتوى العادي
   return <>{children}</>;
 };
 

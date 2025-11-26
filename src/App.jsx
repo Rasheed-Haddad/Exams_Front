@@ -6,8 +6,8 @@ import {
   Navigate,
 } from "react-router-dom";
 import { useEffect } from "react";
-import InstallPWA from "./components/InstallPWA";
 import AndroidBlocker from "./components/AndroidBlocker";
+import IOSInstallBanner from "./components/IOSInstallBanner";
 import CssBaseline from "@mui/material/CssBaseline";
 import { store } from "./store/store";
 import SignIn from "./components/SignIn";
@@ -36,8 +36,8 @@ function App() {
       <AndroidBlocker>
         <Router>
           <div className="App min-h-screen bg-gray-50">
-            {/* زر التثبيت - خارج Routes ليظهر في كل الصفحات */}
-            <InstallPWA />
+            {/* بانر التثبيت لأجهزة iPhone */}
+            <IOSInstallBanner />
 
             <Routes>
               <Route path="/signin" element={<SignIn />} />
