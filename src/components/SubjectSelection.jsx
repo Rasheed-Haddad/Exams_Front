@@ -1,50 +1,77 @@
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import {
-  Container,
-  Typography,
-  Card,
-  CardContent,
-  Grid,
-  Button,
-  Alert,
-  Box,
-} from "@mui/material";
-import { BookOutlined, PlayArrowRounded } from "@mui/icons-material";
+import { BookOpen, Play, BookOpenCheck, LogOut, BarChart3 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { EmptyState, ExamCard, SectionHeader } from "./Exams_Names";
+import LoadingGlow from "./LoadingGlow.jsx";
+import { signOut } from "../store/slices/authSlice";
+import { fetch_names_of_student_exams } from "../store/slices/exams_slice";
 import {
   fetchSubjects,
   selectCollege,
   selectSubject,
 } from "../store/slices/selectionSlice";
-import { signOut } from "../store/slices/authSlice";
 
 const SubjectSelection = () => {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const [refreshing, setRefreshing] = useState(false);
   const { subjects, selectedCollege, loading, error } = useSelector(
     (state) => state.selection
   );
-
+  const { names_of_exams } = useSelector((state) => state.exams);
   const { user } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    if (!selectedCollege) {
-      const saved_college = JSON.parse(localStorage.getItem("college"));
-      if (saved_college) {
-        dispatch(selectCollege(saved_college));
+    const loadSavedCollege = () => {
+      if (!selectedCollege) {
+        const saved_college_str = localStorage.getItem("college");
+        if (saved_college_str) {
+          const saved_college = JSON.parse(saved_college_str);
+          dispatch(selectCollege(saved_college));
+        }
       }
-    }
+    };
+
+    loadSavedCollege();
   }, [dispatch, selectedCollege]);
 
   useEffect(() => {
-    if (!selectedCollege || !user?.ID) return;
-    if (subjects.length == 0) {
+    if (!selectedCollege || !user?.ID) {
+      navigate("/signin", { replace: true });
+    }
+    if (subjects.length === 0) {
       dispatch(
-        fetchSubjects({ college_id: selectedCollege.id, ID: Number(user.ID) })
+        fetchSubjects({ college_id: selectedCollege?.id, ID: user?.ID })
       );
     }
-  }, [dispatch, selectedCollege, user]);
+  }, [dispatch, selectedCollege, user, navigate, subjects.length]);
+
+  useEffect(() => {
+    if (names_of_exams.length === 0) {
+      dispatch(
+        fetch_names_of_student_exams({
+          ID: user.ID,
+          college_id: selectedCollege.id,
+        })
+      );
+    }
+  }, [dispatch, user.ID, selectedCollege.id, names_of_exams.length]);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+
+    await dispatch(
+      fetchSubjects({ college_id: selectedCollege?.id, ID: user?.ID })
+    );
+    await dispatch(
+      fetch_names_of_student_exams({
+        college_id: selectedCollege?.id,
+        ID: user?.ID,
+      })
+    );
+    setRefreshing(false);
+  };
 
   const handleSubjectSelect = (subject) => {
     dispatch(selectSubject(subject));
@@ -52,10 +79,9 @@ const SubjectSelection = () => {
   };
 
   const handleSignOut = () => {
-    localStorage.removeItem("university");
-    localStorage.removeItem("college");
+    localStorage.clear();
     dispatch(signOut());
-    navigate("/signin");
+    navigate("/signin", { replace: true });
   };
 
   const handle_profile = () => {
@@ -63,168 +89,140 @@ const SubjectSelection = () => {
   };
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center mt-32">
-        <h1 className="glow-text">قدها وقدود</h1>
-
-        <style jsx>{`
-          .glow-text {
-            font-size: 3rem;
-            font-weight: 100;
-            color: #8c52ff;
-            animation: glow 1.5s ease-in-out infinite,
-              float 3s ease-in-out infinite;
-          }
-
-          @keyframes glow {
-            0%,
-            100% {
-              text-shadow: 0 0 5px #8c52ff, 0 0 10px #8c52ff, 0 0 20px #8c52ff;
-            }
-            50% {
-              text-shadow: 0 0 15px #8c52ff, 0 0 30px #8c52ff, 0 0 45px #8c52ff;
-            }
-          }
-
-          @keyframes float {
-            0%,
-            100% {
-              transform: translateY(0);
-            }
-            50% {
-              transform: translateY(-20px); /* نزول وطلوع أوضح */
-            }
-          }
-        `}</style>
-      </div>
-    );
+    return <LoadingGlow />;
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div
+      dir="rtl"
+      className="flex font-arabic flex-col min-h-screen bg-gray-50"
+    >
       {/* Header */}
-      <Box className="bg-white shadow-sm border-b border-gray-200 px-4 sm:px-6 py-4">
+      <div className="bg-white mb-12 shadow-md border-b border-gray-100 px-5 py-4 rounded-b-3xl">
         <div
           dir="rtl"
-          className="flex flex-col  sm:flex-row sm:items-center sm:justify-center max-w-7xl mx-auto gap-4"
+          className="flex flex-row items-center justify-center max-w-7xl mx-auto"
         >
-          <div className="flex items-center justify-center gap-2">
-            {/* زر تسجيل الخروج */}
-            <div className="flex justify-center sm:justify-start gap-2 font-arabic text-lg">
-              <Button
-                variant="outlined"
-                onClick={handleSignOut}
-                sx={{ color: "#8C52FF", borderColor: "#8C52FF" }}
-              >
-                <span className="font-arabic text-brand text-sm">
-                  تسجيل الخروج
-                </span>
-              </Button>
-            </div>
-            <div className="flex justify-center sm:justify-start gap-2 font-arabic text-lg">
-              <div className="relative inline-block">
-                <Button
-                  variant="outlined"
-                  onClick={handle_profile}
-                  className="text-brand border-brand hover:bg-gray-50 transition"
-                  sx={{ color: "#8C52FF", borderColor: "#8C52FF" }}
-                >
-                  <span className="font-arabic text-brand text-sm">
-                    الإحصائيات
-                  </span>
-                </Button>
-              </div>
-            </div>
+          {/* الأزرار اليمنى */}
+          <div className="flex flex-row items-center gap-3">
+            <button
+              onClick={handleSignOut}
+              className="bg-white px-4 py-2 rounded-xl active:opacity-70 transition-opacity flex items-center gap-2"
+            >
+              <LogOut size={16} className="text-red-600" />
+              <span className="text-red-600  text-sm">تسجيل الخروج</span>
+            </button>
+            <button
+              onClick={handle_profile}
+              className="bg-white px-4 py-2 rounded-xl active:opacity-70 transition-opacity flex items-center gap-2"
+            >
+              <BarChart3 size={16} className="text-brand" />
+              <span className="text-brand  text-sm">الإحصائيات</span>
+            </button>
           </div>
-
-          {/* عنوان الصفحة */}
-          <Typography
-            variant="p"
-            className="font-bold text-xl font-arabic text-brand text-center"
-          >
-            المواد المتاحة لك
-          </Typography>
         </div>
-      </Box>
+      </div>
 
-      <Container maxWidth="lg" className="py-8">
+      <div className="flex-1 overflow-auto pb-16 mb-12 px-4">
         {error && (
-          <Alert severity="error" className="mb-6">
-            <span className="font-arabic text-2xl">{error}</span>
-          </Alert>
+          <div className="mb-6 bg-red-100 border border-red-400 rounded p-4">
+            <p className="text-red-700 text-2xl">{error}</p>
+          </div>
         )}
 
-        <Grid
-          container
-          spacing={3}
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
+        <div className="flex flex-row flex-wrap items-center justify-center gap-3">
           {subjects.length > 0 &&
             subjects.map((subject) => {
               return (
-                <Grid key={subject.ID}>
-                  <Card className="h-60 w-80 hover:shadow-lg transition-shadow duration-300 cursor-pointer transform hover:scale-105">
-                    <CardContent className="p-6 h-full flex flex-col">
-                      <div className="flex items-start justify-between mb-4">
-                        <BookOutlined className="text-brand text-3xl" />
-                      </div>
+                <div
+                  dir="rtl"
+                  key={subject.ID}
+                  className="w-full flex items-center mb-4 px-3"
+                >
+                  <div
+                    dir="rtl"
+                    className="w-full bg-white rounded-xl shadow-md p-4"
+                  >
+                    {/* Header Icon */}
+                    <div className="flex flex-row justify-between items-center mb-3">
+                      <BookOpenCheck className="text-brand" size={24} />
+                    </div>
+                    {/* محتوى المادة */}
+                    <div dir="rtl" className="mb-4 text-right">
+                      <h3 className="text-lg text-gray-900  mb-1">
+                        {subject.name}
+                      </h3>
 
-                      <div className="flex-grow font-arabic overflow-hidden">
-                        <Typography
-                          variant="p"
-                          className="font-arabic text-lg text-gray-800 mb-2"
-                        >
-                          {subject.name}
-                        </Typography>
+                      {subject.info ? (
+                        <p className="text-sm text-gray-700 leading-5">
+                          {subject.info}
+                        </p>
+                      ) : null}
+                    </div>
 
-                        <div className="mt-2">
-                          <span className="font-arabic text-sm text-gray-700">
-                            {subject.info || ""}
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* الزر - دائمًا في الأسفل */}
-                      <div className="mt-6">
-                        <Button
-                          variant="contained"
-                          fullWidth
-                          disabled={!subject.visible}
-                          startIcon={
-                            <PlayArrowRounded style={{ fontSize: "25px" }} />
-                          }
-                          className="bg-green-600 hover:bg-green-700"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleSubjectSelect(subject);
-                          }}
-                          sx={{ backgroundColor: "#8C52FF" }}
-                        ></Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </Grid>
+                    {/* الزر */}
+                    <button
+                      className={`bg-brand rounded-lg py-3 flex flex-row items-center justify-center gap-2 w-full transition-opacity ${
+                        !subject.visible
+                          ? "opacity-40 cursor-not-allowed"
+                          : "hover:opacity-90"
+                      }`}
+                      disabled={!subject.visible}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleSubjectSelect(subject);
+                      }}
+                    >
+                      <Play size={20} className="text-white fill-white" />
+                    </button>
+                  </div>
+                </div>
               );
             })}
-        </Grid>
+        </div>
+
+        <div className="mt-12">
+          {/* عرض الامتحانات المتاحة */}
+          {names_of_exams && names_of_exams.length > 0 && (
+            <div className="mt-6">
+              {/* Section Header */}
+              <SectionHeader
+                title="المواد المتوفرة لكليتك"
+                count={names_of_exams.total}
+                icon={BookOpen}
+              />
+              {/* Exams List */}
+              {names_of_exams.map((exam, index) => (
+                <ExamCard
+                  key={index}
+                  exam={exam}
+                  onClick={() => {
+                    const phone = exam.admin.phone_number?.replace(
+                      /[^0-9]/g,
+                      ""
+                    );
+                    if (phone) {
+                      window.open(`https://wa.me/${phone}`, "_blank");
+                    }
+                  }}
+                />
+              ))}
+            </div>
+          )}
+          {/* Empty State */}
+          {names_of_exams &&
+            names_of_exams.exams &&
+            names_of_exams.exams.length === 0 && <EmptyState />}
+        </div>
 
         {subjects.length === 0 && !loading ? (
-          <Box textAlign="center" className="py-12">
-            <Typography variant="h6" color="textSecondary">
-              <p className="font-arabic text-lg m-12">
-                للتسجيل على المواد المتاحة لكليتك, يرجى التواصل عبر واتسأب على
-                الرقم 0937922870
-              </p>
-            </Typography>
-          </Box>
-        ) : (
-          ""
-        )}
-      </Container>
+          <div dir="rtl" className="text-center py-12">
+            <p className="text-lg text-gray-500 text-center m-12">
+              حاليا لا توجد أي مواد متاحة لك
+            </p>
+          </div>
+        ) : null}
+      </div>
     </div>
   );
 };

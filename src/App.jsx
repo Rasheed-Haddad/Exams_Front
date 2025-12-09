@@ -6,8 +6,6 @@ import {
   Navigate,
 } from "react-router-dom";
 import { useEffect } from "react";
-import AndroidBlocker from "./components/AndroidBlocker";
-import IOSInstallBanner from "./components/IOSInstallBanner";
 import CssBaseline from "@mui/material/CssBaseline";
 import { store } from "./store/store";
 import SignIn from "./components/SignIn";
@@ -18,31 +16,43 @@ import ExamInterface from "./components/ExamInterface";
 import ExamResults from "./components/ExamResults";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Profile from "./components/Profile";
+import Layout from "./components/Layout";
+import IOSInstallBanner from "./components/IOSInstallBanner";
 import "./App.css";
+import AndroidBlocker from "./components/AndroidBlocker";
 
 function App() {
-  // تسجيل Service Worker يدوياً (في حال لم يتم تسجيله تلقائياً)
   useEffect(() => {
     if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("/sw.js").catch(() => {
-        // Service Worker موجود من Vite Plugin
-      });
+      navigator.serviceWorker.register("/sw.js").catch(() => {});
     }
   }, []);
 
   return (
-    <Provider store={store}>
-      <CssBaseline />
-      <AndroidBlocker>
+    <AndroidBlocker>
+      <Provider store={store}>
+        <CssBaseline />
+
         <Router>
           <div className="App min-h-screen bg-gray-50">
-            {/* بانر التثبيت لأجهزة iPhone */}
             <IOSInstallBanner />
 
             <Routes>
+              {/* Public Routes */}
               <Route path="/signin" element={<SignIn />} />
               <Route path="/" element={<Navigate to="/signin" replace />} />
 
+              {/* Admin Routes - Nested inside Layout */}
+              <Route
+                path="/admin/*"
+                element={
+                  <ProtectedRoute requireAdmin>
+                    <Layout />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Student Protected Routes */}
               <Route
                 path="/university"
                 element={
@@ -97,13 +107,13 @@ function App() {
                 }
               />
 
-              {/* صفحة 404 */}
+              {/* 404 */}
               <Route path="*" element={<Navigate to="/signin" replace />} />
             </Routes>
           </div>
         </Router>
-      </AndroidBlocker>
-    </Provider>
+      </Provider>
+    </AndroidBlocker>
   );
 }
 

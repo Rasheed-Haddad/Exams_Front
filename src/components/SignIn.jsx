@@ -1,37 +1,39 @@
-import { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import {
-  Container,
-  Paper,
-  TextField,
-  Button,
-  Typography,
-  Box,
-  Alert,
-  CircularProgress,
-} from "@mui/material";
-import { signIn, clearError } from "../store/slices/authSlice";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { clearError, signIn, initializeAuth } from "../store/slices/authSlice";
 
 const SignIn = () => {
-  const [Student_Data, set_Student_Data] = useState({
+  const navigate = useNavigate();
+  const [userType, setUserType] = useState("student");
+  const [studentData, setStudentData] = useState({
     name: "",
     nick_name: "",
     ID: "",
     password: "",
   });
-  const token = localStorage.getItem("token") || null;
+  const [teacherData, setTeacherData] = useState({
+    name: "",
+    phone_number: "",
+    password: "",
+  });
   const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const { loading, error, isAuthenticated } = useSelector(
+  const { loading, error, isAuthenticated, user } = useSelector(
     (state) => state.auth
   );
 
+  // 🔥 تحميل البيانات من localStorage عند فتح الصفحة
   useEffect(() => {
-    if (isAuthenticated || token) {
-      navigate("/university");
+    dispatch(initializeAuth());
+  }, [dispatch]);
+
+  // 🔥 التوجيه بعد التحميل
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      const path = user.role === "teacher" ? "/admin" : "/university";
+      navigate(path, { replace: true });
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, user, navigate]);
 
   useEffect(() => {
     return () => {
@@ -39,153 +41,226 @@ const SignIn = () => {
     };
   }, [dispatch]);
 
-  const handleChange = (e) => {
-    set_Student_Data({
-      ...Student_Data,
-      [e.target.name]: e.target.value,
+  const handleStudentChange = (name, value) => {
+    setStudentData({
+      ...studentData,
+      [name]: value,
+    });
+  };
+
+  const handleTeacherChange = (name, value) => {
+    setTeacherData({
+      ...teacherData,
+      [name]: value,
     });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(signIn(Student_Data));
+    if (userType === "student") {
+      dispatch(signIn({ ...studentData, user_type: "student" }));
+    } else {
+      dispatch(signIn({ ...teacherData, user_type: "teacher" }));
+    }
+  };
+
+  const switchUserType = (type) => {
+    setUserType(type);
+    dispatch(clearError());
   };
 
   return (
     <div
+      className="min-h-screen font-arabic flex flex-col bg-[#8c52ff]"
       dir="rtl"
-      className="h-screen bg-gradient-to-br from-brand to-indigo-100 flex items-start justify-center p-4"
     >
-      <Container maxWidth="sm">
-        <Paper elevation={10} className="p-8 mt-14 rounded-2xl shadow-lg">
-          <Box textAlign="center" mb={6}>
-            <Typography
-              variant="p"
-              component="h1"
-              className="font-bold text-3xl text-brand mb-4 font-arabic"
-            >
-              سجل الدخول
-            </Typography>
-          </Box>
-
-          {error && (
-            <Alert severity="error" className="mb-4">
-              <span className="font-arabic text-lg">{error}</span>
-            </Alert>
-          )}
-
-          <form onSubmit={handleSubmit} className="space-y-4" dir="rtl">
-            <TextField
-              style={{ direction: "rtl" }}
-              fullWidth
-              label={
-                <span dir="rtl" className="font-arabic text-sm text-brand">
-                  الاسم والكنية باللغة العربية
+      <div className="flex-1 overflow-auto">
+        <div className="min-h-full flex justify-start items-center p-4 bg-[#8c52ff]/10">
+          <div className="w-full max-w-md mt-12 bg-white rounded-2xl p-8 shadow-lg mx-auto">
+            {/* اختيار نوع المستخدم */}
+            <div className="flex flex-row mb-6 bg-gray-100 rounded-lg p-1">
+              <button
+                className={`flex-1 py-3 rounded-lg transition-colors ${
+                  userType === "student" ? "bg-[#8c52ff]" : "bg-transparent"
+                }`}
+                onClick={() => switchUserType("student")}
+                type="button"
+              >
+                <span
+                  className={`text-center text-base ${
+                    userType === "student" ? "text-white" : "text-gray-600"
+                  }`}
+                >
+                  طالب
                 </span>
-              }
-              name="name"
-              type="text"
-              value={Student_Data.name}
-              onChange={handleChange}
-              variant="outlined"
-              required
-              className="mb-4"
-            />
-            <TextField
-              dir="rtl"
-              fullWidth
-              label={
-                <span className="font-arabic text-sm text-brand">
-                  الاسم المستعار (يظهر للآخرين)
-                </span>
-              }
-              name="nick_name"
-              type="text"
-              value={Student_Data.nick_name}
-              onChange={(e) => {
-                // السماح فقط بالأحرف العربية (من الألف إلى الياء) بدون مسافات
-                const value = e.target.value.replace(/[^ء-ي]/g, "");
-                // تحديد الطول الأقصى 10
-                if (value.length <= 10) {
-                  handleChange({
-                    target: { name: "nick_name", value },
-                  });
-                }
-              }}
-              variant="outlined"
-              required
-              className="mb-4"
-            />
+              </button>
 
-            <TextField
-              dir="rtl"
-              fullWidth
-              label={
-                <span className="font-arabic text-sm text-brand">
-                  الرقم الجامعي
+              <button
+                className={`flex-1 py-3 rounded-lg transition-colors ${
+                  userType === "teacher" ? "bg-[#8c52ff]" : "bg-transparent"
+                }`}
+                onClick={() => switchUserType("teacher")}
+                type="button"
+              >
+                <span
+                  className={`text-center text-base font-semibold ${
+                    userType === "teacher" ? "text-white" : "text-gray-600"
+                  }`}
+                >
+                  مدرس
                 </span>
-              }
-              name="ID"
-              type="text"
-              value={Student_Data.ID}
-              onChange={(e) => {
-                const value = e.target.value;
-                if (/^\d*$/.test(value)) {
-                  handleChange(e);
-                }
-              }}
-              variant="outlined"
-              required
-              className="mb-4"
-              inputProps={{
-                inputMode: "numeric",
-                pattern: "[0-9]*",
-              }}
-            />
+              </button>
+            </div>
 
-            <TextField
-              dir="rtl"
-              fullWidth
-              label={
-                <span className="font-arabic text-sm text-brand">
-                  كلمة المرور
-                </span>
-              }
-              name="password"
-              type="text"
-              value={Student_Data.password}
-              onChange={handleChange}
-              variant="outlined"
-              required
-              className="mb-6"
-            />
+            {error && (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
+                <p className="text-red-600 text-lg">{error}</p>
+              </div>
+            )}
 
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              size="large"
+            {/* نموذج الطالب */}
+            {userType === "student" && (
+              <div className="space-y-4">
+                <div className="mb-4">
+                  <label className="block text-sm text-[#8c52ff] mb-2">
+                    الاسم والكنية باللغة العربية
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full border border-gray-300 rounded-lg p-4 text-right"
+                    value={studentData.name}
+                    onChange={(e) =>
+                      handleStudentChange("name", e.target.value)
+                    }
+                  />
+                </div>
+
+                <div className="mb-4">
+                  <label className="block text-sm text-[#8c52ff] mb-2">
+                    الاسم المستعار (يظهر للآخرين)
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full border border-gray-300 rounded-lg p-4 text-right"
+                    value={studentData.nick_name}
+                    onChange={(e) => {
+                      const filteredValue = e.target.value.replace(
+                        /[^ء-ي]/g,
+                        ""
+                      );
+                      if (filteredValue.length <= 10) {
+                        handleStudentChange("nick_name", filteredValue);
+                      }
+                    }}
+                    maxLength={10}
+                  />
+                </div>
+
+                <div className="mb-4">
+                  <label className="block text-sm text-[#8c52ff] mb-2">
+                    الرقم الجامعي
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full border border-gray-300 rounded-lg p-4 text-right"
+                    value={studentData.ID}
+                    onChange={(e) => {
+                      if (/^\d*$/.test(e.target.value)) {
+                        handleStudentChange("ID", e.target.value);
+                      }
+                    }}
+                    inputMode="numeric"
+                  />
+                </div>
+
+                <div className="mb-6">
+                  <label className="block text-sm text-[#8c52ff] mb-2">
+                    كلمة المرور
+                  </label>
+                  <input
+                    type="password"
+                    className="w-full border mb-6 border-gray-300 rounded-lg p-4 text-right"
+                    value={studentData.password}
+                    onChange={(e) =>
+                      handleStudentChange("password", e.target.value)
+                    }
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* نموذج المدرس */}
+            {userType === "teacher" && (
+              <div className="space-y-4">
+                <div className="mb-4">
+                  <label className="block text-sm text-[#8c52ff] mb-2">
+                    الاسم والكنية باللغة العربية
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full border border-gray-300 rounded-lg p-4 text-right"
+                    value={teacherData.name}
+                    onChange={(e) =>
+                      handleTeacherChange("name", e.target.value)
+                    }
+                  />
+                </div>
+
+                <div className="mb-4">
+                  <label className="block text-sm text-[#8c52ff] mb-2">
+                    رقم الهاتف
+                  </label>
+                  <input
+                    type="tel"
+                    className="w-full border border-gray-300 rounded-lg p-4 text-right"
+                    value={teacherData.phone_number}
+                    onChange={(e) => {
+                      if (/^\d*$/.test(e.target.value)) {
+                        handleTeacherChange("phone_number", e.target.value);
+                      }
+                    }}
+                    inputMode="tel"
+                  />
+                </div>
+
+                <div className="mb-6">
+                  <label className="block text-sm text-brand mb-2">
+                    كلمة المرور
+                  </label>
+                  <input
+                    type="password"
+                    className="w-full border mb-6 border-gray-300 rounded-lg p-4 text-right"
+                    value={teacherData.password}
+                    onChange={(e) =>
+                      handleTeacherChange("password", e.target.value)
+                    }
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* زر التأكيد */}
+            <button
+              className={`w-full h-12 rounded-lg flex items-center justify-center transition-colors ${
+                loading ? "bg-[#8c52ff]/70" : "bg-[#8c52ff]"
+              }`}
+              onClick={handleSubmit}
               disabled={loading}
-              className="h-12 text-lg font-arabic text-white"
-              sx={{
-                backgroundColor: "#8C52FF",
-                "&:hover": {
-                  backgroundColor: "#7a45e6", // ظل غامق بسيط للهوفر
-                },
-              }}
+              type="button"
             >
               {loading ? (
-                <CircularProgress size={24} color="#8C52FF" />
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
               ) : (
-                <span className="font-arabic text-lg text-white">
+                <span className="text-white text-lg font-semibold">
                   تسجيل الدخول
                 </span>
               )}
-            </Button>
-          </form>
-        </Paper>
-      </Container>
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
+
 export default SignIn;

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { Box, Typography, Button, Container } from "@mui/material";
-import { Android, Apple, Download, PhoneIphone } from "@mui/icons-material";
+import { Box, Typography, Container } from "@mui/material";
+import { Android, PhoneIphone } from "@mui/icons-material";
 
 const AndroidBlocker = ({ children }) => {
   const [deviceType, setDeviceType] = useState(null); // 'android', 'desktop', null
@@ -26,7 +26,7 @@ const AndroidBlocker = ({ children }) => {
     const isAndroid = deviceType === "android";
 
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center p-4">
+      <div className="min-h-screen font-arabic bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center p-4">
         <Container maxWidth="sm">
           <Box
             className="bg-white rounded-2xl shadow-2xl p-8 text-center"
@@ -56,7 +56,7 @@ const AndroidBlocker = ({ children }) => {
               variant="h4"
               className="font-arabic font-bold text-gray-800 mb-4"
             >
-              {isAndroid ? "مرحباً بك! 👋" : "هذا التطبيق للهواتف فقط 📱"}
+              {isAndroid ? "مرحباً  " : "هذا التطبيق للهواتف فقط "}
             </Typography>
 
             {/* الرسالة */}
@@ -66,16 +66,15 @@ const AndroidBlocker = ({ children }) => {
             >
               {isAndroid ? (
                 <>
-                  نلاحظ أنك تستخدم جهاز أندرويد.
+                  نلاحظ أنك تستخدم جهاز أندرويد
                   <br />
-                  لتجربة أفضل، يرجى التواصل معنا على واتسأب لتحميل التطبيق
-                  المخصص!
+                  يرجى التواصل معنا على واتسأب لتحميل التطبيق المخصص
                 </>
               ) : (
                 <>
                   يرجى استخدام هاتفك الأيفون
                   <br />
-                  للوصول إلى هذا الموقع.
+                  للوصول إلى هذا الموقع
                 </>
               )}
             </Typography>

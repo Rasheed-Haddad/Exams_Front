@@ -13,6 +13,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useEffect } from "react";
 import { get_rank } from "../store/slices/authSlice";
 import { get_student_info } from "../store/slices/authSlice";
+import LoadingGlow from "./LoadingGlow";
 
 export default function Profile() {
   const dispatch = useDispatch();
@@ -66,41 +67,7 @@ export default function Profile() {
           </div>
 
           {loading ? (
-            <div className="flex items-center justify-center mt-32">
-              <h1 className="glow-text">قدها وقدود</h1>
-
-              <style jsx>{`
-                .glow-text {
-                  font-size: 3rem;
-                  font-weight: 100;
-                  color: #8c52ff;
-                  animation: glow 1.5s ease-in-out infinite,
-                    float 3s ease-in-out infinite;
-                }
-
-                @keyframes glow {
-                  0%,
-                  100% {
-                    text-shadow: 0 0 5px #8c52ff, 0 0 10px #8c52ff,
-                      0 0 20px #8c52ff;
-                  }
-                  50% {
-                    text-shadow: 0 0 15px #8c52ff, 0 0 30px #8c52ff,
-                      0 0 45px #8c52ff;
-                  }
-                }
-
-                @keyframes float {
-                  0%,
-                  100% {
-                    transform: translateY(0);
-                  }
-                  50% {
-                    transform: translateY(-20px); /* نزول وطلوع أوضح */
-                  }
-                }
-              `}</style>
-            </div>
+            <LoadingGlow />
           ) : (
             <div className="flex flex-col items-center text-center w-full">
               {/* المعدل */}
@@ -140,32 +107,6 @@ export default function Profile() {
           )}
 
           <Divider />
-
-          {/* الدرجات */}
-          {/*<div>
-            <span className="font-arabic text-xl text-gray-700 block mb-3">
-              الدرجات :
-            </span>
-            {user.scores && user.scores.length > 0 ? (
-              <ul className="space-y-3">
-                {user.scores.map((s, index) => (
-                  <li
-                    key={index}
-                    className="p-3 border rounded-lg bg-brand/5 hover:bg-brand/10 transition-colors duration-200 flex justify-between items-center"
-                  >
-                    <span className="font-arabic text-brand">
-                      {s.subject_id}
-                    </span>
-                    <span className="font-arabic text-brand">
-                      {s.score.toFixed(2)}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <span className="font-arabic text-brand">لا توجد درجات بعد</span>
-            )}
-          </div>*/}
 
           {/* زر العودة */}
           <Button

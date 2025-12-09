@@ -66,7 +66,7 @@
 
 .question-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
 }
 
 .question-nav-button {
@@ -111,11 +111,11 @@
     font-size: calc(8px + 2vmin);
     padding: 15px;
   }
-  
+
   .exam-container {
     padding: 10px;
   }
-  
+
   .question-nav-grid {
     grid-template-columns: repeat(4, 1fr);
     gap: 8px;
@@ -188,7 +188,7 @@
 
 .selection-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
 }
 
 /* Utility classes */
@@ -200,7 +200,7 @@
 }
 
 .shadow-custom {
-  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
 .border-gradient {
