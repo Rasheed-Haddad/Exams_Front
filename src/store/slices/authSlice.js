@@ -219,6 +219,26 @@ export const initializeAuth = createAsyncThunk("auth/initialize", async () => {
   return { userRole: null };
 });
 
+export const send_time_spent_on_website = createAsyncThunk(
+  "user/time",
+  async ({ ID, start, end }, { rejectWithValue }) => {
+    try {
+      const response = await api.post("/timespent", {
+        ID: ID, // ✅ إضافة ID
+        start: start,
+        end: end,
+      });
+      return response.data; // ✅ إرجاع البيانات
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.error ||
+          error.response?.data?.message ||
+          "حدث خطأ"
+      );
+    }
+  }
+);
+
 const initialState = {
   isAuthenticated: false,
   user: null,

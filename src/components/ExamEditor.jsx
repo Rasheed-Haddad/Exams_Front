@@ -538,7 +538,7 @@ const ExamEditor = () => {
           className="bg-brand w-full py-3 rounded-lg mb-4"
           disabled={loading}
         >
-          <span className="text-white text-center text-base font-semibold">
+          <span className="text-white text-center text-base ">
             {isEditing ? "حفظ التغييرات" : "إنشاء الاختبار"}
           </span>
         </button>
@@ -562,7 +562,7 @@ const ExamEditor = () => {
             className="p-4 border border-gray-300 rounded-xl bg-white mx-3 mb-4 shadow-sm"
           >
             <div className="flex flex-row items-center justify-between mb-3">
-              <span className="text-xl font-bold text-brand">
+              <span className="text-xl font-arabic text-brand">
                 #{qIndex + 1}
               </span>
               <button
@@ -679,7 +679,7 @@ const ExamEditor = () => {
                   className="flex flex-row items-center gap-2"
                 >
                   <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-                    <span className="text-sm font-bold text-gray-600">
+                    <span className="text-sm font-arabic text-gray-600">
                       {optIndex + 1}
                     </span>
                   </div>
@@ -708,7 +708,7 @@ const ExamEditor = () => {
                     }`}
                   >
                     <span
-                      className={`text-center text-base font-bold ${
+                      className={`text-center text-base font-arabic ${
                         question.answer == optNum
                           ? "text-white"
                           : "text-gray-600"

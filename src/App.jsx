@@ -20,6 +20,7 @@ import Layout from "./components/Layout";
 import IOSInstallBanner from "./components/IOSInstallBanner";
 import "./App.css";
 import AndroidBlocker from "./components/AndroidBlocker";
+import LectureSelection from "./components/Lecture";
 
 function App() {
   useEffect(() => {
@@ -79,6 +80,7 @@ function App() {
                   </ProtectedRoute>
                 }
               />
+              <Route path="Lecture" element={<LectureSelection />} />
 
               <Route
                 path="/exam"

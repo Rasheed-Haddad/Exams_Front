@@ -255,7 +255,7 @@ const Admin = () => {
       </span>
 
       {/* القيمة */}
-      <span className="text-gray-900 text-2xl font-bold font-arabic mb-1 block">
+      <span className="text-gray-900 text-2xl font-arabic mb-1 block">
         {value}
       </span>
 
@@ -271,9 +271,7 @@ const Admin = () => {
   const SectionHeader = ({ title, icon: Icon }) => (
     <div className="flex-row items-center mb-4">
       {Icon && <Icon size={20} color="#8c52ff" style={{ marginLeft: 8 }} />}
-      <span className="text-gray-900 text-xl font-bold font-arabic">
-        {title}
-      </span>
+      <span className="text-gray-900 text-xl font-arabic">{title}</span>
     </div>
   );
 
@@ -286,7 +284,7 @@ const Admin = () => {
             <span className="text-white/80 text-sm font-arabic mb-1 block">
               مرحباً بك
             </span>
-            <span className="text-white text-3xl font-bold font-arabic block">
+            <span className="text-white text-3xl font-arabic block">
               {user.name}
             </span>
           </div>
@@ -408,7 +406,7 @@ const Admin = () => {
                   <span className="text-gray-600 text-sm font-arabic block">
                     الإيرادات الكلية
                   </span>
-                  <span className="text-gray-900 text-2xl font-bold font-arabic block">
+                  <span className="text-gray-900 text-2xl font-arabic block">
                     {analytics.revenue.total.toLocaleString("en")} ل.س
                   </span>
                 </div>
@@ -425,7 +423,7 @@ const Admin = () => {
                     </span>
                   </div>
 
-                  <span className="text-gray-900 font-bold font-arabic">
+                  <span className="text-gray-900 font-arabic">
                     {analytics.revenue.current.toLocaleString("en")} ل.س
                   </span>
                 </div>
@@ -480,7 +478,7 @@ const Admin = () => {
                 </div>
 
                 <div className="flex-1">
-                  <span className="text-white text-xl font-bold font-arabic block">
+                  <span className="text-white text-xl font-arabic block">
                     {analytics.students.mostActiveStudent.name}
                   </span>
                   <span className="text-white/90 text-sm font-arabic block">
@@ -495,21 +493,21 @@ const Admin = () => {
                   <span className="text-white text-sm font-arabic">
                     الامتحانات المسجلة
                   </span>
-                  <span className="text-white text-xl font-bold font-arabic">
+                  <span className="text-white text-xl font-arabic">
                     {analytics.students.mostActiveStudent.enrolledExams}
                   </span>
                 </div>
 
                 <div className="flex flex-row justify-between items-center mb-2">
                   <span className="text-white text-sm font-arabic">النقاط</span>
-                  <span className="text-white text-xl font-bold font-arabic">
+                  <span className="text-white text-xl font-arabic">
                     {analytics.students.mostActiveStudent.points}
                   </span>
                 </div>
 
                 <div className="flex flex-row justify-between items-center">
                   <span className="text-white text-sm font-arabic">الشارة</span>
-                  <span className="text-white text-lg font-bold font-arabic">
+                  <span className="text-white text-lg font-arabic">
                     {analytics.students.mostActiveStudent.badge}
                   </span>
                 </div>
@@ -546,14 +544,12 @@ const Admin = () => {
                           : "bg-gray-200"
                       }`}
                     >
-                      <span className="text-white font-bold font-arabic">
-                        {idx + 1}
-                      </span>
+                      <span className="text-white font-arabic">{idx + 1}</span>
                     </div>
 
                     {/* اسم الطالب والشارة */}
                     <div className="flex-1">
-                      <span className="text-gray-900 font-semibold font-arabic block">
+                      <span className="text-gray-900  font-arabic block">
                         {student.name}
                       </span>
                       <span className="text-gray-500 text-xs font-arabic block">
@@ -563,7 +559,7 @@ const Admin = () => {
 
                     {/* النتيجة والنقاط */}
                     <div className="flex flex-col items-end">
-                      <span className="text-green-600 text-lg font-bold font-arabic block">
+                      <span className="text-green-600 text-lg font-arabic block">
                         {student.averageScore}
                       </span>
                       <span className="text-gray-500 text-xs font-arabic block">
@@ -594,7 +590,7 @@ const Admin = () => {
                     </span>
                     <div className=" flex flex-row items-center">
                       <div className="bg-purple-100 px-3 py-1 rounded-full">
-                        <span className="text-purple-700 font-bold font-arabic">
+                        <span className="text-purple-700 font-arabic">
                           {count}
                         </span>
                       </div>
@@ -632,7 +628,7 @@ const Admin = () => {
                     </span>
                   </div>
                   <div className="bg-indigo-50 px-3 py-1 rounded-full mr-2">
-                    <span className="text-indigo-700 text-sm font-bold font-arabic">
+                    <span className="text-indigo-700 text-sm font-arabic">
                       {lecture.questionsCount}
                     </span>
                   </div>
@@ -658,11 +654,11 @@ const Admin = () => {
                     }`}
                   >
                     <div className=" flex flex-row items-center justify-between mb-2">
-                      <span className="text-gray-900 font-bold text-lg font-arabic">
+                      <span className="text-gray-900 font-arabic text-lg">
                         كلية {college.college_id}
                       </span>
                       <div className="bg-blue-100 px-3 py-1 rounded-full">
-                        <span className="text-blue-700 text-xs font-bold font-arabic">
+                        <span className="text-blue-700 text-xs font-arabic">
                           {college.examsCount} امتحان
                         </span>
                       </div>
@@ -671,7 +667,7 @@ const Admin = () => {
                       <span className="text-gray-600 text-sm font-arabic">
                         👥 {college.studentsCount} طالب
                       </span>
-                      <span className="text-green-600 text-sm font-bold font-arabic">
+                      <span className="text-green-600 text-sm font-arabic">
                         💰 {college.totalRevenue.toLocaleString("en")} ل.س
                       </span>
                     </div>
@@ -691,7 +687,7 @@ const Admin = () => {
                   <span className="text-gray-600 text-sm mb-1 font-arabic">
                     هذا الشهر
                   </span>
-                  <span className="text-gray-900 text-2xl font-bold font-arabic">
+                  <span className="text-gray-900 text-2xl font-arabic">
                     {analytics.growth.thisMonth}
                   </span>
                 </div>
@@ -700,7 +696,7 @@ const Admin = () => {
                     معدل النمو
                   </span>
                   <span
-                    className={`text-2xl font-bold font-arabic ${
+                    className={`text-2xl font-arabic ${
                       parseFloat(analytics.growth.growthRate) >= 0
                         ? "text-green-600"
                         : "text-red-600"
@@ -749,7 +745,7 @@ const Admin = () => {
               <div className="flex flex-row items-start">
                 <div className="flex-1 mr-3">
                   <div className="flex flex-row items-center justify-between mb-1">
-                    <span className={`${colors.text} font-bold font-arabic`}>
+                    <span className={`${colors.text} font-arabic`}>
                       {smartTip.title}
                     </span>
                   </div>

@@ -43,7 +43,7 @@ export default function Profile() {
       <Card className="w-full max-w-md shadow-xl border border-gray-200 rounded-2xl overflow-hidden">
         <CardHeader
           title={
-            <span className="text-brand  font-arabic font-bold text-lg">
+            <span className="text-brand  font-arabic font-arabic text-lg">
               {user.name}
             </span>
           }
@@ -61,7 +61,7 @@ export default function Profile() {
             <p className="text-sm font-medium text-gray-600 mb-1 font-arabic">
               الاسم المستعار
             </p>
-            <div className="text-2xl font-bold text-brand font-arabic">
+            <div className="text-2xl font-arabic text-brand font-arabic">
               {user.nick_name || "John Doe"}
             </div>
           </div>

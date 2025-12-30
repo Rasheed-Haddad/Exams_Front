@@ -54,7 +54,7 @@ const AndroidBlocker = ({ children }) => {
             {/* العنوان */}
             <Typography
               variant="h4"
-              className="font-arabic font-bold text-gray-800 mb-4"
+              className="font-arabic font-arabic text-gray-800 mb-4"
             >
               {isAndroid ? "مرحباً  " : "هذا التطبيق للهواتف فقط "}
             </Typography>

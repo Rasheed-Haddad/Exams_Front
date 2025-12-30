@@ -64,7 +64,7 @@ const IOSInstallBanner = () => {
         <IosShare sx={{ fontSize: 32, mt: 0.5 }} />
 
         <Box>
-          <Typography variant="h6" className="font-arabic font-bold mb-2">
+          <Typography variant="h6" className="font-arabic font-arabic mb-2">
             ثبّت التطبيق
           </Typography>
           <Typography variant="body2" className="font-arabic">

@@ -98,7 +98,7 @@ export default function Top_Component() {
               >
                 {/* العنوان */}
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-3 gap-1 sm:gap-2">
-                  <h2 className="text-base sm:text-lg font-bold text-gray-900 break-words">
+                  <h2 className="text-base sm:text-lg font-arabic text-gray-900 break-words">
                     {exam.name}
                   </h2>
                   <span className="text-xs text-gray-500  whitespace-nowrap">
@@ -110,7 +110,7 @@ export default function Top_Component() {
                 <div className="flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center gap-2 text-xs sm:text-sm text-gray-700 mb-3">
                   <span>عدد مرات التقديم : {grades.length}</span>
                   <span
-                    className={`px-2 py-1 rounded-full text-xs sm:text-sm font-bold ${avgColor} whitespace-nowrap`}
+                    className={`px-2 py-1 rounded-full text-xs sm:text-sm font-arabic ${avgColor} whitespace-nowrap`}
                   >
                     متوسط العلامات : {averageGrade} %
                   </span>
@@ -118,7 +118,7 @@ export default function Top_Component() {
 
                 {/* أعلى 5 طلاب */}
                 <div>
-                  <h3 className="text-xs sm:text-sm font-semibold text-gray-700 mb-2">
+                  <h3 className="text-xs sm:text-sm  text-gray-700 mb-2">
                     أعلى 5 طلاب :
                   </h3>
                   <div className="space-y-1.5 sm:space-y-1 bg-gray-50 rounded-md p-2">
@@ -143,7 +143,7 @@ export default function Top_Component() {
                           <span className="flex-1 truncate">
                             {student.name} :
                           </span>
-                          <span className="font-bold whitespace-nowrap">
+                          <span className="font-arabic whitespace-nowrap">
                             {student.score.toFixed(1)} %
                           </span>
                         </div>

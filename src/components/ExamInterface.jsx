@@ -254,7 +254,10 @@ const ExamInterface = () => {
   const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
 
   return (
-    <div className="min-h-screen bg-gray-50 justify-center" style={{ paddingBottom: selectedSubject.open_mode ? '180px' : '0' }}>
+    <div
+      className="min-h-screen bg-gray-50 justify-center"
+      style={{ paddingBottom: selectedSubject.open_mode ? "180px" : "0" }}
+    >
       {/* Header */}
       <Box className="bg-white shadow-sm border-b border-gray-200 px-4 py-3">
         <div
@@ -266,7 +269,7 @@ const ExamInterface = () => {
             <div className="w-full sm:w-auto overflow-x-auto items-center justify-center flex flex-col">
               <table className="min-w-[240px] w-full sm:min-w-[320px] border-collapse rounded-lg overflow-hidden shadow">
                 <thead>
-                  <tr className="bg-brand text-white font-bold">
+                  <tr className="bg-brand text-white font-arabic">
                     <th className="px-3 py-2 font-arabic text-sm sm:text-base text-center">
                       الاسم
                     </th>
@@ -293,7 +296,7 @@ const ExamInterface = () => {
                         <td className="px-3 py-1 font-arabic text-sm sm:text-base">
                           {rank.badge}
                         </td>
-                        <td className="px-3 py-1 font-arabic text-sm sm:text-base font-bold">
+                        <td className="px-3 py-1 font-arabic text-sm sm:text-base">
                           {rank.score}
                         </td>
                       </tr>
@@ -329,10 +332,7 @@ const ExamInterface = () => {
               {/* المؤقت */}
               <div className="flex items-center gap-2 text-brand">
                 <AccessTime />
-                <Typography
-                  variant="h6"
-                  className="font-mono font-bold text-base"
-                >
+                <Typography variant="h6" className="font-arabic text-base">
                   {formatTime(timeRemaining)}
                 </Typography>
               </div>
@@ -374,7 +374,9 @@ const ExamInterface = () => {
                 <div
                   dir="rtl"
                   className={`px-3 py-4 sm:px-6 flex flex-col items-center transition-all duration-300 ${
-                    isTransitioning ? 'opacity-0 translate-x-8' : 'opacity-100 translate-x-0'
+                    isTransitioning
+                      ? "opacity-0 translate-x-8"
+                      : "opacity-100 translate-x-0"
                   }`}
                 >
                   {/* السؤال */}
@@ -388,7 +390,11 @@ const ExamInterface = () => {
                   <FormControl component="fieldset" className="w-full max-w-md">
                     <div className="flex flex-col items-center w-full space-y-3">
                       {currentQuestion.options.map((option, index) => {
-                        const water_marks = [Student_State.user.ID, Student_State.user.name, Student_State.user.nick_name];
+                        const water_marks = [
+                          Student_State.user.ID,
+                          Student_State.user.name,
+                          Student_State.user.nick_name,
+                        ];
                         const isSelected =
                           answers[currentQuestionIndex] == index + 1;
                         const isCorrect = currentQuestion.answer == index + 1;
@@ -428,7 +434,7 @@ const ExamInterface = () => {
                             {/* العلامة المائية بين الخيارات */}
                             {water_marks[index] && (
                               <div className="text-center mt-1 mb-1">
-                                <span className="text-gray-300 text-[10px] font-arabic opacity-72">
+                                <span className="text-brand text-[15px] font-arabic opacity-50">
                                   {water_marks[index]}
                                 </span>
                               </div>
@@ -442,20 +448,18 @@ const ExamInterface = () => {
               </CardContent>
             </Card>
           </Grid>
-         
         </Grid>
-         
       </Container>
 
       {/* أزرار التنقل الثابتة في الأسفل */}
       {selectedSubject.open_mode && (
-        <div 
-          className="fixed bottom-0 left-0 right-0 bg-white border-t-2 border-gray-200 shadow-lg px-4 py-4"
+        <div
+          className="fixed bottom-0 left-0 right-0 bg-white border-t-2 border-gray-200 shadow-lg"
           style={{ zIndex: 1000 }}
         >
-          <div className="max-w-md mx-auto" dir="rtl">
+          <div className="max-w-md mx-auto gap-1" dir="rtl">
             {/* الصف الأول: السابق — التالي */}
-            <div className="flex justify-between gap-3 mb-3">
+            <div className="flex justify-between gap-1 mb-1">
               <button
                 className="bg-brand px-4 py-3 rounded-lg flex-1 disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90 transition-opacity"
                 onClick={handle_previous_question}
@@ -478,13 +482,15 @@ const ExamInterface = () => {
             </div>
 
             {/* الصف الثاني: عشر أسئلة للوراء — عشر أسئلة للأمام */}
-            <div className="flex justify-between gap-3">
+            <div className="flex justify-between gap-1">
               <button
                 className="bg-brand px-4 py-3 rounded-lg flex-1 disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90 transition-opacity"
                 onClick={handle_previous_10_questions}
                 disabled={currentQuestionIndex < 10}
               >
-                <span className="text-white text-center text-lg font-arabic">- 10</span>
+                <span className="text-white text-center text-lg font-arabic">
+                  - 10
+                </span>
               </button>
 
               <button
@@ -492,7 +498,9 @@ const ExamInterface = () => {
                 onClick={handle_next_10_questions}
                 disabled={currentQuestionIndex > questions.length - 11}
               >
-                <span className="text-white text-center text-lg font-arabic">+ 10</span>
+                <span className="text-white text-center text-lg font-arabic">
+                  + 10
+                </span>
               </button>
             </div>
           </div>
@@ -503,9 +511,7 @@ const ExamInterface = () => {
       <div dir="rtl">
         <Dialog dir="rtl" open={showSubmitDialog}>
           <DialogTitle>
-            <span className="font-arabic text-2xl font-bold">
-              تسليم الامتحان
-            </span>
+            <span className="font-arabic text-2xl ">تسليم الامتحان</span>
           </DialogTitle>
           <DialogContent>
             <Typography className="mb-4">
@@ -515,7 +521,7 @@ const ExamInterface = () => {
             </Typography>
             <Box className="p-3 bg-gray-50 rounded-lg">
               <Typography variant="body2" className="mb-2">
-                <strong className="font-arabic font-bold text-lg">
+                <strong className="font-arabic text-lg">
                   ملخص الامتحان :{" "}
                 </strong>
               </Typography>
@@ -554,7 +560,7 @@ const ExamInterface = () => {
         onClose={() => setShowExitDialog(false)}
       >
         <DialogTitle>
-          <span className="font-arabic font-bold text-xl">الانسحاب</span>
+          <span className="font-arabic text-xl">الانسحاب</span>
         </DialogTitle>
         <DialogContent>
           <Typography>

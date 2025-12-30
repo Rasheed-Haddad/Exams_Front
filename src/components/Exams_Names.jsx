@@ -17,7 +17,7 @@ const ExamCard = ({ exam, onClick }) => {
             <div className="flex-1">
               <div className="flex flex-row items-center mb-1 gap-2">
                 <BookOpen size={20} className="text-white" />
-                <h3 className="text-white text-lg font-bold">{exam.name}</h3>
+                <h3 className="text-white text-lg font-arabic">{exam.name}</h3>
               </div>
             </div>
 
@@ -32,11 +32,11 @@ const ExamCard = ({ exam, onClick }) => {
               {exam.price === 0 ? (
                 <>
                   <Sparkles size={14} className="text-white" />
-                  <span className="text-white text-sm font-bold">مجاني</span>
+                  <span className="text-white text-sm font-arabic">مجاني</span>
                 </>
               ) : (
                 <div className="flex flex-row items-center">
-                  <span className="text-white text-sm font-bold mr-1">
+                  <span className="text-white text-sm font-arabic mr-1">
                     {exam.price.toLocaleString("en")} ل.س
                   </span>
                 </div>
@@ -61,7 +61,7 @@ const ExamCard = ({ exam, onClick }) => {
                 <FileText size={20} className="text-blue-600" />
               </div>
               <p className="text-blue-700 text-xs mt-1">الأسئلة</p>
-              <p className="text-blue-900 text-lg font-bold">
+              <p className="text-blue-900 text-lg font-arabic">
                 {exam.questionsCount}
               </p>
             </div>
@@ -84,7 +84,7 @@ const ExamCard = ({ exam, onClick }) => {
                   </svg>
                 </div>
                 <p className="text-purple-700 text-xs mt-1">المدة</p>
-                <p className="text-purple-900 text-lg font-bold">
+                <p className="text-purple-900 text-lg font-arabic">
                   {exam.time} د
                 </p>
               </div>
@@ -99,9 +99,7 @@ const ExamCard = ({ exam, onClick }) => {
                   <User size={20} className="text-white" />
                 </div>
                 <div className="flex-1 items-center justify-center">
-                  <p className="text-gray-900 font-semibold text-sm">
-                    {exam.admin.name}
-                  </p>
+                  <p className="text-gray-900  text-sm">{exam.admin.name}</p>
                   <div className="flex flex-row items-center mt-1 mr-8 gap-1">
                     <Phone size={12} className="text-gray-500" />
                     <span className="text-gray-600 text-xs mr-1">
@@ -119,7 +117,7 @@ const ExamCard = ({ exam, onClick }) => {
                 }}
                 className="bg-gradient-to-r from-brand to-purple-600 px-4 py-2 rounded-lg hover:from-purple-600 hover:to-brand transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105"
               >
-                <span className="text-white text-sm font-semibold">سجّل</span>
+                <span className="text-white text-sm ">سجّل</span>
               </button>
             </div>
           </div>
@@ -138,11 +136,11 @@ const SectionHeader = ({ title, count, icon: Icon }) => (
           <Icon size={20} className="text-brand" />
         </div>
       )}
-      <h2 className="text-gray-900 text-xl font-bold">{title}</h2>
+      <h2 className="text-gray-900 text-xl font-arabic">{title}</h2>
     </div>
     {count !== undefined && (
       <div className="bg-gradient-to-r from-brand to-purple-600 px-3 py-1 rounded-full shadow-md">
-        <span className="text-white text-sm font-bold">{count}</span>
+        <span className="text-white text-sm font-arabic">{count}</span>
       </div>
     )}
   </div>
@@ -161,7 +159,7 @@ const EmptyState = () => (
         style={{ animationDelay: "150ms" }}
       />
     </div>
-    <p className="text-gray-600 text-lg text-center font-semibold mb-2">
+    <p className="text-gray-600 text-lg text-center  mb-2">
       لا توجد امتحانات متاحة حالياً
     </p>
     <p className="text-gray-400 text-sm text-center max-w-sm leading-relaxed">

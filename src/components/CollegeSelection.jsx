@@ -114,7 +114,7 @@ const CollegeSelection = () => {
           className="flex items-center justify-center max-w-7xl mx-auto"
         >
           <div>
-            <Typography variant="p" className="font-bold text-4xl text-brand">
+            <Typography variant="p" className="font-arabic text-4xl text-brand">
               اختر كليتك
             </Typography>
           </div>

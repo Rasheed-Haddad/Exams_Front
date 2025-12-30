@@ -47,7 +47,7 @@ export default function Money() {
       {/* ملخص الإحصائيات */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <div className="bg-gradient-to-r from-yellow-100 to-yellow-200 p-3 sm:p-4 rounded-lg shadow text-center">
-          <p className="text-sm sm:text-base lg:text-lg font-bold text-gray-700">
+          <p className="text-sm sm:text-base lg:text-lg font-arabic text-gray-700">
             أعلى أرباح
           </p>
           <p className="text-base sm:text-lg lg:text-xl font-extrabold text-yellow-700 truncate">
@@ -58,7 +58,7 @@ export default function Money() {
           </p>
         </div>
         <div className="bg-gradient-to-r from-red-100 to-red-200 p-3 sm:p-4 rounded-lg shadow text-center">
-          <p className="text-sm sm:text-base lg:text-lg font-bold text-gray-700">
+          <p className="text-sm sm:text-base lg:text-lg font-arabic text-gray-700">
             أقل أرباح
           </p>
           <p className="text-base sm:text-lg lg:text-xl font-extrabold text-red-700 truncate">
@@ -69,7 +69,7 @@ export default function Money() {
           </p>
         </div>
         <div className="bg-gradient-to-r from-green-100 to-green-200 p-3 sm:p-4 rounded-lg shadow text-center">
-          <p className="text-sm sm:text-base lg:text-lg font-bold text-gray-700">
+          <p className="text-sm sm:text-base lg:text-lg font-arabic text-gray-700">
             إجمالي الأرباح
           </p>
           <p className="text-lg sm:text-xl lg:text-2xl font-extrabold text-green-700">
@@ -77,7 +77,7 @@ export default function Money() {
           </p>
         </div>
         <div className="bg-gradient-to-r from-blue-100 to-blue-200 p-3 sm:p-4 rounded-lg shadow text-center">
-          <p className="text-sm sm:text-base lg:text-lg font-bold text-gray-700">
+          <p className="text-sm sm:text-base lg:text-lg font-arabic text-gray-700">
             أكثر طلاب مسجلين
           </p>
           <p className="text-base sm:text-lg lg:text-xl font-extrabold text-blue-700 truncate">
@@ -131,7 +131,7 @@ export default function Money() {
                 className="border hover:scale-[0.97] transition-transform duration-300 rounded-lg p-4 sm:p-5 bg-gradient-to-b from-white to-gray-50"
               >
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-3 sm:mb-4 gap-1 sm:gap-2">
-                  <h2 className="text-base sm:text-lg lg:text-xl font-bold text-gray-800 break-words">
+                  <h2 className="text-base sm:text-lg lg:text-xl font-arabic text-gray-800 break-words">
                     {subject.name}
                   </h2>
                   <span className="text-xs sm:text-sm text-gray-500 whitespace-nowrap">
@@ -147,7 +147,7 @@ export default function Money() {
                     👥 المسجلين: {registeredCount}
                   </span>
                   <span
-                    className={`px-3 py-1.5 sm:py-1 rounded-full font-semibold text-xs sm:text-sm lg:text-base inline-block ${revenueColor}`}
+                    className={`px-3 py-1.5 sm:py-1 rounded-full  text-xs sm:text-sm lg:text-base inline-block ${revenueColor}`}
                   >
                     💰 الأرباح: {revenue.toLocaleString("en")} ليرة
                   </span>

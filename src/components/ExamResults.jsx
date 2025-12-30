@@ -153,7 +153,7 @@ const ExamResults = () => {
                 <div className="mb-6">
                   <Typography
                     variant="h2"
-                    className="font-bold  mb-2"
+                    className="font-arabic  mb-2"
                     style={{
                       color:
                         getGradeColor(results.score) === "success"
@@ -168,7 +168,7 @@ const ExamResults = () => {
                   <div className="m-8">
                     <Typography
                       variant="h4"
-                      className="font-bold mb-4 text-5xl"
+                      className="font-arabic mb-4 text-5xl"
                       style={{
                         color:
                           getGradeColor(results.score) === "success"
@@ -178,10 +178,10 @@ const ExamResults = () => {
                             : "#1976d2",
                       }}
                     >
-                      <span className="font-bold text-3xl ">
+                      <span className="font-arabic text-3xl ">
                         {getGradeLetter(results.score)}{" "}
                       </span>
-                      <span className="font-arabic font-bold text-3xl m-4 mb-8">
+                      <span className="font-arabic text-3xl m-4 mb-8">
                         {" "}
                         : الدرجة
                       </span>
@@ -226,7 +226,7 @@ const ExamResults = () => {
                     <LinearProgress
                       variant="determinate"
                       value={results.score}
-                      className="h-3 font-bold rounded-full mb-4"
+                      className="h-3 font-arabic rounded-full mb-4"
                       color={getGradeColor(results.score)}
                     />
                     <Typography

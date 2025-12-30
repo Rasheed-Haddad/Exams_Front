@@ -83,9 +83,11 @@ const ExamsList = () => {
           <div className="flex-1">
             <div className="flex flex-row items-center gap-3 mb-2">
               <div className="w-10 h-10 bg-gradient-to-br from-brand to-purple-600 rounded-full flex items-center justify-center shadow-md">
-                <span className="text-xs font-bold text-white">#{exam.ID}</span>
+                <span className="text-xs font-arabic text-white">
+                  #{exam.ID}
+                </span>
               </div>
-              <h3 className="text-lg font-bold text-gray-900 group-hover:text-brand transition-colors">
+              <h3 className="text-lg font-arabic text-gray-900 group-hover:text-brand transition-colors">
                 {exam.name}
               </h3>
             </div>
@@ -99,7 +101,7 @@ const ExamsList = () => {
             <div className="flex-1 flex items-center gap-2 px-3 py-2 bg-blue-50 rounded-lg border border-blue-100">
               <BookOpen size={16} className="text-blue-600" />
               <span className="text-xs text-gray-600">الأسئلة:</span>
-              <span className="text-sm font-bold text-blue-600">
+              <span className="text-sm font-arabic text-blue-600">
                 {exam.questions?.length || 0}
               </span>
             </div>
@@ -108,7 +110,7 @@ const ExamsList = () => {
               <div className="flex-1 flex items-center gap-2 px-3 py-2 bg-green-50 rounded-lg border border-green-100">
                 <Users size={16} className="text-green-600" />
                 <span className="text-xs text-gray-600">الطلاب:</span>
-                <span className="text-sm font-bold text-green-600">
+                <span className="text-sm font-arabic text-green-600">
                   {exam.registeredStudents}
                 </span>
               </div>
@@ -130,7 +132,7 @@ const ExamsList = () => {
                 handle_add_student_to_exam({ EXAM_ID: exam._id });
               }}
             >
-              <span className="text-white text-sm font-semibold">إضافة</span>
+              <span className="text-white text-sm ">إضافة</span>
             </button>
           </div>
         </div>
@@ -238,9 +240,7 @@ const ExamsList = () => {
         <Link to="/admin/exams/create">
           <button className="bg-gradient-to-r mt-4 mb-8 from-brand to-purple-600 hover:from-purple-600 hover:to-brand px-5 py-3 rounded-xl flex flex-row items-center justify-center gap-2 w-full sm:w-auto shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
             <Plus size={20} className="text-white" />
-            <span className="text-white text-base font-semibold">
-              إنشاء اختبار جديد
-            </span>
+            <span className="text-white text-base ">إنشاء اختبار جديد</span>
           </button>
         </Link>
       </div>
@@ -262,7 +262,7 @@ const ExamsList = () => {
               disabled={loading}
               className="bg-brand hover:bg-purple-600 px-6 py-2 rounded-lg transition-colors duration-300"
             >
-              <span className="text-white text-sm font-semibold">بحث</span>
+              <span className="text-white text-sm ">بحث</span>
             </button>
           </div>
         </div>

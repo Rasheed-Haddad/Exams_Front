@@ -103,7 +103,7 @@ const SignIn = () => {
                 type="button"
               >
                 <span
-                  className={`text-center text-base font-semibold ${
+                  className={`text-center text-base  ${
                     userType === "teacher" ? "text-white" : "text-gray-600"
                   }`}
                 >
@@ -251,9 +251,7 @@ const SignIn = () => {
               {loading ? (
                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
               ) : (
-                <span className="text-white text-lg font-semibold">
-                  تسجيل الدخول
-                </span>
+                <span className="text-white text-lg ">تسجيل الدخول</span>
               )}
             </button>
           </div>

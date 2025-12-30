@@ -24,7 +24,7 @@ const ExamDetails = () => {
           <div className="w-24 h-24 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mb-6 mx-auto">
             <FileText size={48} className="text-gray-400" />
           </div>
-          <p className="text-2xl text-gray-600 mb-6 font-semibold">
+          <p className="text-2xl text-gray-600 mb-6 ">
             لم يتم العثور على الاختبار
           </p>
           <button
@@ -51,11 +51,11 @@ const ExamDetails = () => {
         <div className="flex flex-row items-center justify-between mb-4">
           <div className="flex flex-row items-center gap-3">
             <div className="w-10 h-10 flex items-center justify-center rounded-full bg-gradient-to-br from-brand to-purple-600 shadow-md">
-              <span className="text-white text-sm font-bold">{index + 1}</span>
+              <span className="text-white text-sm font-arabic">
+                {index + 1}
+              </span>
             </div>
-            <span className="text-brand font-semibold text-sm">
-              السؤال {index + 1}
-            </span>
+            <span className="text-brand  text-sm">السؤال {index + 1}</span>
           </div>
         </div>
 
@@ -88,20 +88,20 @@ const ExamDetails = () => {
                     {isCorrect ? (
                       <CheckCircle size={16} className="text-white" />
                     ) : (
-                      <span className="text-xs font-semibold text-gray-700">
+                      <span className="text-xs  text-gray-700">
                         {optIndex + 1}
                       </span>
                     )}
                   </div>
                   <p
                     className={`text-sm flex-1 ${
-                      isCorrect ? "text-green-700 font-bold" : "text-gray-700"
+                      isCorrect ? "text-green-700 font-arabic" : "text-gray-700"
                     }`}
                   >
                     {option}
                   </p>
                   {isCorrect && (
-                    <span className="text-xs bg-green-600 text-white px-2 py-1 rounded-full font-semibold">
+                    <span className="text-xs bg-green-600 text-white px-2 py-1 rounded-full ">
                       الإجابة الصحيحة
                     </span>
                   )}
@@ -129,7 +129,9 @@ const ExamDetails = () => {
             >
               <ArrowRight size={24} className="text-brand" />
             </button>
-            <h1 className="text-xl font-bold text-gray-800">تفاصيل الاختبار</h1>
+            <h1 className="text-xl font-arabic text-gray-800">
+              تفاصيل الاختبار
+            </h1>
           </div>
         </div>
       </div>
@@ -147,7 +149,7 @@ const ExamDetails = () => {
             </div>
 
             {/* بيانات المادة */}
-            <h2 className="text-3xl mb-6 font-bold text-gray-900">
+            <h2 className="text-3xl mb-6 font-arabic text-gray-900">
               {exam.name}
             </h2>
 
@@ -156,13 +158,13 @@ const ExamDetails = () => {
               <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4 border border-blue-200">
                 <FileText size={24} className="text-blue-600 mx-auto mb-2" />
                 <p className="text-xs text-gray-600 mb-1">رمز المادة</p>
-                <p className="text-lg font-bold text-blue-600">{exam.ID}</p>
+                <p className="text-lg font-arabic text-blue-600">{exam.ID}</p>
               </div>
 
               <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-4 border border-purple-200">
                 <Users size={24} className="text-purple-600 mx-auto mb-2" />
                 <p className="text-xs text-gray-600 mb-1">رمز الكلية</p>
-                <p className="text-lg font-bold text-purple-600">
+                <p className="text-lg font-arabic text-purple-600">
                   {exam.college_id}
                 </p>
               </div>
@@ -170,7 +172,7 @@ const ExamDetails = () => {
               <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl p-4 border border-orange-200">
                 <Clock size={24} className="text-orange-600 mx-auto mb-2" />
                 <p className="text-xs text-gray-600 mb-1">المدة</p>
-                <p className="text-lg font-bold text-orange-600">
+                <p className="text-lg font-arabic text-orange-600">
                   {exam.time} دقيقة
                 </p>
               </div>
@@ -179,9 +181,7 @@ const ExamDetails = () => {
             {/* وصف الاختبار */}
             {exam.info && (
               <div className="mb-6 bg-gradient-to-br from-gray-50 to-purple-50/50 rounded-xl p-5 border border-gray-200">
-                <p className="text-sm text-gray-600 mb-2 font-semibold">
-                  وصف الاختبار
-                </p>
+                <p className="text-sm text-gray-600 mb-2 ">وصف الاختبار</p>
                 <p className="text-base text-gray-800 leading-relaxed">
                   {exam.info}
                 </p>
@@ -191,10 +191,8 @@ const ExamDetails = () => {
             {/* السعر */}
             <div className="mb-6 bg-gradient-to-r from-green-100 to-emerald-100 rounded-xl p-5 border-2 border-green-300 shadow-md">
               <DollarSign size={28} className="text-green-600 mx-auto mb-2" />
-              <p className="text-base text-gray-700 mb-2 font-semibold">
-                السعر
-              </p>
-              <p className="text-green-600 text-3xl font-bold">
+              <p className="text-base text-gray-700 mb-2 ">السعر</p>
+              <p className="text-green-600 text-3xl font-arabic">
                 {exam?.price.toLocaleString("en")} ل.س
               </p>
             </div>
@@ -202,8 +200,8 @@ const ExamDetails = () => {
             {/* عدد الأسئلة */}
             <div className="mb-6 bg-gradient-to-br from-brand/10 to-purple-100/50 rounded-xl p-5 border-2 border-brand/30 shadow-md">
               <BookOpen size={28} className="text-brand mx-auto mb-2" />
-              <p className="text-sm text-gray-600 font-semibold">عدد الأسئلة</p>
-              <p className="text-4xl font-bold text-brand mt-2">
+              <p className="text-sm text-gray-600 ">عدد الأسئلة</p>
+              <p className="text-4xl font-arabic text-brand mt-2">
                 {exam.questions.length}
               </p>
             </div>
@@ -213,7 +211,7 @@ const ExamDetails = () => {
               <div className="text-right">
                 <div className="flex items-center gap-2 mb-4">
                   <Users size={20} className="text-brand" />
-                  <h3 className="text-lg font-bold text-gray-800">
+                  <h3 className="text-lg font-arabic text-gray-800">
                     الاختبار متاح للطلاب:
                   </h3>
                 </div>
@@ -224,9 +222,7 @@ const ExamDetails = () => {
                       className="bg-gradient-to-r from-brand/10 to-purple-100/50 rounded-lg px-4 py-3 flex flex-row items-center gap-2 border border-brand/20 hover:border-brand/50 transition-all"
                     >
                       <span className="text-lg">🎓</span>
-                      <span className="text-sm text-brand font-semibold">
-                        {student}
-                      </span>
+                      <span className="text-sm text-brand ">{student}</span>
                     </div>
                   ))}
                 </div>
@@ -241,7 +237,7 @@ const ExamDetails = () => {
             <div className="w-10 h-10 bg-gradient-to-br from-brand to-purple-600 rounded-lg flex items-center justify-center">
               <FileText size={20} className="text-white" />
             </div>
-            <h2 className="text-2xl font-bold text-gray-800">الأسئلة</h2>
+            <h2 className="text-2xl font-arabic text-gray-800">الأسئلة</h2>
           </div>
 
           {exam.questions && exam.questions.length > 0 ? (
