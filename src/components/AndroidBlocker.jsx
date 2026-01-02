@@ -3,12 +3,15 @@ import { Box, Typography, Container } from "@mui/material";
 import { Android, PhoneIphone } from "@mui/icons-material";
 
 const AndroidBlocker = ({ children }) => {
-  const [deviceType, setDeviceType] = useState(null); // 'android', 'desktop', null
+  const [deviceType, setDeviceType] = useState(null); // 'android', 'desktop', 'ios', null
 
   useEffect(() => {
     // كشف نظام التشغيل
     const userAgent = navigator.userAgent || navigator.vendor || window.opera;
     const isAndroidDevice = /android/i.test(userAgent);
+    const isIOSDevice = /iphone|ipad|ipod/i.test(userAgent.toLowerCase());
+
+    // التحقق من Desktop (لكن استثناء iOS)
     const isDesktop =
       !/android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(
         userAgent.toLowerCase()
@@ -16,12 +19,14 @@ const AndroidBlocker = ({ children }) => {
 
     if (isAndroidDevice) {
       setDeviceType("android");
+    } else if (isIOSDevice) {
+      setDeviceType("ios"); // iOS مسموح (iPhone + iPad)
     } else if (isDesktop) {
       setDeviceType("desktop");
     }
   }, []);
 
-  // إذا كان Android أو Desktop، اعرض صفحة التحويل
+  // فقط حظر Android و Desktop، السماح لـ iOS (iPhone + iPad)
   if (deviceType === "android" || deviceType === "desktop") {
     const isAndroid = deviceType === "android";
 
@@ -52,10 +57,7 @@ const AndroidBlocker = ({ children }) => {
             )}
 
             {/* العنوان */}
-            <Typography
-              variant="h4"
-              className="font-arabic font-arabic text-gray-800 mb-4"
-            >
+            <Typography variant="h4" className="font-arabic text-gray-800 mb-4">
               {isAndroid ? "مرحباً  " : "هذا التطبيق للهواتف فقط "}
             </Typography>
 
@@ -72,7 +74,7 @@ const AndroidBlocker = ({ children }) => {
                 </>
               ) : (
                 <>
-                  يرجى استخدام هاتفك الأيفون
+                  يرجى استخدام هاتفك الأيفون أو الآيباد
                   <br />
                   للوصول إلى هذا الموقع
                 </>
