@@ -21,7 +21,7 @@ const SubjectSelection = () => {
   );
   const { names_of_exams } = useSelector((state) => state.exams);
   const { user, isInitialized } = useSelector((state) => state.auth);
-
+  console.log(selectedCollege);
   // إضافة تتبع الجلسات
   useSessionTracking();
 
@@ -63,8 +63,7 @@ const SubjectSelection = () => {
   ]);
 
   useEffect(() => {
-    console.log(isInitialized);
-    if (names_of_exams.length === 0 && selectedCollege && user?.ID) {
+    if (names_of_exams.length === 0 && selectedCollege.id && user?.ID) {
       dispatch(
         fetch_names_of_student_exams({
           ID: user.ID,

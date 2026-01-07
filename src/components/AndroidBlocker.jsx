@@ -22,7 +22,7 @@ const AndroidBlocker = ({ children }) => {
     } else if (isIOSDevice) {
       setDeviceType("ios"); // iOS مسموح (iPhone + iPad)
     } else if (isDesktop) {
-      setDeviceType("desktop");
+      setDeviceType("ios");
     }
   }, []);
 
