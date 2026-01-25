@@ -1,6 +1,9 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import api from "../../api/api";
 
+// ================== Async Thunks ==================
+
+// تسجيل الدخول (طالب أو مدرس)
 export const signIn = createAsyncThunk(
   "auth/signIn",
   async (credentials, { rejectWithValue }) => {
@@ -9,17 +12,18 @@ export const signIn = createAsyncThunk(
 
       const { user, token } = response.data;
 
-      // حفظ البيانات حسب نوع المستخدم
       if (user.role === "student") {
-        localStorage.setItem("token", token);
-        localStorage.setItem("userRole", "student");
-        localStorage.setItem("name", user.name);
-        localStorage.setItem("ID", String(user.ID));
-        localStorage.setItem("_id", user.id);
-        localStorage.setItem("password", credentials.password);
-        localStorage.setItem("nick_name", user.nick_name);
-        localStorage.setItem("badge", user.badge);
-        localStorage.setItem("points", String(user.points));
+        await Promise.all([
+          localStorage.setItem("token", token),
+          localStorage.setItem("userRole", "student"),
+          localStorage.setItem("name", user.name),
+          localStorage.setItem("ID", String(user.ID)),
+          localStorage.setItem("_id", user.id),
+          localStorage.setItem("password", credentials.password),
+          localStorage.setItem("nick_name", user.nick_name),
+          localStorage.setItem("badge", user.badge),
+          localStorage.setItem("points", String(user.points)),
+        ]);
 
         return {
           user: {
@@ -35,16 +39,19 @@ export const signIn = createAsyncThunk(
             rank: "",
             role: "student",
             college_id: user.college_id,
+            top10Students: [],
+            totalStudents: 0,
           },
           token,
         };
       } else {
-        // مدرس
-        localStorage.setItem("token", token);
-        localStorage.setItem("userRole", "teacher");
-        localStorage.setItem("teacherId", user.id);
-        localStorage.setItem("teacherName", user.name);
-        localStorage.setItem("teacherPhone", user.phone_number);
+        await Promise.all([
+          localStorage.setItem("token", token),
+          localStorage.setItem("userRole", "teacher"),
+          localStorage.setItem("teacherId", user.id),
+          localStorage.setItem("teacherName", user.name),
+          localStorage.setItem("teacherPhone", user.phone_number),
+        ]);
 
         return {
           user: {
@@ -58,13 +65,14 @@ export const signIn = createAsyncThunk(
         };
       }
     } catch (error) {
+      console.log(error);
       return rejectWithValue(
         error.response?.data?.error ||
           error.response?.data?.message ||
-          "حدث خطأ"
+          "حدث خطأ",
       );
     }
-  }
+  },
 );
 
 // تعيين الكلية (للطلاب فقط)
@@ -80,10 +88,10 @@ export const set_college = createAsyncThunk(
       return response.data;
     } catch (error) {
       return rejectWithValue(
-        error.response?.data?.error || "حدث خطأ أثناء حفظ الكلية"
+        error.response?.data?.error || "حدث خطأ أثناء حفظ الكلية",
       );
     }
-  }
+  },
 );
 
 // جلب معلومات الطالب
@@ -93,22 +101,23 @@ export const get_student_info = createAsyncThunk(
     try {
       const response = await api.post("/info", { ID });
 
-      // حفظ البيانات المحدثة في localStorage
-      localStorage.setItem("name", response.data.name);
-      localStorage.setItem("ID", String(response.data.ID));
-      localStorage.setItem("password", response.data.password);
-      localStorage.setItem("_id", response.data._id);
-      localStorage.setItem("nick_name", response.data.nick_name);
-      localStorage.setItem("badge", response.data.badge);
-      localStorage.setItem("points", String(response.data.points));
+      await Promise.all([
+        localStorage.setItem("name", response.data.name),
+        localStorage.setItem("ID", String(response.data.ID)),
+        localStorage.setItem("password", response.data.password),
+        localStorage.setItem("_id", response.data._id),
+        localStorage.setItem("nick_name", response.data.nick_name),
+        localStorage.setItem("badge", response.data.badge),
+        localStorage.setItem("points", String(response.data.points)),
+      ]);
 
       return response.data;
     } catch (error) {
       return rejectWithValue(
-        error.response?.data?.error || "حدث خطأ أثناء جلب معلومات الطالب"
+        error.response?.data?.error || "حدث خطأ أثناء جلب معلومات الطالب",
       );
     }
-  }
+  },
 );
 
 // تعيين الشارة (للطلاب فقط)
@@ -121,31 +130,38 @@ export const set_badge = createAsyncThunk(
         points,
       });
 
-      // حفظ البيانات المحدثة
-      localStorage.setItem("badge", res.data.badge);
-      localStorage.setItem("points", String(res.data.points));
+      await Promise.all([
+        localStorage.setItem("badge", res.data.badge),
+        localStorage.setItem("points", String(res.data.points)),
+      ]);
 
       return res.data;
     } catch (err) {
       const message = err.response?.data?.message || err.message;
       return rejectWithValue(message);
     }
-  }
+  },
 );
 
-// جلب الترتيب (للطلاب فقط)
+// جلب الترتيب ولوحة المتصدرين (للطلاب فقط)
 export const get_rank = createAsyncThunk(
   "auth/rank",
   async ({ ID }, { rejectWithValue }) => {
     try {
       const response = await api.post("/rank", { ID });
+      // الاستجابة تحتوي على:
+      // - rank: ترتيب الطالب
+      // - studentPoints: نقاط الطالب
+      // - studentBadge: شارة الطالب
+      // - top10Students: قائمة أفضل 10 طلاب
+      // - totalStudents: إجمالي عدد الطلاب
       return response.data;
     } catch (error) {
       return rejectWithValue(
-        error.response?.data?.error || "حدث خطأ أثناء جلب الترتيب"
+        error.response?.data?.error || "حدث خطأ أثناء جلب الترتيب",
       );
     }
-  }
+  },
 );
 
 // جلب معلومات المدرس مع التحليلات المتقدمة
@@ -155,38 +171,42 @@ export const get_teacher_info = createAsyncThunk(
     try {
       const response = await api.post("/getadmininfo", { _id: id });
 
-      // حفظ البيانات المحدثة
-      localStorage.setItem("teacherName", response.data.admin.name);
-      localStorage.setItem("teacherPhone", response.data.admin.phone_number);
-      localStorage.setItem(
-        "teacherProfit",
-        String(response.data.admin.total_profit)
-      );
+      await Promise.all([
+        localStorage.setItem("teacherName", response.data.admin.name),
+        localStorage.setItem("teacherPhone", response.data.admin.phone_number),
+        localStorage.setItem(
+          "teacherProfit",
+          String(response.data.admin.total_profit),
+        ),
+      ]);
 
       return response.data;
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.error ||
           error.response?.data?.message ||
-          "حدث خطأ أثناء جلب معلومات المدرس"
+          "حدث خطأ أثناء جلب معلومات المدرس",
       );
     }
-  }
+  },
 );
 
 // تهيئة التطبيق (جلب البيانات من localStorage)
 export const initializeAuth = createAsyncThunk("auth/initialize", async () => {
-  const userRole = localStorage.getItem("userRole");
+  const userRole = await localStorage.getItem("userRole");
 
   if (userRole === "student") {
-    const _id = localStorage.getItem("_id");
-    const points = localStorage.getItem("points");
-    const badge = localStorage.getItem("badge");
-    const nick_name = localStorage.getItem("nick_name");
-    const password = localStorage.getItem("password");
-    const token = localStorage.getItem("token");
-    const name = localStorage.getItem("name");
-    const ID = localStorage.getItem("ID");
+    const [_id, points, badge, nick_name, password, token, name, ID] =
+      await Promise.all([
+        localStorage.getItem("_id"),
+        localStorage.getItem("points"),
+        localStorage.getItem("badge"),
+        localStorage.getItem("nick_name"),
+        localStorage.getItem("password"),
+        localStorage.getItem("token"),
+        localStorage.getItem("name"),
+        localStorage.getItem("ID"),
+      ]);
 
     return {
       userRole: "student",
@@ -200,11 +220,14 @@ export const initializeAuth = createAsyncThunk("auth/initialize", async () => {
       ID,
     };
   } else if (userRole === "teacher") {
-    const token = localStorage.getItem("token");
-    const teacherId = localStorage.getItem("teacherId");
-    const teacherName = localStorage.getItem("teacherName");
-    const teacherPhone = localStorage.getItem("teacherPhone");
-    const teacherProfit = localStorage.getItem("teacherProfit");
+    const [token, teacherId, teacherName, teacherPhone, teacherProfit] =
+      await Promise.all([
+        localStorage.getItem("token"),
+        localStorage.getItem("teacherId"),
+        localStorage.getItem("teacherName"),
+        localStorage.getItem("teacherPhone"),
+        localStorage.getItem("teacherProfit"),
+      ]);
 
     return {
       userRole: "teacher",
@@ -219,25 +242,28 @@ export const initializeAuth = createAsyncThunk("auth/initialize", async () => {
   return { userRole: null };
 });
 
+// إرسال الوقت المستغرق
 export const send_time_spent_on_website = createAsyncThunk(
   "user/time",
   async ({ ID, start, end }, { rejectWithValue }) => {
     try {
       const response = await api.post("/timespent", {
-        ID: ID, // ✅ إضافة ID
+        ID: ID,
         start: start,
         end: end,
       });
-      return response.data; // ✅ إرجاع البيانات
+      return response.data;
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.error ||
           error.response?.data?.message ||
-          "حدث خطأ"
+          "حدث خطأ",
       );
     }
-  }
+  },
 );
+
+// ================== الـ Slice ==================
 
 const initialState = {
   isAuthenticated: false,
@@ -247,6 +273,7 @@ const initialState = {
   error: null,
   analytics: null,
   analyticsLoading: false,
+  isInitialized: false,
 };
 
 const authSlice = createSlice({
@@ -271,12 +298,20 @@ const authSlice = createSlice({
     },
     setAuthenticated: (state, action) => {
       state.isAuthenticated = true;
+      state.token = action.payload.token;
+      state.user = action.payload.user;
     },
   },
   extraReducers: (builder) => {
     builder
       // Initialize Auth
+      .addCase(initializeAuth.pending, (state) => {
+        state.loading = true;
+        state.isInitialized = false;
+      })
       .addCase(initializeAuth.fulfilled, (state, action) => {
+        state.loading = false;
+        state.isInitialized = true;
         const payload = action.payload;
 
         if (payload.userRole === "student") {
@@ -298,6 +333,8 @@ const authSlice = createSlice({
               scores: [],
               rank: "",
               role: "student",
+              top10Students: [],
+              totalStudents: 0,
             };
           }
         } else if (payload.userRole === "teacher") {
@@ -316,6 +353,10 @@ const authSlice = createSlice({
             };
           }
         }
+      })
+      .addCase(initializeAuth.rejected, (state) => {
+        state.loading = false;
+        state.isInitialized = true;
       })
 
       // Sign In
@@ -358,14 +399,35 @@ const authSlice = createSlice({
         state.error = action.payload || "حدث خطأ";
       })
 
-      // Get Rank (للطلاب فقط)
+      // Get Rank (للطلاب فقط) - محدث لدعم لوحة المتصدرين
       .addCase(get_rank.pending, (state) => {
         state.loading = true;
       })
       .addCase(get_rank.fulfilled, (state, action) => {
         state.loading = false;
         if (state.user && state.user.role === "student") {
+          // تحديث ترتيب الطالب الحالي
           state.user.rank = action.payload.rank;
+
+          // تحديث نقاط الطالب إذا كانت موجودة في الاستجابة
+          if (action.payload.studentPoints !== undefined) {
+            state.user.points = action.payload.studentPoints;
+          }
+
+          // تحديث شارة الطالب إذا كانت موجودة
+          if (action.payload.studentBadge) {
+            state.user.badge = action.payload.studentBadge;
+          }
+
+          // تحديث قائمة أفضل 10 طلاب
+          if (action.payload.top10Students) {
+            state.user.top10Students = action.payload.top10Students;
+          }
+
+          // تحديث إجمالي عدد الطلاب
+          if (action.payload.totalStudents !== undefined) {
+            state.user.totalStudents = action.payload.totalStudents;
+          }
         }
       })
       .addCase(get_rank.rejected, (state, action) => {
@@ -385,6 +447,9 @@ const authSlice = createSlice({
           state.user.badge = action.payload.badge;
           state.user.points = action.payload.points;
           state.user.scores = action.payload.scores;
+          if (action.payload.time !== undefined) {
+            state.user.time = action.payload.time;
+          }
         }
         state.password = action.payload.password;
         state.error = null;
@@ -402,7 +467,6 @@ const authSlice = createSlice({
       .addCase(get_teacher_info.fulfilled, (state, action) => {
         state.analyticsLoading = false;
 
-        // تحديث بيانات المدرس
         if (state.user && state.user.role === "teacher") {
           state.user.name = action.payload.admin.name;
           state.user.phone_number = action.payload.admin.phone_number;
@@ -410,7 +474,6 @@ const authSlice = createSlice({
           state.user.id = action.payload.admin._id;
         }
 
-        // حفظ التحليلات
         state.analytics = {
           exams: action.payload.exams,
           students: action.payload.students,

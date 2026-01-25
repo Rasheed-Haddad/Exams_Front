@@ -19,7 +19,7 @@ const SignIn = () => {
   });
   const dispatch = useDispatch();
   const { loading, error, isAuthenticated, user } = useSelector(
-    (state) => state.auth
+    (state) => state.auth,
   );
 
   // 🔥 تحميل البيانات من localStorage عند فتح الصفحة
@@ -76,9 +76,9 @@ const SignIn = () => {
     >
       <div className="flex-1 overflow-auto">
         <div className="min-h-full flex justify-start items-center p-4 bg-[#8c52ff]/10">
-          <div className="w-full max-w-md mt-12 bg-white rounded-2xl p-8 shadow-lg mx-auto">
+          <div className="w-full max-w-md bg-white rounded-2xl p-8 shadow-lg mx-auto">
             {/* اختيار نوع المستخدم */}
-            <div className="flex flex-row mb-6 bg-gray-100 rounded-lg p-1">
+            {/*<div className="flex flex-row mb-6 bg-gray-100 rounded-lg p-1">
               <button
                 className={`flex-1 py-3 rounded-lg transition-colors ${
                   userType === "student" ? "bg-[#8c52ff]" : "bg-transparent"
@@ -110,7 +110,7 @@ const SignIn = () => {
                   مدرس
                 </span>
               </button>
-            </div>
+            </div>*/}
 
             {error && (
               <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
@@ -146,7 +146,7 @@ const SignIn = () => {
                     onChange={(e) => {
                       const filteredValue = e.target.value.replace(
                         /[^ء-ي]/g,
-                        ""
+                        "",
                       );
                       if (filteredValue.length <= 10) {
                         handleStudentChange("nick_name", filteredValue);

@@ -76,7 +76,7 @@ const LectureSelection = () => {
 
     if (!noLectureDivision && !selectAll) {
       filteredQuestions = selectedSubject?.questions.filter((q) =>
-        selectedLectures.includes(q.lecture)
+        selectedLectures.includes(q.lecture),
       );
     }
 
@@ -92,8 +92,8 @@ const LectureSelection = () => {
       selectedLectures: noLectureDivision
         ? ["الكل"]
         : selectAll
-        ? ["الكل"]
-        : selectedLectures,
+          ? ["الكل"]
+          : selectedLectures,
     };
 
     dispatch(selectSubject(filteredSubject));
@@ -116,7 +116,7 @@ const LectureSelection = () => {
     return (
       <div
         style={{ direction: "rtl" }}
-        className="flex flex-col min-h-screen bg-white"
+        className="flex font-arabic flex-col min-h-screen bg-white"
       >
         {/* Header */}
         <div className="bg-brand shadow-2xl px-6 pt-12 pb-6 rounded-b-[32px]">
@@ -167,7 +167,7 @@ const LectureSelection = () => {
   return (
     <div
       style={{ direction: "rtl" }}
-      className="flex flex-col min-h-screen bg-white pb-24"
+      className="flex flex-col font-arabic min-h-screen bg-white pb-24"
     >
       {/* Header */}
       <div className="bg-brand shadow-2xl px-6 pt-12 pb-6 rounded-b-[32px]">
@@ -292,11 +292,11 @@ const LectureSelection = () => {
             {selectAll
               ? `ابدأ الاختبار (${selectedSubject.questions.length} سؤال)`
               : selectedLectures.length > 0
-              ? `ابدأ الاختبار (${selectedLectures.reduce(
-                  (sum, lec) => sum + getQuestionCount(lec),
-                  0
-                )} سؤال)`
-              : "اختر محاضرة على الأقل"}
+                ? `ابدأ الاختبار (${selectedLectures.reduce(
+                    (sum, lec) => sum + getQuestionCount(lec),
+                    0,
+                  )} سؤال)`
+                : "اختر محاضرة على الأقل"}
           </span>
         </button>
       </div>
