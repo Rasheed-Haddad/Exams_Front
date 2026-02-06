@@ -337,7 +337,7 @@ export const fetchUniversities = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.message);
     }
-  }
+  },
 );
 
 export const fetchColleges = createAsyncThunk(
@@ -349,7 +349,7 @@ export const fetchColleges = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.message);
     }
-  }
+  },
 );
 
 export const fetchSubjects = createAsyncThunk(
@@ -361,10 +361,10 @@ export const fetchSubjects = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.error ||
-          "تأكد من اتصالك بالإنترنت أو من صلاحية الدخول"
+          "تأكد من اتصالك بالإنترنت أو من صلاحية الدخول",
       );
     }
-  }
+  },
 );
 
 const selectionSlice = createSlice({
@@ -403,6 +403,9 @@ const selectionSlice = createSlice({
       state.subjects = [];
     },
     clearError: (state) => {
+      state.error = null;
+    },
+    clearSelectionError: (state) => {
       state.error = null;
     },
   },
@@ -456,5 +459,6 @@ export const {
   selectSubject,
   resetSelections,
   clearError,
+  clearSelectionError,
 } = selectionSlice.actions;
 export default selectionSlice.reducer;

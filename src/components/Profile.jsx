@@ -85,7 +85,7 @@ const MedalIcon = ({ rank }) => {
       {rank <= 3 ? (
         <Trophy size={20} color="#fff" />
       ) : (
-        <span className="text-gray-600 font-bold text-sm">#{rank}</span>
+        <span className="text-gray-600  text-sm">#{rank}</span>
       )}
     </div>
   );
@@ -117,7 +117,7 @@ const LeaderboardCard = ({ student, isCurrentUser }) => {
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-1">
                 <span
-                  className={`text-lg font-bold ${
+                  className={`text-lg  ${
                     isCurrentUser ? "text-[#8c52ff]" : "text-gray-800"
                   }`}
                 >
@@ -125,7 +125,7 @@ const LeaderboardCard = ({ student, isCurrentUser }) => {
                 </span>
                 {isCurrentUser && (
                   <div className="bg-[#8c52ff] px-2 py-0.5 rounded-full">
-                    <span className="text-white text-xs font-bold">أنت</span>
+                    <span className="text-white text-xs ">أنت</span>
                   </div>
                 )}
               </div>
@@ -163,9 +163,7 @@ const LeaderboardCard = ({ student, isCurrentUser }) => {
           {/* Right Section: Points */}
           <div className="flex flex-col items-end">
             <div className="bg-gradient-to-br from-[#8c52ff]/10 to-[#8c52ff]/20 px-4 py-2 rounded-full border border-[#8c52ff]/30">
-              <span className="text-[#8c52ff] font-bold text-lg">
-                {student.points}
-              </span>
+              <span className="text-[#8c52ff]  text-lg">{student.points}</span>
             </div>
             <span className="text-xs text-gray-400 mt-1">نقطة</span>
           </div>
@@ -256,7 +254,7 @@ export default function Profile() {
             {/* User Info Header */}
             <div className="bg-gradient-to-br from-[#8c52ff]/5 to-[#8c52ff]/10 px-6 py-6 border-b border-gray-100">
               <div className="flex flex-col items-center">
-                <span className="text-gray-800 text-2xl font-bold mb-1">
+                <span className="text-gray-800 text-2xl  mb-1">
                   {user.name}
                 </span>
                 <div className="bg-gray-100 px-3 py-1 rounded-full">
@@ -273,7 +271,7 @@ export default function Profile() {
                     الاسم المستعار
                   </span>
                 </div>
-                <div className="text-2xl font-bold text-[#8c52ff] text-center">
+                <div className="text-2xl  text-[#8c52ff] text-center">
                   {user.nick_name || "John Doe"}
                 </div>
               </div>
@@ -362,9 +360,7 @@ export default function Profile() {
                 className="w-full bg-[#8c52ff] rounded-xl py-3 flex items-center justify-center hover:bg-[#7a42e6] transition-colors duration-300"
                 onClick={handle_back}
               >
-                <span className="text-white text-lg mr-2 font-semibold">
-                  عودة
-                </span>
+                <span className="text-white text-lg mr-2 ">عودة</span>
               </button>
             </div>
           </div>
@@ -390,7 +386,7 @@ export default function Profile() {
               </div>
             ) : (
               <div className="bg-white rounded-2xl p-12 flex flex-col items-center">
-                <span className="text-lg font-bold text-gray-800 mb-2 text-center">
+                <span className="text-lg  text-gray-800 mb-2 text-center">
                   لا توجد بيانات متاحة
                 </span>
                 <span className="text-sm text-gray-500 text-center">
@@ -404,9 +400,7 @@ export default function Profile() {
               className="w-full bg-[#8c52ff] rounded-xl py-3 flex items-center justify-center mt-6 hover:bg-[#7a42e6] transition-colors duration-300"
               onClick={handle_back}
             >
-              <span className="text-white text-lg mr-2 font-semibold">
-                عودة
-              </span>
+              <span className="text-white text-lg mr-2 ">عودة</span>
             </button>
           </div>
         )}
