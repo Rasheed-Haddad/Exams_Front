@@ -1,34 +1,42 @@
 import { useEffect, useState } from "react";
-import { Box, Typography, Container } from "@mui/material";
-import { Android, PhoneIphone } from "@mui/icons-material";
+import { Box, Typography, Container, Button } from "@mui/material";
+import { Android, PhoneIphone, Download } from "@mui/icons-material";
 
 const AndroidBlocker = ({ children }) => {
-  const [deviceType, setDeviceType] = useState(null); // 'android', 'desktop', 'ios', null
+  const [deviceType, setDeviceType] = useState(null);
 
   useEffect(() => {
-    // كشف نظام التشغيل
     const userAgent = navigator.userAgent || navigator.vendor || window.opera;
     const isAndroidDevice = /android/i.test(userAgent);
     const isIOSDevice = /iphone|ipad|ipod/i.test(userAgent.toLowerCase());
 
-    // التحقق من Desktop (لكن استثناء iOS)
+    // ✅ كشف iPad الحديث (iPadOS 13+)
+    const isIPad =
+      (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1) ||
+      /ipad/i.test(userAgent.toLowerCase());
+
+    // ✅ كشف أي جهاز iOS (iPhone + iPad القديم والجديد)
+    const isAppleDevice = isIOSDevice || isIPad;
+
     const isDesktop =
       !/android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(
-        userAgent.toLowerCase()
-      );
+        userAgent.toLowerCase(),
+      ) && !isIPad; // ✅ استثناء iPad من Desktop
 
     if (isAndroidDevice) {
       setDeviceType("android");
-    } else if (isIOSDevice) {
-      setDeviceType("ios"); // iOS مسموح (iPhone + iPad)
+    } else if (isAppleDevice) {
+      setDeviceType("ios"); // ✅ iPhone + iPad (القديم والجديد)
     } else if (isDesktop) {
-      setDeviceType("ios");
+      setDeviceType("desktop");
     }
   }, []);
 
   // فقط حظر Android و Desktop، السماح لـ iOS (iPhone + iPad)
   if (deviceType === "android" || deviceType === "desktop") {
     const isAndroid = deviceType === "android";
+    const downloadUrl =
+      "https://expo.dev/artifacts/eas/stoWxAb3mTovU4UY8z8ov6.apk";
 
     return (
       <div className="min-h-screen font-arabic bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center p-4">
@@ -37,7 +45,6 @@ const AndroidBlocker = ({ children }) => {
             className="bg-white rounded-2xl shadow-2xl p-8 text-center"
             sx={{ animation: "fadeIn 0.5s ease-in" }}
           >
-            {/* أيقونة حسب النظام */}
             {isAndroid ? (
               <Android
                 sx={{
@@ -56,12 +63,10 @@ const AndroidBlocker = ({ children }) => {
               />
             )}
 
-            {/* العنوان */}
             <Typography variant="h4" className="font-arabic text-gray-800 mb-4">
-              {isAndroid ? "مرحباً  " : "هذا التطبيق للهواتف فقط "}
+              {isAndroid ? "مرحباً بك" : "هذا التطبيق للهواتف فقط"}
             </Typography>
 
-            {/* الرسالة */}
             <Typography
               variant="body1"
               className="font-arabic text-gray-600 mb-6 text-lg leading-relaxed"
@@ -70,20 +75,44 @@ const AndroidBlocker = ({ children }) => {
                 <>
                   نلاحظ أنك تستخدم جهاز أندرويد
                   <br />
-                  يرجى التواصل معنا على واتسأب لتحميل التطبيق المخصص
+                  يمكنك تحميل التطبيق المخصص الآن
                 </>
               ) : (
                 <>
-                  يرجى استخدام هاتفك الأيفون أو الآيباد
+                  يمكنك تحميل التطبيق على هاتفك الأندرويد
                   <br />
-                  للوصول إلى هذا الموقع
+                  أو استخدام هاتف الآيفون/الآيباد
                 </>
               )}
             </Typography>
+
+            <Button
+              variant="contained"
+              size="large"
+              href={downloadUrl}
+              download
+              startIcon={<Download />}
+              sx={{
+                backgroundColor: isAndroid ? "#3DDC84" : "#8C52FF",
+                color: "white",
+                fontSize: "1.1rem",
+                padding: "12px 32px",
+                borderRadius: "12px",
+                textTransform: "none",
+                fontFamily: "inherit",
+                marginTop: "10px",
+                "&:hover": {
+                  backgroundColor: isAndroid ? "#2BC170" : "#7640E6",
+                  transform: "scale(1.05)",
+                },
+                transition: "all 0.3s ease",
+              }}
+            >
+              تحميل التطبيق
+            </Button>
           </Box>
         </Container>
 
-        {/* أنيميشن CSS */}
         <style>{`
           @keyframes fadeIn {
             from {
@@ -100,7 +129,6 @@ const AndroidBlocker = ({ children }) => {
     );
   }
 
-  // إذا كان iPhone أو iPad، اعرض المحتوى العادي
   return <>{children}</>;
 };
 
