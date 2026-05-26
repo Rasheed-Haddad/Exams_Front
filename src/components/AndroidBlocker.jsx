@@ -1,6 +1,4 @@
 import { useEffect, useState } from "react";
-import { Box, Typography, Container, Button } from "@mui/material";
-import { Android, PhoneIphone, Download } from "@mui/icons-material";
 
 const AndroidBlocker = ({ children }) => {
   const [deviceType, setDeviceType] = useState(null);
@@ -9,122 +7,88 @@ const AndroidBlocker = ({ children }) => {
     const userAgent = navigator.userAgent || navigator.vendor || window.opera;
     const isAndroidDevice = /android/i.test(userAgent);
     const isIOSDevice = /iphone|ipad|ipod/i.test(userAgent.toLowerCase());
-
-    // ✅ كشف iPad الحديث (iPadOS 13+)
     const isIPad =
       (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1) ||
       /ipad/i.test(userAgent.toLowerCase());
-
-    // ✅ كشف أي جهاز iOS (iPhone + iPad القديم والجديد)
     const isAppleDevice = isIOSDevice || isIPad;
-
     const isDesktop =
       !/android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(
         userAgent.toLowerCase(),
-      ) && !isIPad; // ✅ استثناء iPad من Desktop
+      ) && !isIPad;
 
-    if (isAndroidDevice) {
-      setDeviceType("android");
-    } else if (isAppleDevice) {
-      setDeviceType("ios"); // ✅ iPhone + iPad (القديم والجديد)
-    } else if (isDesktop) {
-      setDeviceType("desktop");
-    }
+    if (isAndroidDevice) setDeviceType("android");
+    else if (isAppleDevice) setDeviceType("ios");
+    else if (isDesktop) setDeviceType("desktop");
   }, []);
 
-  // فقط حظر Android و Desktop، السماح لـ iOS (iPhone + iPad)
+  const downloadUrl =
+    "https://drive.google.com/uc?id=1ZYXmypCBrt3E3BclB50p1nU6eSLCJ5eu";
+
   if (deviceType === "android" || deviceType === "desktop") {
-    const isAndroid = deviceType === "android";
-    const downloadUrl =
-      "https://expo.dev/artifacts/eas/stoWxAb3mTovU4UY8z8ov6.apk";
-
     return (
-      <div className="min-h-screen font-arabic bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center p-4">
-        <Container maxWidth="sm">
-          <Box
-            className="bg-white rounded-2xl shadow-2xl p-8 text-center"
-            sx={{ animation: "fadeIn 0.5s ease-in" }}
+      <div
+        className="min-h-screen flex items-center justify-center p-6 bg-brand font-[Tajawal,sans-serif] direction-rtl"
+        dir="rtl"
+      >
+        <link
+          href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500&display=swap"
+          rel="stylesheet"
+        />
+
+        <div className="w-full max-w-[420px] bg-brand rounded-[20px] px-8 py-12 text-center ">
+          <h1 className="text-[2.5rem] font-arabic text-white mb-2 leading-[1.3]">
+            قدها وقدود
+          </h1>
+
+          <p className="text-[0.95rem] text-white leading-[1.8] mb-8 font-light">
+            يمكنك تحميل التطبيق من هنا
+          </p>
+
+          <a
+            href={downloadUrl}
+            download
+            className="inline-flex items-center gap-2.5 bg-brand_2 text-black text-base font-arabic px-[30px] py-[13px] rounded-full no-underline mb-6"
           >
-            {isAndroid ? (
-              <Android
-                sx={{
-                  fontSize: 100,
-                  color: "#3DDC84",
-                  mb: 3,
-                }}
-              />
-            ) : (
-              <PhoneIphone
-                sx={{
-                  fontSize: 100,
-                  color: "#8C52FF",
-                  mb: 3,
-                }}
-              />
-            )}
+            تحميل التطبيق
+          </a>
 
-            <Typography variant="h4" className="font-arabic text-gray-800 mb-4">
-              {isAndroid ? "مرحباً بك" : "هذا التطبيق للهواتف فقط"}
-            </Typography>
-
-            <Typography
-              variant="body1"
-              className="font-arabic text-gray-600 mb-6 text-lg leading-relaxed"
-            >
-              {isAndroid ? (
-                <>
-                  نلاحظ أنك تستخدم جهاز أندرويد
-                  <br />
-                  يمكنك تحميل التطبيق المخصص الآن
-                </>
-              ) : (
-                <>
-                  يمكنك تحميل التطبيق على هاتفك الأندرويد
-                  <br />
-                  أو استخدام هاتف الآيفون/الآيباد
-                </>
-              )}
-            </Typography>
-
-            <Button
-              variant="contained"
-              size="large"
-              href={downloadUrl}
-              download
-              startIcon={<Download />}
-              sx={{
-                backgroundColor: isAndroid ? "#3DDC84" : "#8C52FF",
-                color: "white",
-                fontSize: "1.1rem",
-                padding: "12px 32px",
-                borderRadius: "12px",
-                textTransform: "none",
-                fontFamily: "inherit",
-                marginTop: "10px",
-                "&:hover": {
-                  backgroundColor: isAndroid ? "#2BC170" : "#7640E6",
-                  transform: "scale(1.05)",
-                },
-                transition: "all 0.3s ease",
-              }}
-            >
-              تحميل التطبيق
-            </Button>
-          </Box>
-        </Container>
-
-        <style>{`
-          @keyframes fadeIn {
-            from {
-              opacity: 0;
-              transform: translateY(20px);
-            }
-            to {
-              opacity: 1;
-              transform: translateY(0);
-            }
-          }
-        `}</style>
+          <div className="flex flex-col gap-3 text-right">
+            {[
+              {
+                icon: "🕔",
+                title: "اختصر وقتك",
+                desc: "ملخصات تزيل الحشو الزائد من الكتب",
+              },
+              {
+                icon: "🛡️",
+                title: "قلل الخوف قبل الامتحان",
+                desc: "مع أسئلة أتمتة تغطي مقرر المادة, يمكنك إعادة الأفكار في أقل من ساعتين",
+              },
+              {
+                icon: "💜",
+                title: "حقق أعلى النتائج",
+                desc: "مع نصائح الزملاء الموجودة داخل كل ملخص",
+              },
+            ].map(({ icon, title, desc }) => (
+              <div
+                key={title}
+                className="flex items-start gap-3 bg-white p-[0.9rem_1rem] border border-[#e5e4de] rounded-xl"
+              >
+                <div className="w-9 h-9 rounded-lg bg-white flex items-center justify-center shrink-0 text-base">
+                  {icon}
+                </div>
+                <div>
+                  <div className="text-[1.1rem] font-arabic text-brand mb-0.5">
+                    {title}
+                  </div>
+                  <div className="text-[0.82rem] text-brand leading-[1.6] font-arabic">
+                    {desc}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     );
   }

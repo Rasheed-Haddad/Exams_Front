@@ -1,31 +1,24 @@
 import { useEffect, useRef, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { set_previous_badge_like_the_new } from "../store/slices/authSlice";
+import { useDispatch, useSelector } from "react-redux";
 import {
-  Container,
-  Typography,
-  Card,
-  CardContent,
-  Button,
-  Box,
-  LinearProgress,
-  Grid,
-} from "@mui/material";
-import { School } from "@mui/icons-material";
+  set_badge,
+  set_previous_badge_like_the_new,
+} from "../store/slices/authSlice";
 import { resetExam } from "../store/slices/examSlice";
-import { set_badge } from "../store/slices/authSlice";
+import { replace, useNavigate } from "react-router-dom";
 
 const ExamResults = () => {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [badgeInfo, setBadgeInfo] = useState(null);
   const dispatchedRef = useRef(false);
   const { results, isSubmitted, loading } = useSelector((state) => state.exam);
   const { user } = useSelector((state) => state.auth);
+  const { selectedSubject } = useSelector((state) => state.selection);
+
   useEffect(() => {
     if (!isSubmitted) {
-      navigate("/subject");
+      navigate("/subject", replace);
       return;
     }
 
@@ -40,73 +33,31 @@ const ExamResults = () => {
     (async () => {
       try {
         const payload = await dispatch(
-          set_badge({ ID: user.ID, points: pointsToAdd })
+          set_badge({ ID: user.ID, points: pointsToAdd }),
         ).unwrap();
-
         setBadgeInfo(payload);
         dispatchedRef.current = true;
       } catch (err) {
         console.error("Failed to set badge:", err);
-        dispatchedRef.current = true; // حتى لا يعيد المحاولة باستمرار — عدّل حسب الحاجة
+        dispatchedRef.current = true;
       }
     })();
-  }, [isSubmitted, dispatch, navigate, user?.ID, results?.correctAnswers]);
+  }, [isSubmitted, dispatch, user?.ID, results?.correctAnswers]);
+
   const handleNewExam = () => {
     dispatch(set_previous_badge_like_the_new(badgeInfo?.badge));
-    dispatch(resetExam());
-    navigate("/subject");
+    navigate("/subject", replace);
+    setTimeout(() => {
+      dispatch(resetExam());
+    }, 100);
   };
 
-  if (loading) {
-    return (
-      <>
-        <div className="bg-gray-50 flex items-center justify-center mb-12 mt-32">
-          <h1 className="glow-text">قدها وقدود</h1>
-
-          <style jsx>{`
-            .glow-text {
-              font-size: 3rem;
-              font-weight: 100;
-              color: #8c52ff;
-              animation: glow 1.5s ease-in-out infinite,
-                float 3s ease-in-out infinite;
-            }
-
-            @keyframes glow {
-              0%,
-              100% {
-                text-shadow: 0 0 5px #8c52ff, 0 0 10px #8c52ff, 0 0 20px #8c52ff;
-              }
-              50% {
-                text-shadow: 0 0 15px #8c52ff, 0 0 30px #8c52ff,
-                  0 0 45px #8c52ff;
-              }
-            }
-
-            @keyframes float {
-              0%,
-              100% {
-                transform: translateY(0);
-              }
-              50% {
-                transform: translateY(-5px);
-              }
-            }
-          `}</style>
-        </div>
-        <Typography variant="h6" sx={{ color: "#8C52FF" }}>
-          جار تحميل النتائج....
-        </Typography>
-      </>
-    );
-  }
-
   const getGradeColor = (score) => {
-    if (score >= 90) return "success";
-    if (score >= 80) return "info";
-    if (score >= 70) return "warning";
-    if (score >= 60) return "primary";
-    return "error";
+    if (score >= 90) return "#2e7d32";
+    if (score >= 80) return "#0288d1";
+    if (score >= 70) return "#ed6c02";
+    if (score >= 60) return "#1976d2";
+    return "#d32f2f";
   };
 
   const getGradeLetter = (score) => {
@@ -125,8 +76,7 @@ const ExamResults = () => {
   };
 
   const getPerformanceMessage = (score) => {
-    const firstName = user.name.split(" ")[0];
-
+    const firstName = user?.name?.split(" ")[0] || "";
     if (score >= 90) return `${firstName} رسميا من نيردات الدفعة`;
     if (score >= 80) return `معدلك بأمان يا ${firstName}`;
     if (score >= 70) return "كويسة ";
@@ -134,130 +84,88 @@ const ExamResults = () => {
     return `قيمة ${firstName} ما بتتحدد بورقة وقلم`;
   };
 
+  const scoreColor = getGradeColor(results.score);
+
   return (
-    <div className="h-full bg-gray-50">
-      <Container maxWidth="lg" className="py-8 flex flex-col mt-16">
-        <Grid
-          container
-          spacing={4}
-          sx={{
-            display: "inline",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          {/* Main Results Card */}
-          <Grid>
-            <Card className="mb-6">
-              <CardContent className="p-8 text-center">
-                <div className="mb-6">
-                  <Typography
-                    variant="h2"
-                    className="font-arabic  mb-2"
-                    style={{
-                      color:
-                        getGradeColor(results.score) === "success"
-                          ? "#2e7d32"
-                          : getGradeColor(results.score) === "error"
-                          ? "#d32f2f"
-                          : "#1976d2",
-                    }}
-                  >
-                    {results.score}%
-                  </Typography>
-                  <div className="m-8">
-                    <Typography
-                      variant="h4"
-                      className="font-arabic mb-4 text-5xl"
-                      style={{
-                        color:
-                          getGradeColor(results.score) === "success"
-                            ? "#2e7d32"
-                            : getGradeColor(results.score) === "error"
-                            ? "#d32f2f"
-                            : "#1976d2",
-                      }}
-                    >
-                      <span className="font-arabic text-3xl ">
-                        {getGradeLetter(results.score)}{" "}
-                      </span>
-                      <span className="font-arabic text-3xl m-4 mb-8">
-                        {" "}
-                        : الدرجة
-                      </span>
-                    </Typography>
-                  </div>
-                  <Typography
-                    variant="p"
-                    color="textSecondary"
-                    className="mb-4 mt-8"
-                    style={{
-                      color:
-                        getGradeColor(results.score) === "success"
-                          ? "#2e7d32"
-                          : getGradeColor(results.score) === "error"
-                          ? "#d32f2f"
-                          : "#1976d2",
-                    }}
-                  >
-                    <span className="font-arabic text-2xl ">
-                      {getPerformanceMessage(results.score)}
-                    </span>
-                  </Typography>
-                </div>
+    <div className="flex-1 font-arabic min-h-screen bg-white overflow-y-auto">
+      <div className="py-8 px-4 mt-8">
+        <div className="bg-white rounded-2xl p-8 mb-6">
+          <div className="flex flex-col items-center">
+            {/* ── GRADE LETTER ── */}
+            <div className="mb-7 flex flex-col items-center">
+              <span
+                style={{
+                  fontSize: 100,
+                  color: scoreColor,
+                  lineHeight: "110px",
+                  textAlign: "center",
+                }}
+              >
+                {getGradeLetter(results.score)}
+              </span>
+            </div>
 
-                {/* Score Progress */}
-                <Box className="mb-6">
-                  <div className="my-8">
-                    <Typography
-                      variant="p"
-                      className="mb-2"
-                      style={{
-                        color:
-                          getGradeColor(results.score) === "success"
-                            ? "#2e7d32"
-                            : getGradeColor(results.score) === "error"
-                            ? "#d32f2f"
-                            : "#1976d2",
-                      }}
-                    >
-                      <span className="font-arabic text-xl  mb-4">نتيجتك</span>
-                    </Typography>
-                    <LinearProgress
-                      variant="determinate"
-                      value={results.score}
-                      className="h-3 font-arabic rounded-full mb-4"
-                      color={getGradeColor(results.score)}
-                    />
-                    <Typography
-                      variant="p"
-                      color="textSecondary"
-                      className="font-arabic text-lg text-black"
-                    >
-                      الأجوبة الصحيحة : {results.correctAnswers} من{" "}
-                      {results.totalQuestions}
-                    </Typography>
-                  </div>
-                </Box>
+            {/* ── PERFORMANCE MESSAGE ── */}
+            <div className="mt-16 mb-6">
+              <span
+                style={{ fontSize: 22, color: scoreColor, textAlign: "center" }}
+                className="block"
+              >
+                {getPerformanceMessage(results.score)}
+              </span>
+            </div>
 
-                {/* Action Buttons */}
-                <Box className="flex flex-wrap gap-3 justify-center">
-                  <Button
-                    variant="outlined"
-                    startIcon={<School style={{ color: "#8C52FF" }} />}
-                    onClick={handleNewExam}
-                    size="large"
-                    className="px-6"
-                    sx={{ borderColor: "#8C52FF" }}
-                  >
-                    <span className="font-arabic text-xl text-brand">عودة</span>
-                  </Button>
-                </Box>
-              </CardContent>
-            </Card>
-          </Grid>
-        </Grid>
-      </Container>
+            {/* ── INFO CARD ── */}
+            <div
+              style={{
+                borderWidth: 1.5,
+                borderColor: scoreColor,
+                borderRadius: 12,
+                paddingTop: 10,
+                paddingBottom: 10,
+                paddingLeft: 16,
+                paddingRight: 16,
+                backgroundColor: `${scoreColor}08`,
+                border: `1.5px solid ${scoreColor}`,
+              }}
+              className="w-full flex flex-col items-center"
+            >
+              <span style={{ color: scoreColor }} className="mb-1 block">
+                المادة : {selectedSubject?.name}
+              </span>
+              <span style={{ color: scoreColor }} className="mb-1 block">
+                الطالب : {user?.name}
+              </span>
+              <span style={{ color: scoreColor }} className="block">
+                الرقم الجامعي : {user?.ID}
+              </span>
+            </div>
+
+            {/* ── BACK BUTTON ── */}
+            <div className="mt-4 w-full">
+              <button
+                style={{
+                  borderWidth: 2,
+                  border: `2px solid ${scoreColor}`,
+                  borderRadius: 12,
+                  padding: "12px 28px",
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 8,
+                  width: "100%",
+                  background: "transparent",
+                  cursor: "pointer",
+                }}
+                onClick={handleNewExam}
+              >
+                <span style={{ color: scoreColor, fontSize: 20 }}>عودة</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

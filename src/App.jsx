@@ -16,11 +16,11 @@ import ExamInterface from "./components/ExamInterface";
 import ExamResults from "./components/ExamResults";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Profile from "./components/Profile";
-import Layout from "./components/Layout";
 import IOSInstallBanner from "./components/IOSInstallBanner";
 import "./App.css";
 import AndroidBlocker from "./components/AndroidBlocker";
 import LectureSelection from "./components/Lecture";
+import Summary from "./components/Summary";
 
 function App() {
   useEffect(() => {
@@ -43,16 +43,6 @@ function App() {
               <Route path="/signin" element={<SignIn />} />
               <Route path="/" element={<Navigate to="/signin" replace />} />
 
-              {/* Admin Routes - Nested inside Layout */}
-              <Route
-                path="/admin/*"
-                element={
-                  <ProtectedRoute requireAdmin>
-                    <Layout />
-                  </ProtectedRoute>
-                }
-              />
-
               {/* Student Protected Routes */}
               <Route
                 path="/university"
@@ -62,7 +52,6 @@ function App() {
                   </ProtectedRoute>
                 }
               />
-
               <Route
                 path="/college"
                 element={
@@ -87,6 +76,15 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <ExamInterface />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/summary"
+                element={
+                  <ProtectedRoute>
+                    <Summary />
                   </ProtectedRoute>
                 }
               />

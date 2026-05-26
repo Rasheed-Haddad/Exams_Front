@@ -3,7 +3,7 @@ import api from "../../api/api";
 
 // ================== Async Thunks ==================
 
-// تسجيل الدخول (طالب أو مدرس)
+// تسجيل الدخول
 export const signIn = createAsyncThunk(
   "auth/signIn",
   async (credentials, { rejectWithValue }) => {
@@ -12,60 +12,38 @@ export const signIn = createAsyncThunk(
 
       const { user, token } = response.data;
 
-      if (user.role === "student") {
-        await Promise.all([
-          localStorage.setItem("token", token),
-          localStorage.setItem("userRole", "student"),
-          localStorage.setItem("name", user.name),
-          localStorage.setItem("ID", String(user.ID)),
-          localStorage.setItem("_id", user.id),
-          localStorage.setItem("password", credentials.password),
-          localStorage.setItem("nick_name", user.nick_name),
-          localStorage.setItem("badge", user.badge),
-          localStorage.setItem("points", String(user.points)),
-        ]);
+      await Promise.all([
+        localStorage.setItem("token", token),
+        localStorage.setItem("userRole", "student"),
+        localStorage.setItem("name", user.name),
+        localStorage.setItem("ID", String(user.ID)),
+        localStorage.setItem("_id", user.id),
+        localStorage.setItem("password", credentials.password),
+        localStorage.setItem("nick_name", user.nick_name),
+        localStorage.setItem("badge", user.badge),
+        localStorage.setItem("points", String(user.points)),
+      ]);
 
-        return {
-          user: {
-            ID: String(user.ID),
-            _id: user.id,
-            name: user.name,
-            nick_name: user.nick_name,
-            password: credentials.password,
-            points: user.points,
-            badge: user.badge,
-            previous_badge: user.badge,
-            scores: user.scores || [],
-            rank: "",
-            role: "student",
-            college_id: user.college_id,
-            top10Students: [],
-            totalStudents: 0,
-          },
-          token,
-        };
-      } else {
-        await Promise.all([
-          localStorage.setItem("token", token),
-          localStorage.setItem("userRole", "teacher"),
-          localStorage.setItem("teacherId", user.id),
-          localStorage.setItem("teacherName", user.name),
-          localStorage.setItem("teacherPhone", user.phone_number),
-        ]);
-
-        return {
-          user: {
-            id: user.id,
-            name: user.name,
-            phone_number: user.phone_number,
-            total_profit: user.total_profit,
-            role: "teacher",
-          },
-          token,
-        };
-      }
+      return {
+        user: {
+          ID: String(user.ID),
+          _id: user.id,
+          name: user.name,
+          nick_name: user.nick_name,
+          password: credentials.password,
+          points: user.points,
+          badge: user.badge,
+          previous_badge: user.badge,
+          scores: user.scores || [],
+          rank: "",
+          role: "student",
+          college_id: user.college_id,
+          top10Students: [],
+          totalStudents: 0,
+        },
+        token,
+      };
     } catch (error) {
-      console.log(error);
       return rejectWithValue(
         error.response?.data?.error ||
           error.response?.data?.message ||
@@ -340,18 +318,6 @@ const authSlice = createSlice({
         } else if (payload.userRole === "teacher") {
           const { token, teacherId, teacherName, teacherPhone, teacherProfit } =
             payload;
-
-          if (token && teacherId) {
-            state.isAuthenticated = true;
-            state.token = token;
-            state.user = {
-              id: teacherId || "",
-              name: teacherName || "",
-              phone_number: teacherPhone || "",
-              total_profit: teacherProfit ? Number(teacherProfit) : 0,
-              role: "teacher",
-            };
-          }
         }
       })
       .addCase(initializeAuth.rejected, (state) => {
@@ -456,40 +422,6 @@ const authSlice = createSlice({
       })
       .addCase(get_student_info.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload || "حدث خطأ";
-      })
-
-      // Get Teacher Info with Analytics
-      .addCase(get_teacher_info.pending, (state) => {
-        state.analyticsLoading = true;
-        state.error = null;
-      })
-      .addCase(get_teacher_info.fulfilled, (state, action) => {
-        state.analyticsLoading = false;
-
-        if (state.user && state.user.role === "teacher") {
-          state.user.name = action.payload.admin.name;
-          state.user.phone_number = action.payload.admin.phone_number;
-          state.user.total_profit = action.payload.admin.total_profit;
-          state.user.id = action.payload.admin._id;
-        }
-
-        state.analytics = {
-          exams: action.payload.exams,
-          students: action.payload.students,
-          revenue: action.payload.revenue,
-          performance: action.payload.performance,
-          collegeAnalytics: action.payload.collegeAnalytics,
-          topLectures: action.payload.topLectures,
-          requests: action.payload.requests,
-          growth: action.payload.growth,
-          summary: action.payload.summary,
-        };
-
-        state.error = null;
-      })
-      .addCase(get_teacher_info.rejected, (state, action) => {
-        state.analyticsLoading = false;
         state.error = action.payload || "حدث خطأ";
       });
   },

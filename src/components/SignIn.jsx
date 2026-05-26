@@ -1,54 +1,40 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom"; // بدلاً من expo-router
-import ErrorHelperModal from "./ErrorHelperModal";
 import { clearError, initializeAuth, signIn } from "../store/slices/authSlice";
+import { replace, useNavigate } from "react-router-dom";
 
 const SignIn = () => {
-  const [userType, setUserType] = useState("student");
+  const navigate = useNavigate();
   const [studentData, setStudentData] = useState({
     name: "",
     nick_name: "",
     ID: "",
     password: "",
   });
-  const [teacherData, setTeacherData] = useState({
-    name: "",
-    phone_number: "",
-    password: "",
-  });
-  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const justSignedIn = useRef(false);
 
   const dispatch = useDispatch();
-  const navigate = useNavigate();
-
   const { loading, error, isAuthenticated, user, isInitialized } = useSelector(
     (state) => state.auth,
   );
 
-  // تهيئة التطبيق عند أول تحميل
   useEffect(() => {
     dispatch(initializeAuth());
   }, [dispatch]);
 
-  // التوجيه التلقائي إذا كان المستخدم مسجل دخول
   useEffect(() => {
-    if (isInitialized && isAuthenticated && user) {
-      // توجيه المستخدم حسب نوعه
-      if (user.role === "teacher") {
-        navigate("/admin");
+    if (isInitialized && isAuthenticated && user && !error) {
+      // ← أضف !error
+      if (justSignedIn.current) {
+        justSignedIn.current = false;
+        setShowPasswordModal(true);
       } else {
-        navigate("/university");
+        navigate("/university", { replace: true });
       }
     }
-  }, [isInitialized, isAuthenticated, user, navigate]);
-
-  // إظهار الـ Modal عند حدوث خطأ
-  useEffect(() => {
-    if (error) {
-      setShowErrorModal(true);
-    }
-  }, [error]);
+  }, [isInitialized, isAuthenticated, user, error]); // ← أضف error
 
   useEffect(() => {
     return () => {
@@ -56,243 +42,185 @@ const SignIn = () => {
     };
   }, [dispatch]);
 
+  const getDeviceId = async () => {
+    return navigator.userAgent || "unknown";
+  };
+
   const handleStudentChange = (name, value) => {
-    setStudentData({
-      ...studentData,
-      [name]: value,
-    });
+    setStudentData({ ...studentData, [name]: value });
   };
 
-  const handleTeacherChange = (name, value) => {
-    setTeacherData({
-      ...teacherData,
-      [name]: value,
-    });
-  };
-
-  const handleSubmit = (e) => {
-    if (e) e.preventDefault();
-    if (userType === "student") {
-      // استدعاء API تسجيل دخول الطالب
-      dispatch(signIn({ ...studentData, user_type: "student" }));
-    } else {
-      // استدعاء API تسجيل دخول المدرس
-      dispatch(signIn({ ...teacherData, user_type: "teacher" }));
-    }
-  };
-
-  const switchUserType = (type) => {
-    setUserType(type);
+  const handleSubmit = async () => {
     dispatch(clearError());
+    const device_id = await getDeviceId();
+    justSignedIn.current = true;
+    dispatch(signIn({ ...studentData, user_type: "student", device_id }));
   };
 
-  const handleCloseErrorModal = () => {
-    setShowErrorModal(false);
-    dispatch(clearError());
+  const handleCopyPassword = () => {
+    navigator.clipboard.writeText(studentData.password);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
-  // عرض شاشة تحميل أثناء التهيئة
+  const handlePasswordModalConfirm = () => {
+    setShowPasswordModal(false);
+    navigate("/university", { replace: true });
+  };
+
   if (!isInitialized) {
     return (
-      <div className="flex h-screen w-full justify-center items-center bg-[#8c52ff]">
-        <div className="flex flex-col items-center">
-          {/* ActivityIndicator بديل */}
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
-          <p className="text-white font-arabic text-lg mt-4">جاري التحميل...</p>
+      <div className="flex-1 flex justify-center items-center bg-[#8c52ff] min-h-screen">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-10 h-10 border-4 border-white border-t-transparent rounded-full animate-spin" />
+          <span className="text-white text-lg">جاري التحميل...</span>
         </div>
       </div>
     );
   }
 
-  // إذا كان المستخدم مسجل دخول، لا تعرض صفحة التسجيل
-  if (isAuthenticated && user) {
+  if (isAuthenticated && user && !showPasswordModal) {
     return (
-      <div className="flex h-screen w-full justify-center items-center bg-[#8c52ff]">
-        <div className="flex flex-col items-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
-          <p className="text-white font-arabic text-lg mt-4">
+      <div className="flex-1 flex justify-center items-center bg-[#8c52ff] min-h-screen">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-10 h-10 border-4 border-white border-t-transparent rounded-full animate-spin" />
+          <span className="text-white text-lg">
             جاري تحميل الصفحة الرئيسية...
-          </p>
+          </span>
         </div>
       </div>
     );
   }
 
   return (
-    <div
-      className="min-h-screen flex flex-col bg-[#8c52ff]"
-      style={{ direction: "rtl" }}
-    >
-      <div className="flex-1 overflow-y-auto bg-[#8c52ff]/10 p-4 flex flex-col items-center">
-        <div className="w-full max-w-md bg-white rounded-2xl p-8 shadow-lg mt-10">
-          {/* اختيار نوع المستخدم - تم إبقاء الكود المعلق كما هو مع تحويله */}
-          {/* 
-          <div className="flex flex-row mb-6 bg-gray-100 rounded-lg p-1">
-            <button
-              className={`flex-1 py-3 rounded-lg transition-colors ${
-                userType === "student" ? "bg-[#8c52ff] text-white" : "bg-transparent text-gray-600"
-              }`}
-              onClick={() => switchUserType("student")}
-            >
-              <span className="text-center font-arabic text-base ">
-                طالب
-              </span>
-            </button>
-
-            <button
-              className={`flex-1 py-3 rounded-lg transition-colors ${
-                userType === "teacher" ? "bg-[#8c52ff] text-white" : "bg-transparent text-gray-600"
-              }`}
-              onClick={() => switchUserType("teacher")}
-            >
-              <span className="text-center font-arabic text-base ">
-                مدرس
-              </span>
-            </button>
-          </div> 
-          */}
-
-          <form onSubmit={handleSubmit}>
-            {/* نموذج الطالب */}
-            {userType === "student" && (
-              <div className="flex flex-col gap-y-4">
-                <div className="mb-4">
-                  <input
-                    type="text"
-                    className="w-full border border-gray-300 rounded-lg p-4 font-arabic text-right placeholder-[#8c52ff] outline-none focus:ring-2 focus:ring-[#8c52ff]/50"
-                    value={studentData.name}
-                    onChange={(e) =>
-                      handleStudentChange("name", e.target.value)
-                    }
-                    placeholder=" الاسم والكنية باللغة العربية"
-                  />
-                </div>
-
-                <div className="mb-4">
-                  <input
-                    type="text"
-                    className="w-full border border-gray-300 font-arabic rounded-lg p-4 text-right placeholder-[#8c52ff] outline-none focus:ring-2 focus:ring-[#8c52ff]/50"
-                    value={studentData.nick_name}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      const filteredValue = value.replace(/[^ء-ي]/g, "");
-                      if (filteredValue.length <= 10) {
-                        handleStudentChange("nick_name", filteredValue);
-                      }
-                    }}
-                    maxLength={10}
-                    placeholder=" الاسم المستعار (يظهر للآخرين)"
-                  />
-                </div>
-
-                <div className="mb-4">
-                  <input
-                    type="text"
-                    inputMode="numeric"
-                    className="w-full border font-arabic border-gray-300 rounded-lg p-4 text-left placeholder-[#8c52ff] outline-none focus:ring-2 focus:ring-[#8c52ff]/50"
-                    value={studentData.ID}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      if (/^\d*$/.test(value)) {
-                        handleStudentChange("ID", value);
-                      }
-                    }}
-                    placeholder=" الرقم الجامعي"
-                  />
-                </div>
-
-                <div className="mb-6">
-                  <input
-                    className="w-full border font-arabic border-gray-300 rounded-lg p-4 text-left placeholder-[#8c52ff] outline-none focus:ring-2 focus:ring-[#8c52ff]/50"
-                    value={studentData.password}
-                    onChange={(e) =>
-                      handleStudentChange("password", e.target.value)
-                    }
-                    placeholder="كلمة المرور"
-                  />
-                </div>
+    <>
+      <div
+        dir="rtl"
+        className="flex-1 min-h-screen bg-[#8c52ff] overflow-y-auto"
+      >
+        <div className="flex justify-center items-center px-5 min-h-screen bg-[#8c52ff]">
+          <div className="w-full max-w-sm bg-brand px-7 py-9">
+            {/* ─── بانر الخطأ ─── */}
+            {error && (
+              <div className="flex flex-row items-center bg-red-50 border border-red-300 rounded-xl px-4 py-3 mb-5">
+                <span className="text-red-500 text-lg ml-2">⚠️</span>
+                <span className="text-red-600 font-arabic text-sm text-right flex-1 leading-5">
+                  {error}
+                </span>
               </div>
             )}
 
-            {/* نموذج المدرس */}
-            {userType === "teacher" && (
-              <div className="flex flex-col gap-y-4">
-                <div className="mb-4">
-                  <label className="block text-sm text-[#8c52ff] mb-2 font-arabic">
-                    الاسم والكنية باللغة العربية
-                  </label>
-                  <input
-                    type="text"
-                    className="w-full border border-gray-300 rounded-lg p-4 font-arabic text-right outline-none focus:ring-2 focus:ring-[#8c52ff]/50"
-                    value={teacherData.name}
-                    onChange={(e) =>
-                      handleTeacherChange("name", e.target.value)
-                    }
-                  />
-                </div>
+            {/* الاسم والكنية */}
+            <div className="mb-4">
+              <input
+                className="w-full border border-[#8c52ff]/25 rounded-xl font-arabic px-4 py-3 text-center bg-white text-[#3a3a3a] outline-none"
+                value={studentData.name}
+                onChange={(e) => handleStudentChange("name", e.target.value)}
+                placeholder="الاسم والكنية"
+              />
+            </div>
 
-                <div className="mb-4">
-                  <label className="block text-sm text-[#8c52ff] mb-2 font-arabic">
-                    رقم الهاتف
-                  </label>
-                  <input
-                    type="tel"
-                    className="w-full border border-gray-300 font-arabic rounded-lg p-4 text-right outline-none focus:ring-2 focus:ring-[#8c52ff]/50"
-                    value={teacherData.phone_number}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      if (/^\d*$/.test(value)) {
-                        handleTeacherChange("phone_number", value);
-                      }
-                    }}
-                  />
-                </div>
+            {/* الاسم المستعار */}
+            <div className="mb-4">
+              <input
+                className="w-full border font-arabic border-[#8c52ff]/25 rounded-xl px-4 py-3 text-center bg-white text-[#3a3a3a] outline-none"
+                value={studentData.nick_name}
+                onChange={(e) => {
+                  const filtered = e.target.value.replace(/[^ء-ي]/g, "");
+                  if (filtered.length <= 10)
+                    handleStudentChange("nick_name", filtered);
+                }}
+                maxLength={10}
+                placeholder="الاسم المستعار (يظهر للآخرين)"
+              />
+            </div>
 
-                <div className="mb-6">
-                  <label className="block text-sm text-[#8c52ff] mb-2 font-arabic">
-                    كلمة المرور
-                  </label>
-                  <input
-                    className="w-full border font-arabic border-gray-300 rounded-lg p-4 text-right outline-none focus:ring-2 focus:ring-[#8c52ff]/50"
-                    value={teacherData.password}
-                    onChange={(e) =>
-                      handleTeacherChange("password", e.target.value)
-                    }
-                  />
-                </div>
-              </div>
-            )}
+            {/* الرقم الجامعي */}
+            <div className="mb-4">
+              <input
+                className="w-full border font-arabic border-[#8c52ff]/25 rounded-xl px-4 py-3 text-center bg-white text-[#3a3a3a] outline-none"
+                value={studentData.ID}
+                onChange={(e) => {
+                  if (/^\d*$/.test(e.target.value))
+                    handleStudentChange("ID", e.target.value);
+                }}
+                inputMode="numeric"
+                placeholder="الرقم الجامعي"
+              />
+            </div>
+
+            {/* كلمة المرور */}
+            <div className="mb-8">
+              <input
+                className="w-full border font-arabic border-[#8c52ff]/25 rounded-xl px-4 py-3 text-center bg-white text-[#3a3a3a] outline-none"
+                value={studentData.password}
+                onChange={(e) =>
+                  handleStudentChange("password", e.target.value)
+                }
+                placeholder="ضع كلمة مرور وتذكرها جيدا"
+              />
+            </div>
 
             {/* زر التأكيد */}
             <button
-              type="submit"
-              className={`w-full h-12 rounded-lg flex items-center justify-center transition-opacity ${
-                loading
-                  ? "bg-[#8c52ff]/70 cursor-not-allowed"
-                  : "bg-[#8c52ff] hover:opacity-90"
-              }`}
+              className="w-full font-arabic h-13 rounded-xl flex items-center justify-center py-3.5 bg-white"
+              onClick={handleSubmit}
               disabled={loading}
             >
               {loading ? (
-                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                <div className="w-5 h-5 border-2 border-[#8c52ff] border-t-transparent rounded-full animate-spin" />
               ) : (
-                <span className="text-white font-arabic text-lg">
-                  تسجيل الدخول
-                </span>
+                <span className="text-brand text-base font-arabic">دخول</span>
               )}
             </button>
-          </form>
+          </div>
         </div>
       </div>
 
-      {/* Error Helper Modal */}
-      <ErrorHelperModal
-        visible={showErrorModal}
-        onClose={handleCloseErrorModal}
-        errorMessage={error || ""}
-        screenType="signin"
-      />
-    </div>
+      {/* مودال تذكير كلمة المرور */}
+      {showPasswordModal && (
+        <div
+          className="fixed inset-0 flex justify-center items-center px-6 z-50"
+          style={{ backgroundColor: "rgba(140,82,255,0.55)" }}
+        >
+          <div
+            className="w-full max-w-sm bg-white rounded-3xl px-7 py-8"
+            style={{ boxShadow: "0 8px 24px rgba(0,0,0,0.18)" }}
+          >
+            <p className="text-center text-4xl mb-3">🔑</p>
+            <p className="text-[#8c52ff] text-xl text-center mb-2">
+              احفظ كلمة المرور
+            </p>
+            <p className="text-[#8c52ff]/60 text-sm text-center mb-6 leading-6">
+              قد تضطر لحذف حسابك في حال نسيانها
+              <br />
+              تأكد من حفظها الآن
+            </p>
+
+            <div className="flex flex-row items-center justify-between bg-[#8c52ff]/8 border border-[#8c52ff]/20 rounded-2xl px-4 py-3 mb-6">
+              <button
+                onClick={handleCopyPassword}
+                className="bg-[#8c52ff] rounded-lg px-4 py-1.5"
+              >
+                <span className="text-white text-sm">
+                  {copied ? "تم النسخ ✓" : "نسخ"}
+                </span>
+              </button>
+              <span className="text-[#8c52ff] text-base tracking-wider flex-1 text-right ml-3">
+                {studentData.password}
+              </span>
+            </div>
+
+            <button
+              className="w-full bg-[#8c52ff] rounded-xl py-3.5 flex items-center justify-center"
+              onClick={handlePasswordModalConfirm}
+            >
+              <span className="text-white text-base font-semibold">متابعة</span>
+            </button>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 

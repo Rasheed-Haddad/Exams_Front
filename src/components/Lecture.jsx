@@ -1,54 +1,50 @@
-import { useNavigate } from "react-router-dom";
-import {
-  BookOpen,
-  CheckCircle,
-  Circle,
-  Play,
-  ArrowRight,
-  Grid,
-} from "lucide-react";
+import { BookOpen, CheckCircle, Circle, Play } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { selectSubject } from "../store/slices/selectionSlice";
+import { setSelectedLectures } from "../store/slices/examSlice";
+import { useNavigate } from "react-router-dom";
 
 const LectureSelection = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { selectedSubject } = useSelector((state) => state.selection);
   const [lectures, setLectures] = useState([]);
-  const [selectedLectures, setSelectedLectures] = useState([]);
+  // ✅ تم تغيير اسم setter المحلي لتجنب التضارب مع الـ Redux action
+  const [pickedLectures, setPickedLectures] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
   const [noLectureDivision, setNoLectureDivision] = useState(false);
 
   useEffect(() => {
     if (!selectedSubject) {
-      navigate(-1);
+      window.history.back();
       return;
     }
 
-    // استخراج المحاضرات الفريدة
-    const allLectures = selectedSubject.questions
+    const fromQuestions = selectedSubject.questions
       .map((q) => q.lecture || "")
-      .filter((lecture) => lecture.trim() !== "");
+      .filter((l) => l.trim() !== "");
 
-    // التحقق من عدم وجود تقسيم للمحاضرات
-    if (allLectures.length === 0) {
+    const fromSummary = (selectedSubject.summary ?? [])
+      .map((s) => s.meta?.lecture_title || "")
+      .filter((l) => l.trim() !== "");
+
+    const all = Array.from(new Set([...fromQuestions, ...fromSummary]));
+
+    if (all.length === 0) {
       setNoLectureDivision(true);
       return;
     }
-
-    // إزالة التكرار
-    const uniqueLectures = Array.from(new Set(allLectures));
-    setLectures(uniqueLectures);
-  }, [selectedSubject, navigate]);
+    setLectures(all);
+  }, [selectedSubject]);
 
   const toggleLecture = (lecture) => {
-    if (selectedLectures.includes(lecture)) {
-      setSelectedLectures(selectedLectures.filter((l) => l !== lecture));
+    if (pickedLectures.includes(lecture)) {
+      setPickedLectures(pickedLectures.filter((l) => l !== lecture));
       setSelectAll(false);
     } else {
-      const newSelected = [...selectedLectures, lecture];
-      setSelectedLectures(newSelected);
+      const newSelected = [...pickedLectures, lecture];
+      setPickedLectures(newSelected);
       if (newSelected.length === lectures.length) {
         setSelectAll(true);
       }
@@ -57,26 +53,28 @@ const LectureSelection = () => {
 
   const toggleSelectAll = () => {
     if (selectAll) {
-      setSelectedLectures([]);
+      setPickedLectures([]);
       setSelectAll(false);
     } else {
-      setSelectedLectures([...lectures]);
+      setPickedLectures([...lectures]);
       setSelectAll(true);
     }
   };
 
   const handleStartExam = () => {
-    if (!selectAll && selectedLectures.length === 0 && !noLectureDivision) {
+    if (!selectAll && pickedLectures.length === 0 && !noLectureDivision) {
       alert("يرجى اختيار محاضرة واحدة على الأقل");
       return;
     }
 
-    // إنشاء نسخة معدلة من المادة تحتوي فقط على الأسئلة المحددة
-    let filteredQuestions = selectedSubject?.questions;
+    const chosenLectures =
+      noLectureDivision || selectAll ? lectures : pickedLectures;
 
+    // فلتر الأسئلة
+    let filteredQuestions = selectedSubject?.questions;
     if (!noLectureDivision && !selectAll) {
-      filteredQuestions = selectedSubject?.questions.filter((q) =>
-        selectedLectures.includes(q.lecture),
+      filteredQuestions = selectedSubject.questions.filter((q) =>
+        pickedLectures.includes(q.lecture),
       );
     }
 
@@ -85,19 +83,15 @@ const LectureSelection = () => {
       return;
     }
 
-    // تحديث المادة المختارة بالأسئلة المفلترة
     const filteredSubject = {
       ...selectedSubject,
       questions: filteredQuestions,
-      selectedLectures: noLectureDivision
-        ? ["الكل"]
-        : selectAll
-          ? ["الكل"]
-          : selectedLectures,
     };
 
     dispatch(selectSubject(filteredSubject));
-    navigate("/exam");
+    // ✅ الآن يستدعي Redux action بشكل صحيح
+    dispatch(setSelectedLectures(chosenLectures));
+    navigate("/summary");
   };
 
   const getQuestionCount = (lecture) => {
@@ -107,55 +101,63 @@ const LectureSelection = () => {
     );
   };
 
-  if (!selectedSubject) {
-    return null;
-  }
+  if (!selectedSubject) return null;
 
   // حالة عدم وجود تقسيم للمحاضرات
   if (noLectureDivision) {
     return (
       <div
-        style={{ direction: "rtl" }}
+        dir="rtl"
         className="flex font-arabic flex-col min-h-screen bg-white"
       >
         {/* Header */}
-        <div className="bg-brand shadow-2xl px-6 pt-12 pb-6 rounded-b-[32px]">
+        <div className="bg-brand shadow-2xl font-arabic px-6 pt-12 pb-6 rounded-b-[32px]">
           <div className="flex flex-row items-center gap-3 mb-2">
             <button
-              onClick={() => navigate(-1)}
-              className="bg-white/20 w-10 h-10 rounded-full flex items-center justify-center hover:bg-white/30 transition-all"
+              onClick={() => window.history.back()}
+              className="bg-white/20 w-10 h-10 rounded-full flex items-center justify-center"
             >
-              <ArrowRight size={20} color="#fff" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#fff"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M5 12h14" />
+                <path d="m12 5 7 7-7 7" />
+              </svg>
             </button>
-            <span className="text-white text-2xl font-arabic flex-1">
+            <span className="text-white font-arabic text-2xl flex-1">
               {selectedSubject.name}
             </span>
           </div>
         </div>
 
         <div className="flex-1 flex justify-center items-center px-6">
-          <div className="bg-white rounded-3xl shadow-lg p-8 flex flex-col items-center w-full max-w-md">
+          <div className="bg-white rounded-3xl shadow-lg p-8 flex flex-col items-center w-full">
             <div className="w-24 h-24 bg-purple-50 rounded-full flex items-center justify-center mb-6">
               <BookOpen size={48} color="#8c52ff" />
             </div>
 
-            <span className="text-2xl font-arabic text-gray-800 mb-3 text-center">
+            <span className="text-2xl text-gray-800 font-arabic mb-3 text-center block">
               المحاضرات غير مقسمة بعد
             </span>
 
-            <span className="text-base text-gray-600 text-center mb-6 leading-7">
+            <span className="text-base font-arabic text-gray-600 text-center mb-6 leading-7 block">
               هذه المادة تحتوي على {selectedSubject.questions.length} سؤال غير
-              مقسم إلى محاضرات. يمكنك البدء بالاختبار مباشرة.
+              مقسم إلى محاضرات. يمكنك البدء بالمكثفة مباشرة.
             </span>
 
             <button
               onClick={handleStartExam}
-              className="bg-brand rounded-2xl py-4 px-8 flex flex-row items-center justify-center gap-3 w-full hover:opacity-90 transition-all"
+              className="bg-brand rounded-2xl py-4 px-8 flex flex-row items-center justify-center gap-3 w-full"
             >
               <Play size={24} color="#fff" fill="#fff" />
-              <span className="text-white font-arabic text-lg">
-                ابدأ الاختبار
-              </span>
             </button>
           </div>
         </div>
@@ -166,50 +168,68 @@ const LectureSelection = () => {
   // حالة وجود تقسيم للمحاضرات
   return (
     <div
-      style={{ direction: "rtl" }}
-      className="flex flex-col font-arabic min-h-screen bg-white pb-24"
+      dir="rtl"
+      className="flex font-arabic flex-col min-h-screen bg-brand mb-12"
     >
       {/* Header */}
-      <div className="bg-brand shadow-2xl px-6 pt-12 pb-6 rounded-b-[32px]">
+      <div className="bg-brand px-6 pt-12 pb-6 rounded-b-[32px]">
         <div className="flex flex-row items-center gap-3 mb-4">
           <button
-            onClick={() => navigate(-1)}
-            className="bg-white/20 w-10 h-10 rounded-full flex items-center justify-center hover:bg-white/30 transition-all"
+            onClick={() => window.history.back()}
+            className="bg-white/20 w-10 h-10 rounded-full flex items-center justify-center"
           >
-            <ArrowRight size={20} color="#fff" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#fff"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M5 12h14" />
+              <path d="m12 5 7 7-7 7" />
+            </svg>
           </button>
           <div className="flex-1">
-            <span className="text-white text-2xl block">
-              {selectedSubject.name}
-            </span>
-            <span className="text-white/80 text-sm mt-3 block">
-              اختار المحاضرات اللي داخلة معك
-            </span>
+            <span className="text-white text-2xl">{selectedSubject.name}</span>
           </div>
         </div>
       </div>
 
-      <div
-        className="flex-1 px-6 -mt-4 overflow-y-auto"
-        style={{ paddingBottom: "8rem" }}
-      >
+      <div className="flex-1 px-6 -mt-4 overflow-y-auto">
         {/* Select All Option */}
         <button
           onClick={toggleSelectAll}
-          className="bg-white rounded-3xl shadow-lg p-5 mb-4 border-2 border-brand w-full hover:shadow-xl transition-all"
+          className="bg-white rounded-3xl p-5 mb-4 border-2 border-brand w-full"
         >
           <div className="flex flex-row items-center justify-between">
             <div className="flex flex-row items-center gap-3 flex-1">
               <div className="w-12 h-12 bg-gradient-to-br from-[#8c52ff] to-[#a855f7] rounded-2xl flex items-center justify-center">
-                <Grid size={24} color="#fff" />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#fff"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <rect width="7" height="7" x="3" y="3" rx="1" />
+                  <rect width="7" height="7" x="14" y="3" rx="1" />
+                  <rect width="7" height="7" x="14" y="14" rx="1" />
+                  <rect width="7" height="7" x="3" y="14" rx="1" />
+                </svg>
               </div>
               <div className="flex-1 text-right">
-                <span className="text-lg font-arabic text-gray-800 block">
-                  جميع المحاضرات
-                </span>
-                <span className="text-sm  font-arabic text-gray-500 block">
+                <p className="text-lg text-gray-800">جميع المحاضرات</p>
+                <p className="text-sm text-gray-500">
                   {selectedSubject.questions.length} سؤال
-                </span>
+                </p>
               </div>
             </div>
             {selectAll ? (
@@ -224,14 +244,14 @@ const LectureSelection = () => {
         <div className="mb-6">
           <div className="flex flex-col gap-3">
             {lectures.map((lecture, index) => {
-              const isSelected = selectedLectures.includes(lecture);
+              const isSelected = pickedLectures.includes(lecture);
               const questionCount = getQuestionCount(lecture);
 
               return (
                 <button
                   key={index}
                   onClick={() => toggleLecture(lecture)}
-                  className={`bg-white rounded-2xl shadow-md p-4 border-2 w-full hover:shadow-lg transition-all ${
+                  className={`bg-white rounded-2xl p-4 border-2 w-full ${
                     isSelected ? "border-brand" : "border-transparent"
                   }`}
                 >
@@ -248,16 +268,14 @@ const LectureSelection = () => {
                         />
                       </div>
                       <div className="flex-1 text-right">
-                        <span
-                          className={`text-base font-arabic block ${
-                            isSelected ? "text-brand" : "text-gray-800"
-                          }`}
+                        <p
+                          className={`text-base ${isSelected ? "text-brand" : "text-gray-800"}`}
                         >
                           {lecture}
-                        </span>
-                        <span className="text-sm  font-arabic text-gray-500 block">
+                        </p>
+                        <p className="text-sm text-gray-500">
                           {questionCount} سؤال
-                        </span>
+                        </p>
                       </div>
                     </div>
                     {isSelected ? (
@@ -273,31 +291,19 @@ const LectureSelection = () => {
         </div>
 
         {/* Bottom Spacing */}
-        <div className="h-12" />
+        <div className="h-32" />
       </div>
 
       {/* Fixed Bottom Button */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-6 py-4 shadow-2xl">
+      <div className="fixed bottom-0 left-0 right-0 bg-brand px-6 py-4">
         <button
           onClick={handleStartExam}
-          className={`rounded-2xl py-4 px-6 flex flex-row items-center justify-center gap-3 w-full transition-all ${
-            selectAll || selectedLectures.length > 0
-              ? "bg-brand hover:opacity-90"
-              : "bg-gray-300 cursor-not-allowed"
+          disabled={!selectAll && pickedLectures.length === 0}
+          className={`rounded-2xl py-4 px-6 flex flex-row items-center border border-white justify-center gap-3 w-full ${
+            selectAll || pickedLectures.length > 0 ? "bg-brand" : "bg-gray-300"
           }`}
-          disabled={!selectAll && selectedLectures.length === 0}
         >
-          <Play size={24} color="#fff" fill="#fff" />
-          <span className="text-white font-arabic text-lg">
-            {selectAll
-              ? `ابدأ الاختبار (${selectedSubject.questions.length} سؤال)`
-              : selectedLectures.length > 0
-                ? `ابدأ الاختبار (${selectedLectures.reduce(
-                    (sum, lec) => sum + getQuestionCount(lec),
-                    0,
-                  )} سؤال)`
-                : "اختر محاضرة على الأقل"}
-          </span>
+          <span className="text-xl text-white">ابدأ</span>
         </button>
       </div>
     </div>

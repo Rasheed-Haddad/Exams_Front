@@ -1,22 +1,11 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import api from "../../api/api";
+
 export const mockUniversities = [
   { id: "1", name: "الجامعة الدولية", location: "درعا" },
-  {
-    id: "2",
-    name: "الجامعة السورية الخاصة",
-    location: "ريف دمشق",
-  },
-  {
-    id: "3",
-    name: "الجامعة العربية الخاصة ",
-    location: "طريق حمص - حماة",
-  },
-  {
-    id: "4",
-    name: "الجامعة العربية الدولية",
-    location: "درعا",
-  },
+  { id: "2", name: "الجامعة السورية الخاصة", location: "ريف دمشق" },
+  { id: "3", name: "الجامعة العربية الخاصة ", location: "طريق حمص - حماة" },
+  { id: "4", name: "الجامعة العربية الدولية", location: "درعا" },
   { id: "5", name: "الجامعة الوطنية الخاصة", location: "حماة" },
   { id: "6", name: "جامعة أنطاكية الخاصة", location: "ريف دمشق" },
   { id: "7", name: "جامعة الأندلس ", location: "طرطوس" },
@@ -31,19 +20,11 @@ export const mockUniversities = [
   { id: "16", name: "جامعة حلب", location: "حلب" },
   { id: "17", name: "جامعة دمشق", location: "دمشق" },
   { id: "18", name: "جامعة حمص", location: "حمص" },
-  {
-    id: "19",
-    name: "جامعة الرشيد الدولية ",
-    location: "درعا",
-  },
+  { id: "19", name: "جامعة الرشيد الدولية ", location: "درعا" },
   { id: "20", name: "جامعة طرطوس", location: "طرطوس" },
   { id: "21", name: "جامعة اللاذقية", location: "اللاذقية" },
   { id: "22", name: "جامعة قرطبة", location: "حلب" },
-  {
-    id: "23",
-    name: "جامعة قاسبون الخاصة ",
-    location: "جباب",
-  },
+  { id: "23", name: "جامعة قاسيون الخاصة ", location: "جباب" },
 ];
 
 export const mockColleges = {
@@ -354,31 +335,40 @@ export const fetchColleges = createAsyncThunk(
 
 export const fetchSubjects = createAsyncThunk(
   "selection/fetchSubjects",
-  async ({ college_id, ID }, { rejectWithValue }) => {
+  async ({ college_id, ID, search_term }, { rejectWithValue }) => {
     try {
-      const response = await api.post("/subjects", { college_id, ID });
+      const response = await api.post("/subjects", {
+        college_id,
+        ID,
+        search_term,
+      });
       return response.data;
     } catch (error) {
       return rejectWithValue(
-        error.response?.data?.error ||
-          "تأكد من اتصالك بالإنترنت أو من صلاحية الدخول",
+        typeof error.response?.data === "string"
+          ? error.response.data
+          : error.response?.data?.message ||
+              error.response?.data?.error ||
+              "تأكد من اتصالك بالإنترنت أو من صلاحية الدخول",
       );
     }
   },
 );
 
+const initialState = {
+  universities: [],
+  colleges: [],
+  subjects: [],
+  selectedUniversity: null,
+  selectedCollege: null,
+  selectedSubject: null,
+  loading: false,
+  error: null,
+};
+
 const selectionSlice = createSlice({
   name: "selection",
-  initialState: {
-    universities: [],
-    colleges: [],
-    subjects: [],
-    selectedUniversity: null,
-    selectedCollege: null,
-    selectedSubject: null,
-    loading: false,
-    error: null,
-  },
+  initialState,
   reducers: {
     selectUniversity: (state, action) => {
       state.selectedUniversity = action.payload;
@@ -411,7 +401,6 @@ const selectionSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // Universities
       .addCase(fetchUniversities.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -424,7 +413,6 @@ const selectionSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
-      // Colleges
       .addCase(fetchColleges.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -437,13 +425,13 @@ const selectionSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
-      // Subjects
       .addCase(fetchSubjects.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(fetchSubjects.fulfilled, (state, action) => {
         state.loading = false;
+        state.error = null;
         state.subjects = action.payload;
       })
       .addCase(fetchSubjects.rejected, (state, action) => {

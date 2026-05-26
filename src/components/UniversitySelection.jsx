@@ -1,199 +1,152 @@
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import {
-  Container,
-  Typography,
-  Card,
-  CardContent,
-  Grid,
-  Button,
-  CircularProgress,
-  Alert,
-  Box,
-  Chip,
-} from "@mui/material";
-import {
-  SchoolOutlined,
-  LocationOnOutlined,
-  LogoutOutlined,
-} from "@mui/icons-material";
 import {
   fetchColleges,
   fetchUniversities,
   selectUniversity,
 } from "../store/slices/selectionSlice";
-import { signOut } from "../store/slices/authSlice";
-import { useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+
+const SkeletonCard = () => {
+  const [opacity, setOpacity] = useState(0.4);
+
+  useEffect(() => {
+    let increasing = true;
+    const interval = setInterval(() => {
+      setOpacity((prev) => {
+        if (prev >= 1) increasing = false;
+        if (prev <= 0.4) increasing = true;
+        return increasing ? prev + 0.05 : prev - 0.05;
+      });
+    }, 50);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div
+      style={{ opacity }}
+      className="bg-white w-[90%] rounded-xl shadow-md min-h-[170px] p-4 flex flex-col justify-between"
+    >
+      {/* Icon placeholder */}
+      <div className="flex flex-col items-center gap-3">
+        <div className="w-6 h-6 rounded-full bg-gray-200 mb-3" />
+
+        {/* Name placeholder */}
+        <div className="w-3/4 h-4 rounded-md bg-gray-200 mb-2" />
+        <div className="w-1/2 h-3 rounded-md bg-gray-200" />
+
+        {/* Location placeholder */}
+        <div className="flex flex-row items-center justify-end gap-1 mt-1 w-full">
+          <div className="w-2 h-2 rounded-full bg-gray-200" />
+          <div className="w-1/3 h-3 rounded-md bg-gray-200" />
+        </div>
+      </div>
+
+      {/* Button placeholder */}
+      <div className="w-full h-8 rounded-lg bg-gray-200 mt-auto" />
+    </div>
+  );
+};
+
 const UniversitySelection = () => {
-  const location = useLocation();
-  const dispatch = useDispatch();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const { universities, loading, error } = useSelector(
-    (state) => state.selection
+    (state) => state.selection,
   );
   const { user } = useSelector((state) => state.auth);
 
   useEffect(() => {
     dispatch(fetchUniversities());
   }, [dispatch]);
+
   useEffect(() => {
-    const savedUniversity =
-      JSON.parse(localStorage.getItem("university")) || null;
+    const checkSavedUniversity = async () => {
+      const savedUniversityStr = localStorage.getItem("university");
+      const savedUniversity = savedUniversityStr
+        ? JSON.parse(savedUniversityStr)
+        : null;
 
-    if (savedUniversity) {
-      dispatch(selectUniversity(savedUniversity));
-      dispatch(fetchColleges(savedUniversity.id));
-
-      if (location.pathname !== "/college") {
+      if (savedUniversity) {
+        dispatch(selectUniversity(savedUniversity));
+        dispatch(fetchColleges(savedUniversity.id));
         navigate("/college");
       }
-    }
-  }, [dispatch, selectUniversity, navigate, location]);
-  const handleUniversitySelect = (university) => {
+    };
+    checkSavedUniversity();
+  }, [dispatch]);
+
+  const handleUniversitySelect = async (university) => {
     dispatch(selectUniversity(university));
     localStorage.setItem("university", JSON.stringify(university));
     navigate("/college");
   };
 
-  const handleSignOut = () => {
-    localStorage.removeItem("university");
-    localStorage.removeItem("college");
-    dispatch(signOut());
-    navigate("/signin");
-  };
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center mt-32">
-        <h1 className="glow-text">قدها وقدود</h1>
-
-        <style jsx>{`
-          .glow-text {
-            font-size: 3rem;
-            font-weight: 100;
-            color: #8c52ff;
-            animation: glow 1.5s ease-in-out infinite,
-              float 3s ease-in-out infinite;
-          }
-
-          @keyframes glow {
-            0%,
-            100% {
-              text-shadow: 0 0 5px #8c52ff, 0 0 10px #8c52ff, 0 0 20px #8c52ff;
-            }
-            50% {
-              text-shadow: 0 0 15px #8c52ff, 0 0 30px #8c52ff, 0 0 45px #8c52ff;
-            }
-          }
-
-          @keyframes float {
-            0%,
-            100% {
-              transform: translateY(0);
-            }
-            50% {
-              transform: translateY(-5px);
-            }
-          }
-        `}</style>
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <Box className="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
-        <div
-          dir="rtl"
-          className="flex justify-center items-center max-w-7xl mx-auto"
-        >
-          <div>
-            <Typography variant="p" className="font-arabic text-2xl text-brand">
-              <span className="font-arabic text-2xl">اختر جامعتك</span>
-            </Typography>
-          </div>
-        </div>
-      </Box>
-
-      <Container maxWidth="lg" className="py-8">
+    <div dir="rtl" className="flex-1 bg-brand min-h-screen">
+      <div className="py-8 px-4">
         {error && (
-          <Alert severity="error" className="mb-6">
-            {error}
-          </Alert>
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+            <p className="text-red-600 font-arabic text-center">{error}</p>
+          </div>
         )}
 
-        <Grid
-          container
-          spacing={3}
-          sx={{
-            display: "flex",
-            flexWrap: "wrap",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          {universities.map((university) => (
-            <Grid key={university.id}>
-              <Card
-                className=" h-52 w-64 hover:shadow-lg transition-shadow duration-300 cursor-pointer transform hover:scale-105"
-                onClick={() => handleUniversitySelect(university)}
-              >
-                <CardContent className="p-6">
-                  <div className="flex items-start justify-between mb-4">
-                    <SchoolOutlined className="text-brand text-3xl" />
+        <div className="flex flex-row flex-wrap justify-center gap-6">
+          {loading
+            ? Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} />)
+            : universities.map((university) => (
+                <div
+                  key={university.id}
+                  className="bg-white w-[90%] rounded-xl shadow-md cursor-pointer active:scale-95 transition-transform"
+                  onClick={() => handleUniversitySelect(university)}
+                >
+                  <div className="flex-1 p-4 flex flex-col justify-center min-h-[170px]">
+                    <div className="flex flex-col items-center">
+                      <div className="flex flex-row items-center mb-3">
+                        {/* school icon */}
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="22"
+                          height="22"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="#8c52ff"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+                          <path d="M6 12v5c3 3 9 3 12 0v-5" />
+                        </svg>
+                      </div>
+
+                      <p className="text-brand font-arabic mb-2 text-lg leading-6 text-right line-clamp-3">
+                        {university.name}
+                      </p>
+                    </div>
+
+                    <button
+                      className="bg-brand rounded-lg py-2 mt-auto w-full"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleUniversitySelect(university);
+                      }}
+                    >
+                      <span className="text-white font-arabic text-xs text-center">
+                        اختيار
+                      </span>
+                    </button>
                   </div>
-
-                  <Typography
-                    variant="p"
-                    className=" text-brand mb-3 text-xl font-arabic"
-                  >
-                    {university.name}
-                  </Typography>
-
-                  <div className="flex items-center text-brand mb-4">
-                    <LocationOnOutlined className="text-sm mr-1" />
-                    <Typography variant="p" className="text-sm font-arabic">
-                      {university.location}
-                    </Typography>
-                  </div>
-
-                  <Button
-                    variant="contained"
-                    fullWidth
-                    className="mt-auto"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleUniversitySelect(university);
-                    }}
-                    sx={{
-                      fontFamily: "Cairo",
-                      fontSize: "1rem",
-                      backgroundColor: "#8C52FF",
-                      "&:hover": {
-                        backgroundColor: "#7a45e6", // ظل غامق بسيط عند التحويم
-                      },
-                    }}
-                  >
-                    <span className="font-arabic text-white text-sm">
-                      اختيار
-                    </span>
-                  </Button>
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
+                </div>
+              ))}
+        </div>
 
         {universities.length === 0 && !loading && (
-          <Box textAlign="center" className="py-12 font-arabic text-lg">
-            <Typography variant="p" color="textSecondary">
-              لا يوجد جامعات متوفرة حاليا
-            </Typography>
-          </Box>
+          <div className="text-center py-12">
+            <p className="text-gray-500 text-lg">لا يوجد جامعات متوفرة حاليا</p>
+          </div>
         )}
-      </Container>
+      </div>
     </div>
   );
 };

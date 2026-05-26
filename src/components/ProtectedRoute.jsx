@@ -1,19 +1,19 @@
 import { Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 
-const ProtectedRoute = ({ children, requireAdmin = false }) => {
-  const { isAuthenticated, user } = useSelector((state) => state.auth);
+const ProtectedRoute = ({ children }) => {
+  const { isAuthenticated, isInitialized } = useSelector((state) => state.auth);
+
+  if (!isInitialized) {
+    return (
+      <div className="flex justify-center items-center min-h-screen bg-[#8c52ff]">
+        <div className="w-10 h-10 border-4 border-white border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   if (!isAuthenticated) {
     return <Navigate to="/signin" replace />;
-  }
-
-  if (requireAdmin && user?.role !== "teacher") {
-    return <Navigate to="/subject" replace />;
-  }
-
-  if (!requireAdmin && user?.role === "teacher") {
-    return <Navigate to="/admin" replace />;
   }
 
   return children;

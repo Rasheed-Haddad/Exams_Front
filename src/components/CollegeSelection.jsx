@@ -1,190 +1,159 @@
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-
-import {
-  Container,
-  Typography,
-  Card,
-  CardContent,
-  Grid,
-  Button,
-  CircularProgress,
-  Alert,
-  Box,
-} from "@mui/material";
-import { BusinessOutlined } from "@mui/icons-material";
+import { set_college } from "../store/slices/authSlice";
 import {
   fetchColleges,
   fetchSubjects,
   selectCollege,
 } from "../store/slices/selectionSlice";
-import { set_college } from "../store/slices/authSlice";
-import { useLocation } from "react-router-dom";
+import { replace, useNavigate } from "react-router-dom";
+
+const SkeletonCollegeCard = () => {
+  const [opacity, setOpacity] = useState(0.4);
+
+  useEffect(() => {
+    let increasing = true;
+    const interval = setInterval(() => {
+      setOpacity((prev) => {
+        if (prev >= 1) increasing = false;
+        if (prev <= 0.4) increasing = true;
+        return increasing ? prev + 0.05 : prev - 0.05;
+      });
+    }, 50);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div
+      style={{ opacity }}
+      className="w-[95%] h-24 bg-white rounded-xl shadow-md p-4 flex flex-col justify-between"
+    >
+      {/* أيقونة placeholder */}
+      <div className="w-5 h-5 rounded-full bg-gray-200" />
+
+      {/* اسم الكلية placeholder */}
+      <div className="flex-1 flex flex-col items-center justify-center gap-2">
+        <div className="w-2/3 h-4 rounded-md bg-gray-200" />
+        <div className="w-1/3 h-3 rounded-md bg-gray-200" />
+      </div>
+    </div>
+  );
+};
+
 const CollegeSelection = () => {
-  const location = useLocation();
-  const dispatch = useDispatch();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const { colleges, selectedUniversity, loading, error } = useSelector(
-    (state) => state.selection
+    (state) => state.selection,
   );
   const { user } = useSelector((state) => state.auth);
+
   useEffect(() => {
-    const saved_college = JSON.parse(localStorage.getItem("college")) || null;
+    const loadSavedCollege = async () => {
+      const saved_college_str = localStorage.getItem("college");
+      const saved_college = saved_college_str
+        ? JSON.parse(saved_college_str)
+        : null;
 
-    if (saved_college && user?.ID && !isNaN(user.ID)) {
-      dispatch(selectCollege(saved_college));
-      dispatch(
-        fetchSubjects({ college_id: saved_college.id, ID: Number(user.ID) })
-      );
-
-      if (location.pathname !== "/subject") {
+      if (saved_college && user?.ID) {
+        dispatch(selectCollege(saved_college));
+        dispatch(
+          fetchSubjects({
+            college_id: saved_college.id,
+            ID: user?.ID,
+            search_term: "",
+          }),
+        );
         navigate("/subject");
       }
-    }
-  }, [dispatch, user, navigate, location]);
+    };
+
+    loadSavedCollege();
+  }, [dispatch, user]);
 
   useEffect(() => {
+    if (!user) {
+      navigate("/signIn", replace);
+    }
     if (!selectedUniversity) {
-      navigate("/university");
+      navigate("/university", replace);
       return;
     }
     dispatch(fetchColleges(selectedUniversity.id));
-  }, [dispatch, selectedUniversity, navigate]);
+  }, [dispatch, selectedUniversity]);
 
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
-
-  const handleCollegeSelect = (college) => {
+  const handleCollegeSelect = async (college) => {
     dispatch(selectCollege(college));
     localStorage.setItem("college", JSON.stringify(college));
-    dispatch(set_college({ ID: user.ID, college_id: college.id }));
+    dispatch(set_college({ ID: user?.ID, college_id: college.id }));
     navigate("/subject");
   };
 
   const handleBack = () => {
-    navigate("/university");
+    navigate("/university", replace);
   };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center mt-32">
-        <h1 className="glow-text">قدها وقدود</h1>
-
-        <style jsx>{`
-          .glow-text {
-            font-size: 3rem;
-            font-weight: 100;
-            color: #8c52ff;
-            animation: glow 1.5s ease-in-out infinite,
-              float 3s ease-in-out infinite;
-          }
-
-          @keyframes glow {
-            0%,
-            100% {
-              text-shadow: 0 0 5px #8c52ff, 0 0 10px #8c52ff, 0 0 20px #8c52ff;
-            }
-            50% {
-              text-shadow: 0 0 15px #8c52ff, 0 0 30px #8c52ff, 0 0 45px #8c52ff;
-            }
-          }
-
-          @keyframes float {
-            0%,
-            100% {
-              transform: translateY(0);
-            }
-            50% {
-              transform: translateY(-5px);
-            }
-          }
-        `}</style>
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <Box className="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
-        <div
-          dir="rtl"
-          className="flex items-center justify-center max-w-7xl mx-auto"
-        >
-          <div>
-            <Typography variant="p" className="font-arabic text-4xl text-brand">
-              اختر كليتك
-            </Typography>
-          </div>
-        </div>
-      </Box>
-
-      <Container maxWidth="lg" className="py-8">
+    <div className="flex flex-col min-h-screen bg-brand mb-12">
+      <div className="flex-1 py-8 px-4 overflow-y-auto">
         {error && (
-          <Alert severity="error" className="mb-6">
-            {error}
-          </Alert>
+          <div className="mb-6 bg-red-100 border font-arabic border-red-400 rounded p-4">
+            <span className="text-red-700">{error}</span>
+          </div>
         )}
 
-        <Grid
-          container
-          spacing={3}
-          sx={{
-            alignItems: "start",
-            display: "flex",
-            justifyContent: "center",
-          }}
-        >
-          {colleges.map((college) => (
-            <Grid key={college.id}>
-              <Card
-                className="h-32 w-32 hover:shadow-lg transition-shadow duration-300 cursor-pointer transform hover:scale-105"
-                onClick={() => handleCollegeSelect(college)}
-              >
-                <CardContent className="p-6" sx={{ height: "20vh" }}>
-                  <div className="flex items-start justify-between mb-4">
-                    <BusinessOutlined className="text-brand text-3xl" />
-                  </div>
-
-                  <div className="flex flex-col gap-4 font-arabic">
-                    <div className="h-28">
-                      <Typography
-                        variant="p"
-                        className="text-xl font-arabic text-brand"
+        <div className="flex flex-row flex-wrap justify-center pb-12 gap-4 px-3">
+          {loading
+            ? Array.from({ length: 6 }).map((_, i) => (
+                <SkeletonCollegeCard key={i} />
+              ))
+            : colleges.map((college) => (
+                <button
+                  key={college.id}
+                  className="w-[95%] h-24 bg-white rounded-xl shadow-md active:scale-95 transition-transform"
+                  onClick={() => handleCollegeSelect(college)}
+                >
+                  <div className="p-4 h-full flex flex-col justify-between">
+                    <div className="flex flex-row items-center justify-between">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="#8c52ff"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
                       >
-                        {college.name}
-                      </Typography>
+                        <rect width="16" height="20" x="4" y="2" rx="2" />
+                        <path d="M9 22v-4h6v4" />
+                        <path d="M8 6h.01M16 6h.01M12 6h.01M12 10h.01M8 10h.01M16 10h.01M12 14h.01M8 14h.01M16 14h.01" />
+                      </svg>
                     </div>
-                    <Button
-                      variant="contained"
-                      fullWidth
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleCollegeSelect(college);
-                      }}
-                    >
-                      اختيار
-                    </Button>
+
+                    <div className="flex items-center justify-center flex-1 px-2">
+                      <span className="text-lg font-arabic text-brand text-center">
+                        {college.name}
+                      </span>
+                    </div>
                   </div>
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
+                </button>
+              ))}
+        </div>
 
         {colleges.length === 0 && !loading && (
-          <Box textAlign="center" className="py-12 gap-6">
-            <Typography variant="h6" color="textSecondary">
-              قريبا
-            </Typography>
-            <Button variant="outlined" onClick={handleBack} className="mt-4">
-              عودة
-            </Button>
-          </Box>
+          <div className="text-center py-12 flex flex-col gap-6">
+            <span className="text-xl text-gray-500 text-center">قريبا</span>
+            <button
+              className="border border-brand rounded py-2 px-4 mt-4 mx-auto"
+              onClick={handleBack}
+            >
+              <span className="text-brand text-center">عودة</span>
+            </button>
+          </div>
         )}
-      </Container>
+      </div>
     </div>
   );
 };
