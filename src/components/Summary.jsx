@@ -9,9 +9,9 @@ import {
   stopTimer,
 } from "../store/slices/examSlice";
 import ExamInterface from "./ExamInterface";
+import { ChevronDown, ChevronUp, Pencil, Users } from "lucide-react";
 
 // ─── Helpers ──────────────────────────────────────────────────
-
 const toListItem = (item) => ({
   text: item.text ?? "",
   keywords: item.keywords ?? [],
@@ -72,76 +72,77 @@ const RecursiveItemRenderer = ({
   const li = toListItem(item);
   const paddingLeft = level * 20;
 
-  const displayTitle = li.title || "";
-  const displayDescription = li.description || "";
-  const displayText = li.text || "";
-
   return (
-    <div className="mb-3 font-arabic">
-      <div className="flex flex-row items-start gap-3" style={{ paddingLeft }}>
+    <div className="mb-3">
+      <div className="items-center justify-center" style={{ paddingLeft }}>
         {showNumber ? (
-          <div className="w-7 h-7 rounded-full bg-purple-100 items-center justify-center flex-shrink-0 mt-0.5 border border-purple-200 flex">
+          <div className="w-7 h-7 rounded-full bg-brand/10 items-center justify-center flex-shrink-0 mt-0.5 border border-brand/20 mb-2">
             <span className="text-brand text-sm">{numberIndex + 1}</span>
           </div>
-        ) : showBullet ? (
-          <div className="mt-2 w-2 h-2 rounded-full bg-brand/60 flex-shrink-0" />
         ) : null}
 
-        <div className="flex-1">
-          {li.emoji && <p className="text-2xl mb-1">{li.emoji}</p>}
-
-          {displayTitle ? (
-            <p className="text-brand text-lg mb-1">{displayTitle}</p>
-          ) : null}
-
-          {displayDescription ? (
+        <div className="items-center w-full">
+          {li.emoji && (
+            <span className="text-2xl mb-1 text-center">{li.emoji}</span>
+          )}
+          {li.title && (
+            <>
+              <span className="text-brand text-lg mb-1 text-center">
+                {li.title}
+              </span>
+              <br />
+            </>
+          )}
+          {li.description && (
             <HighlightedText
-              text={displayDescription}
+              text={li.description}
               keywords={li.keywords}
-              className="text-gray-600 text-base leading-relaxed mb-1"
+              className="text-gray-600 text-md leading-relaxed mb-1 text-center"
             />
-          ) : null}
-
+          )}
           {li.is_example ? (
-            <div className="bg-gray-50 p-3 rounded-xl border-l-4 border-purple-300">
-              <p className="text-black text-base leading-relaxed">
-                <span className="text-brand">مثال: </span>
-                <HighlightedText
-                  text={displayText}
-                  keywords={li.keywords}
-                  className="text-black"
-                />
-              </p>
+            <div className="bg-gray-50 p-3 rounded-xl border-l-4 border-brand/30 w-full">
+              <HighlightedText
+                text={li.text}
+                keywords={li.keywords}
+                className="text-black text-md leading-relaxed text-center"
+              />
             </div>
           ) : li.strong ? (
-            <p className="text-black text-base leading-relaxed">
-              <span className="text-brand">{li.strong} </span>
+            <>
+              <br />
+              <br />
+              <span className="text-brand border-2 mb-2 border-brand p-2 rounded-2xl font-arabic_bold text-center">
+                {li.strong + " ⭐ "}
+              </span>
+              <br />
+              <br />
               <HighlightedText
-                text={displayText}
+                text={li.text}
                 keywords={li.keywords}
-                className="text-black"
+                className="text-black text-md leading-relaxed text-center"
               />
-            </p>
-          ) : displayText ? (
+            </>
+          ) : li.text !== li.title ? (
             <HighlightedText
-              text={displayText}
+              text={li.text}
               keywords={li.keywords}
-              className="text-black text-base leading-relaxed"
+              className="text-black text-md leading-relaxed text-center"
             />
           ) : null}
         </div>
       </div>
 
-      {li.items && li.items.length > 0 && (
-        <div className="mt-3">
-          {li.items.map((nestedItem, nestedIndex) => (
+      {li.items?.length > 0 && (
+        <div className="mt-3 items-center">
+          {li.items.map((nested, i) => (
             <RecursiveItemRenderer
-              key={`nested-${level}-${nestedIndex}`}
-              item={nestedItem}
+              key={`nested-${level}-${i}`}
+              item={nested}
               level={level + 1}
-              showBullet={true}
+              showBullet
               showNumber={false}
-              numberIndex={nestedIndex}
+              numberIndex={i}
             />
           ))}
         </div>
@@ -153,52 +154,65 @@ const RecursiveItemRenderer = ({
 // ─── Block Renderers ─────────────────────────────────────────
 
 const ProcessList = ({ block }) => (
-  <div className="my-6 flex flex-col gap-4">
+  <div className="my-6 items-center" style={{ gap: 16 }}>
     {block.emoji && (
-      <p className="text-3xl mb-1 font-arabic px-1">{block.emoji}</p>
+      <>
+        <span className="text-3xl mb-1 text-center">{block.emoji}</span>
+        <br />
+      </>
     )}
-    {block.title && (
-      <p className="text-black text-lg font-arabic mb-1 px-1">{block.title}</p>
+    {(block.label || block.title) && (
+      <>
+        <span className="text-black text-lg mb-1 text-center">
+          {block.label ?? block.title}
+        </span>
+        <br />
+      </>
     )}
     {block.text && (
       <HighlightedText
         text={block.text}
         keywords={block.keywords ?? []}
-        className="text-black font-arabic text-lg mb-2 px-1"
+        className="text-black text-lg mb-2 text-center"
       />
     )}
     {(block.items ?? []).map((item, i) => (
       <div
         key={`process-${i}`}
-        className="flex font-arabic flex-row items-start bg-white rounded-2xl p-4 shadow-sm border border-gray-100"
+        className="items-center bg-white rounded-2xl p-4 shadow-sm border border-gray-100 w-full "
       >
-        <div className="w-8 h-8 rounded-full bg-brand flex items-center justify-center flex-shrink-0">
-          <span className="text-white">{i + 1}</span>
+        <div className="w-8 h-8 rounded-full bg-brand flex items-center pb-1 justify-center mb-3">
+          <span className="text-white self-center">{i + 1}</span>
         </div>
-        <div className="flex-1 ml-3">
-          <RecursiveItemRenderer
-            item={item}
-            level={0}
-            showBullet={false}
-            showNumber={false}
-          />
-        </div>
+        <RecursiveItemRenderer
+          item={item}
+          level={0}
+          showBullet={false}
+          showNumber={false}
+        />
       </div>
     ))}
   </div>
 );
 
 const BulletList = ({ block }) => (
-  <div className="my-4 flex flex-col gap-3">
-    {block.emoji && <p className="text-3xl mb-1 px-1">{block.emoji}</p>}
-    {block.title && (
-      <p className="text-black text-lg mb-1 px-1">{block.title}</p>
+  <div className="my-4 items-center" style={{ gap: 12 }}>
+    {block.emoji && (
+      <>
+        <span className="text-3xl mb-1 text-center">{block.emoji}</span>
+        <br />
+      </>
+    )}
+    {(block.label || block.title) && (
+      <span className="text-black text-lg mb-1 text-center">
+        {block.label ?? block.title}
+      </span>
     )}
     {block.text && (
       <HighlightedText
         text={block.text}
         keywords={block.keywords ?? []}
-        className="text-black text-sm mb-2 px-1"
+        className="text-black text-sm mb-2 text-center"
       />
     )}
     {(block.items ?? []).map((item, i) => (
@@ -206,7 +220,7 @@ const BulletList = ({ block }) => (
         key={`bullet-${i}`}
         item={item}
         level={0}
-        showBullet={true}
+        showBullet
         showNumber={false}
         numberIndex={i}
       />
@@ -215,30 +229,29 @@ const BulletList = ({ block }) => (
 );
 
 const DefinitionBox = ({ block }) => (
-  <div className="my-5 font-arabic bg-purple-50 rounded-xl px-5 py-5">
-    <div className="flex flex-row items-center gap-2 mb-2">
-      {/* book icon */}
-      <svg
-        className="w-5 h-5 text-brand"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
-        />
-      </svg>
-      <p className="text-brand text-lg">تعريف</p>
+  <div className="my-5 justify-center bg-brand/5 rounded-xl px-5 py-5">
+    <div className="flex-row text-center justify-center items-center gap-2 mb-2">
+      {block.emoji && (
+        <>
+          <span className="text-2xl">{block.emoji}</span>
+          <br />
+        </>
+      )}
     </div>
-    {block.title && <p className="text-brand text-base mb-2">{block.title}</p>}
+    {(block.label || block.title) && (
+      <>
+        <span className="text-brand text-md text-center justify-center mb-2">
+          {block.label ?? block.title}
+        </span>
+        <br />
+        <br />
+      </>
+    )}
     {block.text && (
       <HighlightedText
         text={block.text}
         keywords={block.keywords ?? []}
-        className="text-black text-base leading-7"
+        className="text-black text-center justify-center text-md leading-7"
       />
     )}
     {block.items && block.items.length > 0 && (
@@ -250,30 +263,27 @@ const DefinitionBox = ({ block }) => (
 );
 
 const HighlightCard = ({ block }) => (
-  <div className="my-5 bg-orange-50 font-arabic rounded-2xl p-5 border border-orange-200">
-    <div className="flex flex-row items-center gap-2 mb-3">
-      {block.emoji && <span className="text-2xl">{block.emoji}</span>}
-      {/* star icon */}
-      <svg
-        className="w-5 h-5 text-orange-400"
-        fill="currentColor"
-        viewBox="0 0 24 24"
-      >
-        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-      </svg>
-      {block.title ? (
-        <p className="text-orange-600 font-arabic text-lg">{block.title}</p>
-      ) : null}
+  <div className="my-5 bg-secondary/10 rounded-2xl p-5 border border-secondary/20">
+    <div className="items-center gap-2 mb-3">
+      {block.emoji && (
+        <>
+          <span className="text-2xl text-center">{block.emoji}</span>
+          <br />
+        </>
+      )}
+      {block.badge && (
+        <span className="text-brand text-lg text-center">{block.badge}</span>
+      )}
     </div>
     {block.text && (
       <HighlightedText
         text={block.text}
         keywords={block.keywords ?? []}
-        className="text-black text-base font-arabic leading-relaxed"
+        className="text-black text-md leading-relaxed text-center"
       />
     )}
-    {block.items && block.items.length > 0 && (
-      <div className="mt-3 font-arabic">
+    {block.items?.length > 0 && (
+      <div className="mt-3">
         <BulletList block={{ items: block.items }} />
       </div>
     )}
@@ -281,98 +291,88 @@ const HighlightCard = ({ block }) => (
 );
 
 const InfoBox = ({ block }) => (
-  <div className="my-4 bg-white border font-arabic border-purple-200 rounded-2xl p-5 shadow-sm">
-    {(block.title || block.text) && (
-      <div className="flex flex-row items-center gap-2 mb-3">
-        {/* info icon */}
-        <svg
-          className="w-5 h-5 text-brand"
-          fill="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" />
-        </svg>
-        {block.title ? (
-          <p className="text-brand text-lg">{block.title}</p>
-        ) : null}
+  <div className="my-4 bg-white border border-brand/20 rounded-2xl p-5 shadow-sm">
+    {(block.emoji || block.label) && (
+      <div className="items-center gap-2 mb-3">
+        {block.emoji && (
+          <>
+            <span className="text-2xl text-center">{block.emoji}</span>
+            <br />
+          </>
+        )}
+        {(block.label || block.title) && (
+          <span className="text-brand text-lg text-center font-arabic_bold">
+            {block.label ?? block.title}
+          </span>
+        )}
       </div>
     )}
     {block.text && (
       <HighlightedText
         text={block.text}
         keywords={block.keywords ?? []}
-        className="text-black font-arabic text-base leading-relaxed"
+        className="text-black text-md leading-relaxed text-center"
       />
     )}
-    {block.items && block.items.length > 0 && (
-      <div className="mt-3 font-arabic">
+    {block.items?.length > 0 && (
+      <div className="mt-3">
         <BulletList block={{ items: block.items }} />
       </div>
     )}
   </div>
 );
 
-const WarningBox = ({ block }) => {
-  const text = block.text ?? "";
-  const keywords = block.keywords ?? [];
-
-  return (
-    <div className="my-5 bg-red-50 border border-red-100 rounded-2xl p-5">
-      <div className="flex flex-row items-center gap-2 mb-2">
-        {block.emoji && (
-          <span className="text-2xl font-arabic">{block.emoji}</span>
-        )}
-        {/* warning icon */}
-        <svg
-          className="w-5 font-arabic h-5 text-red-500"
-          fill="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z" />
-        </svg>
-        <p className="text-red-600 text-lg font-arabic">
-          {block.title ?? "انتباه"}
-        </p>
-      </div>
-      {text ? (
-        <HighlightedText
-          text={text}
-          keywords={keywords}
-          className="text-gray-800 font-arabic text-base leading-7"
-        />
-      ) : null}
-      {block.items && block.items.length > 0 && (
-        <div className="mt-3 font-arabic">
-          <BulletList block={{ items: block.items }} />
-        </div>
+const WarningBox = ({ block }) => (
+  <div className="my-5 bg-red-50 border border-red-100 rounded-2xl p-5">
+    <div className="items-center gap-2 mb-2">
+      {block.emoji && (
+        <>
+          <span className="text-2xl text-center">{block.emoji}</span>
+          <br />
+        </>
       )}
+      <span className="text-red-600 text-lg text-center">
+        {block.label ?? "هام"}
+      </span>
     </div>
-  );
-};
+    {block.text && (
+      <HighlightedText
+        text={block.text}
+        keywords={block.keywords ?? []}
+        className="text-gray-800 text-md leading-7 text-center"
+      />
+    )}
+    {block.items?.length > 0 && (
+      <div className="mt-3">
+        <BulletList block={{ items: block.items }} />
+      </div>
+    )}
+  </div>
+);
 
-// ─── Two Column Item Renderer ─────────────────────────────────
 const TwoColumnItem = ({ item }) => {
   const subItems = item.items ?? [];
 
   return (
-    <div className="bg-white border font-arabic border-gray-200 rounded-2xl p-4 mb-3 shadow-sm">
-      {item.title && <p className="text-brand text-lg mb-2">{item.title}</p>}
+    <div className="bg-white border text-center justify-center border-gray-200 rounded-2xl p-4 mb-3 shadow-sm">
+      {item.title && (
+        <span className="text-brand text-center justify-center text-lg mb-2">
+          {item.title}
+        </span>
+      )}
       {item.description && (
         <HighlightedText
           text={item.description}
           keywords={item.keywords ?? []}
-          className="text-gray-700 font-arabic text-base leading-relaxed mb-3"
+          className="text-gray-700  text-center justify-center text-md leading-relaxed mb-3"
         />
       )}
       {subItems.length > 0 && (
-        <div className="mt-2 flex font-arabic flex-col gap-2">
+        <div className="mt-2" style={{ gap: 10 }}>
           {subItems.map((sub, i) => (
-            <div
-              key={`two-sub-${i}`}
-              className="flex flex-row items-start gap-2"
-            >
-              <div className="mt-2 w-2 h-2 font-arabic rounded-full bg-brand/60 flex-shrink-0" />
-              <div className="flex-1 font-arabic">
+            <div key={`two-sub-${i}`} className="flex-row items-start gap-2">
+              <div className="mt-2 w-2 h-2 rounded-full bg-brand/60" />
+              <div className="flex-1">
                 <RecursiveItemRenderer
                   item={sub}
                   level={0}
@@ -389,14 +389,25 @@ const TwoColumnItem = ({ item }) => {
 };
 
 const TwoColumn = ({ block }) => (
-  <div className="my-4 font-arabic flex flex-col gap-4">
-    {block.emoji && <p className="text-3xl mb-1 px-1">{block.emoji}</p>}
-    {block.title && <p className="text-black text-lg px-1">{block.title}</p>}
+  <div className="my-4 gap-4 text-center justify-center" style={{ gap: 16 }}>
+    {block.emoji && (
+      <>
+        <span className="text-3xl text-center justify-center mb-3 px-1">
+          {block.emoji}
+        </span>
+        <br />
+      </>
+    )}
+    {block.title && (
+      <span className="text-black text-center justify-center text-lg px-1">
+        {block.title}
+      </span>
+    )}
     {block.text && (
       <HighlightedText
         text={block.text}
         keywords={block.keywords ?? []}
-        className="text-black font-arabic text-base leading-relaxed px-1"
+        className="text-black text-center justify-center text-md leading-relaxed px-1"
       />
     )}
     {(block.items ?? []).map((item, i) => (
@@ -410,16 +421,27 @@ const ItemsGrid = ({ block }) => {
   if (items.length === 0 && block.text) return <InfoBox block={block} />;
 
   return (
-    <div className="my-5 font-arabic flex flex-col gap-3">
-      {block.emoji && <p className="text-3xl mb-1 px-1">{block.emoji}</p>}
-      {block.title && (
-        <p className="text-black text-lg px-1 mb-1">{block.title}</p>
+    <div className="my-5 text-center" style={{ gap: 12 }}>
+      {block.emoji && (
+        <>
+          <span className="text-3xl mb-1 px-1 self-center">{block.emoji}</span>
+          <br />
+        </>
+      )}
+      {(block.label || block.title) && (
+        <>
+          <span className="text-black self-center text-lg px-1 mb-1">
+            {block.label ?? block.title}
+          </span>
+          <br />
+          <br />
+        </>
       )}
       {block.text && (
         <HighlightedText
           text={block.text}
           keywords={block.keywords ?? []}
-          className="text-black font-arabic text-base leading-relaxed px-1 mb-2"
+          className="text-black text-md leading-relaxed px-1 mb-2"
         />
       )}
       {items.map((item, i) => {
@@ -427,19 +449,28 @@ const ItemsGrid = ({ block }) => {
         return (
           <div
             key={`grid-${i}`}
-            className="bg-white border font-arabic border-gray-100 rounded-2xl p-5 flex flex-col items-center justify-center shadow-sm w-full"
+            className="bg-white border border-gray-100 rounded-2xl p-5 items-center justify-center shadow-sm w-full"
           >
-            {item.emoji && <p className="text-4xl mb-2">{item.emoji}</p>}
+            {item.emoji && (
+              <>
+                <span className="text-4xl mb-2">{item.emoji}</span>
+                <br />
+              </>
+            )}
             {item.title && (
-              <p className="text-brand text-xl text-center mb-1">
-                {item.title}
-              </p>
+              <>
+                <span className="text-brand text-xl text-center mb-1 font-arabic_bold">
+                  {item.title}
+                </span>
+                <br />
+                <br />
+              </>
             )}
             {displayText ? (
               <HighlightedText
                 text={displayText}
                 keywords={item.keywords ?? []}
-                className="text-gray-600 font-arabic text-base text-center leading-6"
+                className="text-gray-600 text-lg text-center leading-6"
               />
             ) : null}
             {item.items && item.items.length > 0 && (
@@ -463,43 +494,49 @@ const ItemsGrid = ({ block }) => {
   );
 };
 
-const BadgeCard = ({ block }) => (
-  <div className="my-4 font-arabic flex flex-col items-center">
-    <div
-      className={`px-6 py-2.5 rounded-full border ${
-        block.style === "warning"
-          ? "bg-orange-100 border-orange-200"
-          : block.style === "success"
-            ? "bg-green-100 border-green-200"
-            : block.style === "info"
-              ? "bg-blue-100 border-blue-200"
-              : "bg-purple-100 border-purple-200"
-      }`}
-    >
-      <p
-        className={`text-lg ${
-          block.style === "warning"
-            ? "text-orange-600"
-            : block.style === "success"
-              ? "text-green-600"
-              : block.style === "info"
-                ? "text-blue-600"
-                : "text-brand"
-        }`}
-      >
-        {block.emoji ? `${block.emoji} ` : ""}
-        {block.text}
-      </p>
-    </div>
-    {block.items && block.items.length > 0 && (
-      <div className="mt-3 font-arabic w-full">
-        <BulletList block={{ items: block.items }} />
-      </div>
-    )}
-  </div>
-);
+const BADGE_STYLES = {
+  warning: {
+    container: "bg-orange-100 border-orange-200",
+    text: "text-orange-600",
+  },
+  success: {
+    container: "bg-green-100 border-green-200",
+    text: "text-green-600",
+  },
+  info: {
+    container: "bg-blue-100 border-blue-200",
+    text: "text-blue-600",
+  },
+  default: {
+    container: "bg-brand/10 border-brand/20",
+    text: "text-brand",
+  },
+};
 
-// ─── Notes Field ─────────────────────────────────────────────
+const BadgeCard = ({ block }) => {
+  const styles = BADGE_STYLES[block.style] ?? BADGE_STYLES.default;
+
+  return (
+    <div className="my-4 items-center">
+      <div className={`px-6 py-2.5 rounded-full border ${styles.container}`}>
+        <span className={`text-lg ${styles.text}`}>
+          {block.emoji && `${block.emoji} `}
+          {block.badge && (
+            <span className="text-lg text-brand">{block.badge}</span>
+          )}
+          {block.text}
+        </span>
+        <br />
+      </div>
+
+      {block.items?.length > 0 && (
+        <div className="mt-3 w-full">
+          <BulletList block={{ items: block.items }} />
+        </div>
+      )}
+    </div>
+  );
+};
 
 const NotesField = ({ sectionId, subjectId, lectureTitle }) => {
   const dispatch = useDispatch();
@@ -558,54 +595,44 @@ const NotesField = ({ sectionId, subjectId, lectureTitle }) => {
   }, []);
 
   return (
-    <div className="mt-8 font-arabic bg-[#FFF9E6] rounded-xl overflow-hidden border border-[#FFE4A3] shadow-sm">
+    <div className="mt-8 bg-[#FFF9E6] rounded-xl overflow-hidden border border-[#FFE4A3] shadow-sm">
       <div className="p-5">
-        <div className="flex flex-row items-center gap-2 mb-4">
-          <div className="w-10 h-10 rounded-full bg-[#FFD93D] flex items-center justify-center">
-            {/* pencil icon */}
-            <svg
-              className="w-5 h-5 text-[#856404]"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
-              />
-            </svg>
+        <div className="flex-row items-center justify-center gap-2 mb-4">
+          <div className="w-10 h-10 justify-center rounded-full bg-[#FFD93D] items-center">
+            <Pencil size={18} color="#856404" />
           </div>
-          <p className="text-[#856404] text-sm">ملاحظاتي</p>
         </div>
 
         <textarea
-          className="w-full px-4 py-4 text-sm text-gray-800 bg-white/60 rounded-xl leading-relaxed border border-[#FFE4A3] resize-none min-h-[100px] text-right outline-none focus:ring-2 focus:ring-[#FFD93D]"
-          placeholder="أضف معلومة أو نصيحة وسيراها باقي الطلاب"
+          className="px-4 py-4 text-sm text-gray-800 text-center bg-white/60 rounded-xl font-arabic leading-relaxed border border-[#FFE4A3] resize-none w-full"
+          placeholder={`ملاحظات ${user?.nick_name} للطلاب بخصوص هذا القسم...`}
           value={draftNote}
           onChange={(e) => {
             setDraftNote(e.target.value);
             if (error || status) dispatch(clearStatus());
           }}
           rows={4}
-          dir="rtl"
+          style={{ minHeight: 100, textAlign: "right" }}
         />
 
         <button
           onClick={handleSave}
-          className={`mt-4 w-full flex flex-row justify-center items-center gap-4 py-3 rounded-xl transition-colors ${
-            saved ? "bg-green-500" : "bg-brand hover:bg-purple-700"
+          className={`mt-4 w-full flex-row justify-center items-center gap-4 py-2 rounded-xl active:opacity-80 transition-opacity ${
+            saved ? "bg-green-500" : "bg-brand"
           }`}
         >
           <span className="text-white">{saved ? "تم الحفظ" : "حفظ"}</span>
         </button>
 
         {error && (
-          <p className="text-red-500 text-center text-sm mt-2">{error}</p>
+          <span className="text-red-500 self-center text-sm mt-2 text-right">
+            {error}
+          </span>
         )}
         {status && (
-          <p className="text-green-600 text-center text-sm mt-2 ">{status}</p>
+          <span className="text-green-600 self-center text-sm mt-2 text-right">
+            {status}
+          </span>
         )}
       </div>
 
@@ -613,36 +640,21 @@ const NotesField = ({ sectionId, subjectId, lectureTitle }) => {
         <div className="border-t border-[#FFE4A3]">
           <button
             onClick={() => setShowOthers((v) => !v)}
-            className="flex flex-row items-center gap-3 px-5 py-4 bg-white/40 w-full text-right"
+            className="flex-row items-center gap-3 px-5 py-4 bg-white/40 w-full"
           >
-            {/* people icon */}
-            <svg
-              className="w-5 h-5 text-brand"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z" />
-            </svg>
+            <Users size={20} color="#8c52ff" />
             <span className="text-brand flex-1">
               نصائح الزملاء ({otherNotes.length})
             </span>
-            <svg
-              className={`w-5 h-5 text-brand transition-transform ${showOthers ? "rotate-180" : ""}`}
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M19 9l-7 7-7-7"
-              />
-            </svg>
+            {showOthers ? (
+              <ChevronUp size={20} color="#8c52ff" />
+            ) : (
+              <ChevronDown size={20} color="#8c52ff" />
+            )}
           </button>
 
           {showOthers && (
-            <div className="p-4 flex flex-col gap-3">
+            <div className="p-4" style={{ gap: 12 }}>
               {otherNotes.map((n) => (
                 <div
                   key={n.student_ID}
@@ -650,32 +662,22 @@ const NotesField = ({ sectionId, subjectId, lectureTitle }) => {
                 >
                   <button
                     onClick={() => toggleStudent(n.student_ID)}
-                    className="flex flex-row items-center justify-between w-full"
+                    className="flex-row items-center justify-between w-full"
                   >
-                    <div className="flex flex-row items-center gap-2">
+                    <div className="flex-row items-center gap-2">
                       <span className="text-white">{n.student_nick_name}</span>
                     </div>
-                    <svg
-                      className={`w-4 h-4 text-white transition-transform ${
-                        expandedStudents.has(n.student_ID) ? "rotate-180" : ""
-                      }`}
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M19 9l-7 7-7-7"
-                      />
-                    </svg>
+                    {expandedStudents.has(n.student_ID) ? (
+                      <ChevronUp size={18} color="#fff" />
+                    ) : (
+                      <ChevronDown size={18} color="#fff" />
+                    )}
                   </button>
                   {expandedStudents.has(n.student_ID) && (
-                    <div className="mt-3 pt-3 border-t border-white/20">
-                      <p className="text-white text-sm leading-relaxed">
+                    <div className="mt-3 pt-3 border-t border-gray-50">
+                      <span className="text-white text-sm leading-relaxed">
                         {n.note}
-                      </p>
+                      </span>
                     </div>
                   )}
                 </div>
@@ -687,8 +689,6 @@ const NotesField = ({ sectionId, subjectId, lectureTitle }) => {
     </div>
   );
 };
-
-// ─── Block Router ────────────────────────────────────────────
 
 const RenderBlock = memo(({ block }) => {
   if (!block || !block.type) return null;
@@ -714,42 +714,59 @@ const RenderBlock = memo(({ block }) => {
       return <BadgeCard block={block} />;
     case "h3":
       return (
-        <div className="mt-8 font-arabic mb-2 pr-4">
-          <div className="flex flex-row items-center gap-2 mb-4">
+        <div className="mt-8 mb-2">
+          <div className="items-center gap-2 mb-4">
             {block.emoji && (
-              <span className="text-2xl font-arabic">{block.emoji}</span>
+              <>
+                <span className="text-2xl text-center">{block.emoji}</span>
+                <br />
+              </>
             )}
-            <p className="text-brand text-xl font-arabic">{block.text}</p>
+            <span className="text-brand text-xl text-center">{block.text}</span>
           </div>
-          {block.items && block.items.length > 0 && (
+          {block.items?.length > 0 && (
             <BulletList block={{ items: block.items }} />
           )}
         </div>
       );
+
     case "h4":
       return (
-        <div className="mt-6 mb-2">
-          <p className="text-brand font-arabic text-lg">
+        <div className="mt-6 mb-2 items-center">
+          <span className="text-brand text-lg text-center">
             {block.emoji ? `${block.emoji} ` : ""}
             {block.title ?? block.text}
-          </p>
-          {block.items && block.items.length > 0 && (
+          </span>
+          <br />
+          {block.items?.length > 0 && (
             <BulletList block={{ items: block.items }} />
           )}
         </div>
       );
+
     case "paragraph":
       return (
-        <div className="my-4 font-arabic">
+        <div className="my-4 items-center">
+          {block.emoji && (
+            <>
+              <span className="text-3xl mb-1 text-center">{block.emoji}</span>
+              <br />
+            </>
+          )}
+          {(block.label || block.title) && (
+            <span className="text-brand text-lg mb-3 text-center">
+              {block.label ?? block.title}
+            </span>
+          )}
           {block.text && (
             <HighlightedText
               text={block.text}
               keywords={block.keywords ?? []}
-              className="text-gray-800 font-arabic text-base leading-8"
+              className="text-gray-800 text-md leading-8 text-center"
             />
           )}
-          {block.items && block.items.length > 0 && (
-            <div className="mt-3 font-arabic">
+          {block.items?.length > 0 && (
+            <div className="mt-3 w-full">
               <BulletList block={{ items: block.items }} />
             </div>
           )}
@@ -767,17 +784,17 @@ const RenderBlock = memo(({ block }) => {
   }
 });
 
-// ─── Section Card ─────────────────────────────────────────────
-
 const SectionCard = ({ section, subjectId }) => (
-  <div className="pb-10 font-arabic">
-    <div className="flex flex-row items-center gap-4 mb-8">
-      <div className="w-14 h-14 rounded-2xl bg-brand flex items-center justify-center flex-shrink-0">
-        <span className="text-white text-2xl">{section.number}</span>
+  <div className="pb-10">
+    <div className="flex flex-col items-center justify-center gap-4 text-center mb-8">
+      <div className="w-10 h-10 self-center rounded-2xl text-center bg-brand flex items-center justify-center shadow-lg shadow-brand/30">
+        <span className="text-white self-center text-center text-lg">
+          {section.number}
+        </span>
       </div>
-      <p className="text-brand text-xl flex-1 leading-relaxed">
+      <span className="text-brand text-xl self-center text-center flex-1 leading-relaxed">
         {section.title}
-      </p>
+      </span>
     </div>
 
     {section.content_blocks.map((block, i) => (
@@ -809,7 +826,6 @@ const EmptyState = ({ type }) => (
   <div className="flex-1 font-arabic flex flex-col items-center justify-center px-8 py-20">
     <div className="w-20 h-20 rounded-3xl bg-white/20 flex items-center justify-center mb-5">
       {type === "summary" ? (
-        // BookOpen icon
         <svg
           className="w-9 h-9 text-white"
           fill="none"
@@ -824,7 +840,6 @@ const EmptyState = ({ type }) => (
           />
         </svg>
       ) : (
-        // HelpCircle icon
         <svg
           className="w-9 h-9 text-white"
           fill="none"
@@ -850,8 +865,6 @@ const EmptyState = ({ type }) => (
     </p>
   </div>
 );
-
-// ─── Main Component ───────────────────────────────────────────
 
 const Summary = () => {
   const navigate = useNavigate();
@@ -884,9 +897,7 @@ const Summary = () => {
     }
   }, [subjectForInit, examSummary.length, dispatch]);
 
-  // Get selectedLectures from location state or search params
   const { selectedLectures } = useSelector((state) => state.exam);
-
   const { selectedSubject } = useSelector((state) => state.selection);
 
   const summaryData = useMemo(
@@ -897,7 +908,6 @@ const Summary = () => {
     [selectedSubject, selectedLectures],
   );
 
-  // صلّح allSections (كان فيه bug واضح - كود ميت):
   const allSections = useMemo(() => {
     const filtered = summaryData.flatMap((lecture) =>
       (lecture.sections ?? []).map((section) => ({
@@ -968,7 +978,7 @@ const Summary = () => {
         <span
           className={`text-sm font-arabic ${activeTab === "summary" ? "text-brand" : "text-white"}`}
         >
-          الملخص
+          ملخص
         </span>
       </button>
       <button
@@ -980,7 +990,7 @@ const Summary = () => {
         <span
           className={`text-sm font-arabic ${activeTab === "exam" ? "text-brand" : "text-white"}`}
         >
-          الأسئلة
+          أتمتة
         </span>
       </button>
     </div>
@@ -992,7 +1002,6 @@ const Summary = () => {
         <TabSwitch />
       </div>
 
-      {/* تاب الملخص */}
       <div
         className={`${activeTab === "summary" ? "flex" : "hidden"} flex-col flex-1 bg-white overflow-hidden`}
       >
@@ -1002,7 +1011,6 @@ const Summary = () => {
           </div>
         ) : (
           <>
-            {/* Header */}
             <div className="bg-brand px-5 pb-6 ">
               <div className="flex flex-row items-center justify-between">
                 <div className="flex items-center flex-1 px-4">
@@ -1012,7 +1020,6 @@ const Summary = () => {
                 </div>
               </div>
 
-              {/* Progress Bar */}
               <div className="h-1.5 bg-white/20 rounded-full mt-2 overflow-hidden">
                 <div
                   className="h-full bg-white transition-all duration-300"
@@ -1023,7 +1030,6 @@ const Summary = () => {
               </div>
             </div>
 
-            {/* المحتوى */}
             <div
               key={currentIndex}
               className="flex-1 overflow-y-auto px-6 pt-8"
@@ -1035,7 +1041,6 @@ const Summary = () => {
               <div className="h-32" />
             </div>
 
-            {/* Navigation Footer */}
             <div className="flex flex-row border-t border-gray-100">
               <button
                 onClick={goToPrev}
@@ -1078,7 +1083,6 @@ const Summary = () => {
         )}
       </div>
 
-      {/* تاب الأسئلة */}
       {examEverOpened && (
         <div
           className={`${activeTab === "exam" ? "flex" : "hidden"} flex-col flex-1 bg-white overflow-hidden`}

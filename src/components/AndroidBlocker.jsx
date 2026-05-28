@@ -22,12 +22,12 @@ const AndroidBlocker = ({ children }) => {
   }, []);
 
   const downloadUrl =
-    "https://drive.google.com/uc?id=1AdLbYoVpeolILTihcs93xGuKK9RBfsIj";
+    "https://drive.google.com/uc?id=1UNINGxmnjTsK50lZe9O3gx4UfH1OwsmB";
 
   if (deviceType === "android" || deviceType === "desktop") {
     return (
       <div
-        className="min-h-screen flex items-center justify-center p-6 bg-brand font-[Tajawal,sans-serif] direction-rtl"
+        className="h-screen flex items-center justify-center pb-6 bg-brand font-[Tajawal,sans-serif] direction-rtl"
         dir="rtl"
       >
         <link
