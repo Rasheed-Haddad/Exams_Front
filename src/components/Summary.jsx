@@ -978,7 +978,7 @@ const Summary = () => {
         <span
           className={`text-sm font-arabic ${activeTab === "summary" ? "text-brand" : "text-white"}`}
         >
-          ملخص
+          مقرر
         </span>
       </button>
       <button
@@ -990,7 +990,7 @@ const Summary = () => {
         <span
           className={`text-sm font-arabic ${activeTab === "exam" ? "text-brand" : "text-white"}`}
         >
-          أتمتة
+          تسميع
         </span>
       </button>
     </div>
