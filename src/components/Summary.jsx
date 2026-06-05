@@ -10,6 +10,7 @@ import {
 } from "../store/slices/examSlice";
 import ExamInterface from "./ExamInterface";
 import { ChevronDown, ChevronUp, Pencil, Users } from "lucide-react";
+import { People } from "@mui/icons-material";
 
 // ─── Helpers ──────────────────────────────────────────────────
 const toListItem = (item) => ({
@@ -272,7 +273,13 @@ const HighlightCard = ({ block }) => (
         </>
       )}
       {block.badge && (
-        <span className="text-brand text-lg text-center">{block.badge}</span>
+        <>
+          <span className="text-brand text-lg text-center">{block.badge}</span>
+          <br />
+        </>
+      )}
+      {block.title && (
+        <span className="text-brand text-lg text-center">{block.title}</span>
       )}
     </div>
     {block.text && (
@@ -332,7 +339,7 @@ const WarningBox = ({ block }) => (
         </>
       )}
       <span className="text-red-600 text-lg text-center">
-        {block.label ?? "هام"}
+        {block.label ?? block.title ?? "هام"}
       </span>
     </div>
     {block.text && (
@@ -356,9 +363,12 @@ const TwoColumnItem = ({ item }) => {
   return (
     <div className="bg-white border text-center justify-center border-gray-200 rounded-2xl p-4 mb-3 shadow-sm">
       {item.title && (
-        <span className="text-brand text-center justify-center text-lg mb-2">
-          {item.title}
-        </span>
+        <>
+          <span className="text-brand text-center justify-center text-lg mb-2">
+            {item.title}
+          </span>
+          <br />
+        </>
       )}
       {item.description && (
         <HighlightedText
@@ -399,9 +409,12 @@ const TwoColumn = ({ block }) => (
       </>
     )}
     {block.title && (
-      <span className="text-black text-center justify-center text-lg px-1">
-        {block.title}
-      </span>
+      <>
+        <span className="text-black text-center justify-center text-lg px-1">
+          {block.title}
+        </span>
+        <br />
+      </>
     )}
     {block.text && (
       <HighlightedText
@@ -595,55 +608,130 @@ const NotesField = ({ sectionId, subjectId, lectureTitle }) => {
   }, []);
 
   return (
-    <div className="mt-8 bg-[#FFF9E6] rounded-xl overflow-hidden border border-[#FFE4A3] shadow-sm">
+    <div
+      className="mt-8 bg-[#FFF9E6] rounded-b-xl overflow-hidden border border-[#FFE4A3] shadow-sm"
+      style={{ direction: "rtl" }}
+    >
       <div className="p-5">
-        <div className="flex-row items-center justify-center gap-2 mb-4">
-          <div className="w-10 h-10 justify-center rounded-full bg-[#FFD93D] items-center">
-            <Pencil size={18} color="#856404" />
-          </div>
-        </div>
-
-        <textarea
-          className="px-4 py-4 text-sm text-gray-800 text-center bg-white/60 rounded-xl font-arabic leading-relaxed border border-[#FFE4A3] resize-none w-full"
-          placeholder={`ملاحظات ${user?.nick_name} للطلاب بخصوص هذا القسم...`}
-          value={draftNote}
-          onChange={(e) => {
-            setDraftNote(e.target.value);
-            if (error || status) dispatch(clearStatus());
+        {/* حاوية الورقة المسطّرة */}
+        <div
+          className="rounded-xl overflow-hidden"
+          style={{
+            position: "relative", // ← الإصلاح الأساسي
+            backgroundColor: "#FFF9E6",
+            minHeight: 200,
           }}
-          rows={4}
-          style={{ minHeight: 100, textAlign: "right" }}
-        />
+        >
+          {/* الخطوط الأفقية */}
+          {Array.from({ length: 12 }).map((_, i) => (
+            <div
+              key={i}
+              style={{
+                position: "absolute",
+                left: 0,
+                right: 0,
+                top: 8 + i * 32,
+                height: 1,
+                backgroundColor: "#FFE4A3",
+                pointerEvents: "none",
+                zIndex: 0,
+              }}
+            />
+          ))}
+
+          {/* textarea فوق الخطوط */}
+          <textarea
+            placeholder={`ملاحظات ${user?.nick_name} للطلاب بخصوص هذه الفقرة.........`}
+            value={draftNote}
+            onChange={(e) => {
+              setDraftNote(e.target.value); // ← e.target.value مش e مباشرة
+              if (error || status) dispatch(clearStatus());
+            }}
+            style={{
+              position: "relative", // ← يطفو فوق الخطوط
+              zIndex: 1,
+              width: "100%", // ← ملء العرض
+              boxSizing: "border-box", // ← يحسب الـ padding ضمن العرض
+              minHeight: 200,
+              padding: "8px 16px",
+              background: "transparent",
+              border: "none",
+              outline: "none",
+              resize: "none",
+              textAlign: "right",
+              lineHeight: "32px",
+              fontSize: 14,
+              color: "#1f2937",
+            }}
+          />
+        </div>
 
         <button
           onClick={handleSave}
-          className={`mt-4 w-full flex-row justify-center items-center gap-4 py-2 rounded-xl active:opacity-80 transition-opacity ${
-            saved ? "bg-green-500" : "bg-brand"
-          }`}
+          style={{
+            marginTop: 16,
+            width: "100%",
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "center",
+            alignItems: "center",
+            gap: 16,
+            padding: "8px 0",
+            borderRadius: "0 0 12px 12px",
+            border: "none",
+            cursor: "pointer",
+            backgroundColor: saved ? "#22c55e" : "#e7ab1f",
+            color: "white",
+            fontSize: 18,
+          }}
         >
-          <span className="text-white">{saved ? "تم الحفظ" : "حفظ"}</span>
+          {saved ? "تم الحفظ" : "حفظ"}
         </button>
 
         {error && (
-          <span className="text-red-500 self-center text-sm mt-2 text-right">
+          <p
+            style={{
+              color: "#ef4444",
+              textAlign: "center",
+              fontSize: 14,
+              marginTop: 8,
+            }}
+          >
             {error}
-          </span>
+          </p>
         )}
         {status && (
-          <span className="text-green-600 self-center text-sm mt-2 text-right">
+          <p
+            style={{
+              color: "#16a34a",
+              textAlign: "center",
+              fontSize: 14,
+              marginTop: 8,
+            }}
+          >
             {status}
-          </span>
+          </p>
         )}
       </div>
 
       {otherNotes.length > 0 && (
-        <div className="border-t border-[#FFE4A3]">
+        <div style={{ borderTop: "1px solid #FFE4A3" }}>
           <button
             onClick={() => setShowOthers((v) => !v)}
-            className="flex-row items-center gap-3 px-5 py-4 bg-white/40 w-full"
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              gap: 12,
+              padding: "14px 20px",
+              width: "100%",
+              background: "rgba(255,255,255,0.4)",
+              border: "none",
+              cursor: "pointer",
+            }}
           >
-            <Users size={20} color="#8c52ff" />
-            <span className="text-brand flex-1">
+            <People size={20} color="#8c52ff" />
+            <span style={{ color: "#8c52ff", flex: 1, textAlign: "right" }}>
               نصائح الزملاء ({otherNotes.length})
             </span>
             {showOthers ? (
@@ -654,28 +742,62 @@ const NotesField = ({ sectionId, subjectId, lectureTitle }) => {
           </button>
 
           {showOthers && (
-            <div className="p-4" style={{ gap: 12 }}>
+            <div
+              style={{
+                padding: 16,
+                display: "flex",
+                flexDirection: "column",
+                gap: 12,
+              }}
+            >
               {otherNotes.map((n) => (
                 <div
                   key={n.student_ID}
-                  className="bg-brand rounded-2xl p-4 border border-gray-100 shadow-sm"
+                  style={{
+                    backgroundColor: "#8c52ff",
+                    borderRadius: 16,
+                    padding: 16,
+                  }}
                 >
                   <button
                     onClick={() => toggleStudent(n.student_ID)}
-                    className="flex-row items-center justify-between w-full"
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      width: "100%",
+                      background: "none",
+                      border: "none",
+                      cursor: "pointer",
+                      padding: 0,
+                    }}
                   >
-                    <div className="flex-row items-center gap-2">
-                      <span className="text-white">{n.student_nick_name}</span>
-                    </div>
+                    <span style={{ color: "white" }}>
+                      {n.student_nick_name}
+                    </span>
                     {expandedStudents.has(n.student_ID) ? (
                       <ChevronUp size={18} color="#fff" />
                     ) : (
                       <ChevronDown size={18} color="#fff" />
                     )}
                   </button>
+
                   {expandedStudents.has(n.student_ID) && (
-                    <div className="mt-3 pt-3 border-t border-gray-50">
-                      <span className="text-white text-sm leading-relaxed">
+                    <div
+                      style={{
+                        marginTop: 12,
+                        paddingTop: 12,
+                        borderTop: "1px solid rgba(255,255,255,0.2)",
+                      }}
+                    >
+                      <span
+                        style={{
+                          color: "white",
+                          fontSize: 14,
+                          lineHeight: 1.6,
+                        }}
+                      >
                         {n.note}
                       </span>
                     </div>
@@ -722,7 +844,9 @@ const RenderBlock = memo(({ block }) => {
                 <br />
               </>
             )}
-            <span className="text-brand text-xl text-center">{block.text}</span>
+            <span className="text-brand text-xl text-center">
+              {block.text ?? block.title}
+            </span>
           </div>
           {block.items?.length > 0 && (
             <BulletList block={{ items: block.items }} />
@@ -935,7 +1059,7 @@ const Summary = () => {
 
   const hasSummary = !isEmpty(allSections);
   const hasQuestions = !isEmpty(selectedSubject?.questions);
-
+  console.log(summaryData);
   const goToNext = useCallback(() => {
     if (currentIndex < allSections.length - 1) {
       setCurrentIndex((prev) => prev + 1);

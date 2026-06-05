@@ -22,7 +22,7 @@ const AndroidBlocker = ({ children }) => {
   }, []);
 
   const downloadUrl =
-    "https://drive.google.com/uc?id=1iKbFc48DmTdDeP68zbww9zihqjak8TkH";
+    "https://drive.google.com/uc?id=1YfAdhRxXuvYtCoDUg_bE0PR-7nLQewYl";
 
   if (deviceType === "android" || deviceType === "desktop") {
     return (
