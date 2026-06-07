@@ -21,8 +21,7 @@ const AndroidBlocker = ({ children }) => {
     else if (isDesktop) setDeviceType("desktop");
   }, []);
 
-  const downloadUrl =
-    "https://drive.google.com/uc?id=1YfAdhRxXuvYtCoDUg_bE0PR-7nLQewYl";
+  const downloadUrl = "https://top4top.io/downloadf-3810ti20v0-apk.html";
 
   if (deviceType === "android" || deviceType === "desktop") {
     return (
