@@ -21,7 +21,8 @@ const AndroidBlocker = ({ children }) => {
     else if (isDesktop) setDeviceType("desktop");
   }, []);
 
-  const downloadUrl = "https://top4top.io/downloadf-3810ti20v0-apk.html";
+  const downloadUrl =
+    "https://download944.mediafire.com/6ji7wjwxowdgjiLfvWm5tk7KVUPcF7BfXfGPH4BC6SIiqACxqxNCT_-1KQE2HtIa9Sk0ZoH45c0YM62hwVOvCnMtsjFqnbHvYYBmy9chQ8CzdVX5O3aF_6syLMx61pzE1Hmhk1ilUgwe_dMLA5qoFF_JHl0hZaEoS5KBtPjjSvk/obf6itwilsrkyth/%D9%82%D8%AF%D9%87%D8%A7+%D9%88%D9%82%D8%AF%D9%88%D8%AF.apk";
 
   if (deviceType === "android" || deviceType === "desktop") {
     return (
