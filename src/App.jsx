@@ -30,88 +30,90 @@ function App() {
   }, []);
 
   return (
-    <Provider store={store}>
-      <CssBaseline />
+    <AndroidBlocker>
+      <Provider store={store}>
+        <CssBaseline />
 
-      <Router>
-        <div className="App min-h-screen bg-gray-50">
-          <IOSInstallBanner />
+        <Router>
+          <div className="App min-h-screen bg-gray-50">
+            <IOSInstallBanner />
 
-          <Routes>
-            {/* Public Routes */}
-            <Route path="/signin" element={<SignIn />} />
-            <Route path="/" element={<Navigate to="/signin" replace />} />
+            <Routes>
+              {/* Public Routes */}
+              <Route path="/signin" element={<SignIn />} />
+              <Route path="/" element={<Navigate to="/signin" replace />} />
 
-            {/* Student Protected Routes */}
-            <Route
-              path="/university"
-              element={
-                <ProtectedRoute>
-                  <UniversitySelection />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/college"
-              element={
-                <ProtectedRoute>
-                  <CollegeSelection />
-                </ProtectedRoute>
-              }
-            />
+              {/* Student Protected Routes */}
+              <Route
+                path="/university"
+                element={
+                  <ProtectedRoute>
+                    <UniversitySelection />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/college"
+                element={
+                  <ProtectedRoute>
+                    <CollegeSelection />
+                  </ProtectedRoute>
+                }
+              />
 
-            <Route
-              path="/subject"
-              element={
-                <ProtectedRoute>
-                  <SubjectSelection />
-                </ProtectedRoute>
-              }
-            />
-            <Route path="Lecture" element={<LectureSelection />} />
+              <Route
+                path="/subject"
+                element={
+                  <ProtectedRoute>
+                    <SubjectSelection />
+                  </ProtectedRoute>
+                }
+              />
+              <Route path="Lecture" element={<LectureSelection />} />
 
-            <Route
-              path="/exam"
-              element={
-                <ProtectedRoute>
-                  <ExamInterface />
-                </ProtectedRoute>
-              }
-            />
+              <Route
+                path="/exam"
+                element={
+                  <ProtectedRoute>
+                    <ExamInterface />
+                  </ProtectedRoute>
+                }
+              />
 
-            <Route
-              path="/summary"
-              element={
-                <ProtectedRoute>
-                  <Summary />
-                </ProtectedRoute>
-              }
-            />
+              <Route
+                path="/summary"
+                element={
+                  <ProtectedRoute>
+                    <Summary />
+                  </ProtectedRoute>
+                }
+              />
 
-            <Route
-              path="/results"
-              element={
-                <ProtectedRoute>
-                  <ExamResults />
-                </ProtectedRoute>
-              }
-            />
+              <Route
+                path="/results"
+                element={
+                  <ProtectedRoute>
+                    <ExamResults />
+                  </ProtectedRoute>
+                }
+              />
 
-            <Route
-              path="/profile"
-              element={
-                <ProtectedRoute>
-                  <Profile />
-                </ProtectedRoute>
-              }
-            />
+              <Route
+                path="/profile"
+                element={
+                  <ProtectedRoute>
+                    <Profile />
+                  </ProtectedRoute>
+                }
+              />
 
-            {/* 404 */}
-            <Route path="*" element={<Navigate to="/signin" replace />} />
-          </Routes>
-        </div>
-      </Router>
-    </Provider>
+              {/* 404 */}
+              <Route path="*" element={<Navigate to="/signin" replace />} />
+            </Routes>
+          </div>
+        </Router>
+      </Provider>
+    </AndroidBlocker>
   );
 }
 
